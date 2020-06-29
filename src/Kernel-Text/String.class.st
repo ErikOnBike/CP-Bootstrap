@@ -397,6 +397,11 @@ String >> translate: aString from: start to: stop table: table [
 ]
 
 { #category : #all }
+String >> isString [
+	^ true
+]
+
+{ #category : #all }
 String >> cpEncodeWith: anEncoder [
 	anEncoder encodeString: self
 ]

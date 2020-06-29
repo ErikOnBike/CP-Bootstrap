@@ -394,6 +394,11 @@ Object >> isSmallInteger [
 ]
 
 { #category : #all }
+Object >> isString [
+	^ false
+]
+
+{ #category : #all }
 Object >> isSymbol [
 	^ false
 ]
