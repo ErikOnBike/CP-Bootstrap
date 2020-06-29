@@ -9,7 +9,7 @@ This source code is based on Pharo Candle. The most relevant changes:
 * Added Exception handling (classes Exception, Error, MessageNotUnderstood and the Block>>#on:do:, Context>>#unwindTo:, etc)
 * Added Announcements (classes Announcer, Announcement, AnnouncementSubscription and SubscriptionRegistry)
 * Added class Mutex
-* Added SystemDictionary (empty subclass of Dictionary to allow SqueakJS VM to run recognize the Smalltalk globals)
+* Added SystemDictionary (empty subclass of Dictionary to allow SqueakJS VM to recognize the Smalltalk globals)
 * Removed some classes (PCFile, PCBitBlt, PCForm, PCWordArray)
 * Removed some test and benchmark code
 * Reorganised some of the package structure
