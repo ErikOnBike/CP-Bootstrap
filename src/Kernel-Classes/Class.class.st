@@ -2,10 +2,10 @@ Class {
 	#name : #Class,
 	#superclass : #Behavior,
 	#instVars : [
-		'name',
 		'instVarNames',
 		'classVariables',
-		'subclasses'
+		'subclasses',
+		'name'
 	],
 	#category : #'Kernel-Classes'
 }
@@ -71,7 +71,7 @@ Class >> isMeta [
 Class >> allSubclassesDo: aBlock [
 	self subclassesDo: [ :each |
 		aBlock value: each.
-		each subclassesDo: aBlock ]
+		each allSubclassesDo: aBlock ]
 ]
 
 { #category : #all }
