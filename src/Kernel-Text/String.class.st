@@ -6,7 +6,8 @@ Class {
 		'AsciiOrder',
 		'CaseInsensitiveOrder',
 		'CaseSensitiveOrder',
-		'LowercasingTable'
+		'LowercasingTable',
+		'UppercasingTable'
 	],
 	#category : #'Kernel-Text'
 }
@@ -50,7 +51,9 @@ String class >> initialize [
 	order = 255
 		ifFalse: [ self error: 'order problem' ].	"create a table for translating to lower case"
 	LowercasingTable := ((0 to: 255)
-		collect: [ :i | i asCharacter asLowercase ]) asString
+		collect: [ :i | i asCharacter asLowercase ]) asString.
+	UppercasingTable := ((0 to: 255)
+		collect: [ :i | i asCharacter asUppercase ]) asString
 ]
 
 { #category : #all }
@@ -103,6 +106,20 @@ String >> asByteArray [
 		replaceFrom: 1
 		to: self size
 		with: self
+]
+
+{ #category : #all }
+String >> asUppercase [
+	"Answer a String made up from the receiver whose characters are all uppercase."
+
+	| result |
+	result := self copy asString.
+	self
+		translate: result
+		from: 1
+		to: result size
+		table: UppercasingTable.
+	^ result
 ]
 
 { #category : #all }
@@ -181,7 +198,7 @@ String >> compare: aString [
 String >> compare: string1 with: string2 collated: order [
 	"Return 1, 2 or 3, if string1 is <, =, or > string2, with the collating order of characters given by the order array."
 
-	<primitive: 235>
+	<primitive: 'primitiveCompareString' module: 'MiscPrimitivePlugin'>
 	| len1 len2 c1 c2 |
 	len1 := string1 size.
 	len2 := string2 size.
@@ -231,7 +248,7 @@ String >> findSubstring: key in: body startingAt: start matchTable: matchTable [
 
 	"Note: The algorithm below is not optimum because it is intended to be translated to C."
 
-	<primitive: 246>
+	<primitive: 'primitiveFindSubstring' module: 'MiscPrimitivePlugin'>
 	| index |
 	key size = 0
 		ifTrue: [ ^ 0 ].
@@ -302,8 +319,8 @@ String >> indexOf: aCharacter startingAt: startIndex ifAbsent: absentBlock [
 
 { #category : #all }
 String >> indexOfAscii: anInteger inString: aString startingAt: start [
-	"	<primitive: 245>"
 
+	<primitive: 'primitiveIndexOfAsciiInString' module: 'MiscPrimitivePlugin'>
 	| stringSize |
 	stringSize := aString size.
 	start to: stringSize do: [ :pos | 
@@ -392,7 +409,7 @@ String >> substrings [
 String >> translate: aString from: start to: stop table: table [
 	"Translate the characters in the given string in place using the given mapping table."
 
-	<primitive: 243>
+	<primitive: 'primitiveTranslateStringWithTable' module: 'MiscPrimitivePlugin'>
 	start to: stop do: [ :i | aString at: i put: (table at: (aString at: i) asciiValue + 1) ]
 ]
 
