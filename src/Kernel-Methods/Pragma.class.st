@@ -18,6 +18,11 @@ Pragma class >> keyword: aSymbol arguments: anArray [
 ]
 
 { #category : #all }
+Pragma class >> withPragmasIn: aClass do: aBlock [
+	aClass selectorAndMethodsDo: [ :selector :method | method pragmas do: aBlock ]
+]
+
+{ #category : #all }
 Pragma >> keyword: aSymbol [
 	keyword := aSymbol
 ]
@@ -59,6 +64,11 @@ Pragma >> method [
 
 { #category : #all }
 Pragma >> selector [
+	^ method selector
+]
+
+{ #category : #all }
+Pragma >> methodSelector [
 	^ method selector
 ]
 

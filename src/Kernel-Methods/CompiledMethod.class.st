@@ -96,6 +96,11 @@ CompiledMethod >> properties [
 ]
 
 { #category : #all }
+CompiledMethod >> pragmas [
+	^ self properties ifNotNil: [ :properties | properties pragmas ] ifNil: [ #() ]
+]
+
+{ #category : #all }
 CompiledMethod >> isCompiledMethod [
 	^ true
 ]

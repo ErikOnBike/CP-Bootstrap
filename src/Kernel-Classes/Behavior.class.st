@@ -235,6 +235,11 @@ Behavior >> addSelector: aSymbol withMethod: aCompiledMethod [
 ]
 
 { #category : #all }
+Behavior >> selectorAndMethodsDo: aTwoArgBlock [
+	^ self methodDict keysAndValuesDo: aTwoArgBlock
+]
+
+{ #category : #all }
 Behavior >> primitiveFlushMethodCacheForSelector: aSelector [
 	<primitive: 119>
 ]
