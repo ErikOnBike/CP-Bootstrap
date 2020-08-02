@@ -83,6 +83,16 @@ ReadStream >> peekFor: anObject [
 ]
 
 { #category : #all }
+ReadStream >> upToEnd [
+	"Answer a subcollection from the current access position through the last element of the receiver."
+
+	| newStream |
+	newStream := WriteStream on: (collection species new: (100 max: readLimit - position)).
+	[ self atEnd ] whileFalse: [ newStream nextPut: self next ].
+	^ newStream contents
+]
+
+{ #category : #all }
 ReadStream >> position [
 	"Answer the current position of accessing the sequence of objects."
 

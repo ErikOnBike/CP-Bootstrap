@@ -243,6 +243,15 @@ Collection >> select: aBlock [
 ]
 
 { #category : #all }
+Collection >> reject: aBlock [
+	"Evaluate aBlock with each of the receiver's elements as the argument. 
+	Collect into a new collection like the receiver, only those elements for 
+	which aBlock evaluates to false. Answer the new collection."
+
+	^ self select: [ :element | (aBlock value: element) == false ]
+]
+
+{ #category : #all }
 Collection >> inject: thisValue into: binaryBlock [
 	"Accumulate a running value associated with evaluating the argument, binaryBlock, with the current value of the argument, thisValue, and the receiver as block arguments."
 	

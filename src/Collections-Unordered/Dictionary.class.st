@@ -60,19 +60,16 @@ Dictionary >> at: key [
 
 { #category : #all }
 Dictionary >> at: key ifAbsent: aBlock [
-	| index assoc |
-	index := self findElementOrNil: key.
-	assoc := array at: index.
-	nil == assoc
-		ifTrue: [ ^ aBlock value ].
-	^ assoc value
+	^ ((array at: (self findElementOrNil: key)) 
+		ifNil: [ aBlock ] 
+		ifNotNil: [ :assoc | assoc ]) value.
 ]
 
 { #category : #all }
 Dictionary >> at: key ifAbsentPut: aBlock [
 	"Answer the element at the given index. If I do not contain an element at that index, put the result of evaluating aBlock into the specified location and answer that result."
 
-	^self at: key ifAbsent: [ self at: key put: aBlock value ]
+	^ self at: key ifAbsent: [ self at: key put: aBlock value ]
 ]
 
 { #category : #all }
