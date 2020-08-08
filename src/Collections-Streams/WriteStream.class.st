@@ -83,5 +83,5 @@ WriteStream >> size [
 WriteStream >> space [
 	"Append a space character to me."
 
-	self nextPut: Character space
+	self nextPut: $  "literal space"
 ]
