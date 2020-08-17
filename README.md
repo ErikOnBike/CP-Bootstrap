@@ -1,6 +1,6 @@
 # Source code for tiny Smalltalk image
 
-This repo contains the source code of the tiny Smalltalk image used in [CodeParadise](https://github.com/ErikOnBike/CodeParadise). The code is based on [Pharo Candle](https://github.com/carolahp/PharoCandleSrc). The image is created using [Pharo Bootstrap](https://github.com/carolahp/Pharo80Bootstrap). Easiest is to use the [Pharo Bootstrap Manager](https://github.com/carolahp/PBManager).
+This repo contains the source code of the tiny Smalltalk image used in [CodeParadise](https://github.com/ErikOnBike/CodeParadise). The code is based on [Pharo Candle](https://github.com/carolahp/PharoCandleSrc). The image is created using [Pharo Bootstrap](https://github.com/carolahp/pharo). Easiest is to use the [Pharo Bootstrap Manager](https://github.com/carolahp/PBManager).
 
 ## Differences wrt Pharo Candle
 
