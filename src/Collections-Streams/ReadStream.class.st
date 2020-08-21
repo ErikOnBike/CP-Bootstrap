@@ -83,6 +83,20 @@ ReadStream >> peekFor: anObject [
 ]
 
 { #category : #all }
+ReadStream >> lookAheadAt: index [
+
+	"Answer the element at the specified (delta) position or nil if outside the receiver boundaries."
+
+	| lookPosition |
+
+	lookPosition := position + index.
+	(lookPosition < 1 or: [ lookPosition > readLimit ])
+		ifTrue: [ ^ nil ].
+
+	^ collection at: lookPosition
+]
+
+{ #category : #all }
 ReadStream >> upToEnd [
 	"Answer a subcollection from the current access position through the last element of the receiver."
 
@@ -109,10 +123,21 @@ ReadStream >> position: anInteger [
 ]
 
 { #category : #all }
+ReadStream >> setFrom: newStart to: newStop [
+	position := newStart - 1.
+	readLimit := newStop
+]
+
+{ #category : #all }
 ReadStream >> size [
 	"Compatibility with other streams (e.g., FileStream)"
 
 	^ readLimit
+]
+
+{ #category : #all }
+ReadStream >> skip [
+	self skip: 1
 ]
 
 { #category : #all }
