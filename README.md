@@ -21,7 +21,7 @@ Furthermore a set of classes is added to create a `ClientEnvironment` which allo
 
 ## Creating your own image
 
-To create a tiny image yourself, you might have to use [PBManager](https://github.com/ErikOnBike/PBManager) because this tiny image uses a different language definition than the Pharo Candle source code (amongst others, due to the changed class names). The PR for my changes is being integrated, but might not have been done yet.
+To create a tiny image yourself, you might have to use this specific repo [PBManager](https://github.com/ErikOnBike/PBManager) because this tiny image uses a different language definition than the Pharo Candle source code (amongst others, due to the changed class names). The PR for my changes is being integrated, but might not have been done yet.
 
 The following code can be executed to create the resulting image, without the need to use the GUI:
 ```Smalltalk
