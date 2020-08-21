@@ -406,6 +406,15 @@ String >> substrings [
 ]
 
 { #category : #all }
+String >> truncateTo: smallSize [
+	"return myself or a copy shortened to smallSize."
+
+	^ self size <= smallSize
+		ifTrue: [ self ]
+		ifFalse: [ self copyFrom: 1 to: smallSize ]
+]
+
+{ #category : #all }
 String >> translate: aString from: start to: stop table: table [
 	"Translate the characters in the given string in place using the given mapping table."
 
