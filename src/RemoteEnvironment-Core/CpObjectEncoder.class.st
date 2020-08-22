@@ -287,6 +287,21 @@ CpObjectEncoder >> encodeMessageSend: aMessageSend [
 ]
 
 { #category : #all }
+CpObjectEncoder >> encodeMessage: aMessage [
+
+	"Encode aMessage using its selector and arguments (lookupClass is ignored).
+	The selector and all arguments should be encodable themselves."
+
+	writeStream nextPut: 28.
+
+	"Write selector (a Symbol)"
+	self writeString: aMessage selector.
+
+	"Encode arguments (either nil or Array)"
+	aMessage arguments cpEncodeWith: self
+]
+
+{ #category : #all }
 CpObjectEncoder >> encodeMetaclassReference: aClass [
 
 	writeStream nextPut: 22.

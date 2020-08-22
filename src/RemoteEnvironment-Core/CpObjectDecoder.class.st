@@ -279,6 +279,16 @@ CpObjectDecoder >> decodeMessageSend [
 ]
 
 { #category : #all }
+CpObjectDecoder >> decodeMessage [
+
+	"Decode a Message (lookupClass is ignored"
+
+	^ Message
+		selector: self readString asSymbol
+		arguments: self decodeNext
+]
+
+{ #category : #all }
 CpObjectDecoder >> decodeMetaclassReference [
 
 	| name class |
@@ -324,6 +334,7 @@ CpObjectDecoder >> decodeNext [
 		decodeClass
 		decodeAnnouncement
 		decodeMessageSend
+		decodeMessage
 	) at: type ifAbsent: [ self error: 'Unknown type in decode stream' ].
 
 	^ self perform: selector

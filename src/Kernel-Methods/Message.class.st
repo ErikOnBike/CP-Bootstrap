@@ -11,12 +11,12 @@ Class {
 
 { #category : #all }
 Message class >> selector: aSymbol [
-	self new setSelector: aSymbol arguments: (Array new: 0)
+	^ self new setSelector: aSymbol arguments: (Array new: 0)
 ]
 
 { #category : #all }
 Message class >> selector: aSymbol arguments: anArray [
-	self new setSelector: aSymbol arguments: anArray
+	^ self new setSelector: aSymbol arguments: anArray
 ]
 
 { #category : #all }
@@ -78,4 +78,10 @@ Message >> setSelector: aSymbol arguments: anArray [
 
 	selector := aSymbol.
 	arguments := anArray
+]
+
+{ #category : #all }
+Message >> cpEncodeWith: anEncoder [
+
+	anEncoder encodeMessage: self
 ]
