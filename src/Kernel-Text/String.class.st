@@ -284,6 +284,14 @@ String >> findTokens: delimiters [
 ]
 
 { #category : #all }
+String >> includesSubstring: substring [
+	"Returns whether the receiver contains the argument."
+	"('abcdefgh' includesSubstring: 'de') >>> true"
+
+	^ substring isEmpty or: [ (self findString: substring startingAt: 1 caseSensitive: true) > 0 ]
+]
+
+{ #category : #all }
 String >> hash [
 	| l m |
 	(l := m := self size) <= 2
