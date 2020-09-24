@@ -155,7 +155,7 @@ System class >> allObjectsDo: aBlock [
 { #category : #all }
 System class >> log: aString [
 
-	<primitive: 'primitiveLog:' module: 'CpSystemPlugin'>
+	<primitive: 'primitiveEnvironmentLog:' module: 'CpSystemPlugin'>
 	^ self
 ]
 
