@@ -114,6 +114,12 @@ Behavior >> inheritsFrom: aClass [
 ]
 
 { #category : #all }
+Behavior >> includesBehavior: aClass [
+
+	^ self == aClass or: [ self inheritsFrom: aClass ]
+]
+
+{ #category : #all }
 Behavior >> initialize [
 	"Default initialization."
 
