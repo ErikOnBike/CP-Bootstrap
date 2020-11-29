@@ -125,11 +125,10 @@ CpObjectDecoder >> decodeClass [
 	Smalltalk at: className put: newClass.
 
 	"Read and install instance and class methods"
-	newClass methodDictionary: self readMethodDictionary.
-	newClass class methodDictionary: self readMethodDictionary.
+	newClass installMethodDictionary: self readMethodDictionary.
+	newClass class installMethodDictionary: self readMethodDictionary.
 
 	^ newClass
-
 ]
 
 { #category : #all }

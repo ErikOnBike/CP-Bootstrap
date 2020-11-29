@@ -345,3 +345,9 @@ Behavior >> superclass: aBehaviorOrNil [
 Behavior >> instanceSide [
 	^ self theNonMetaClass
 ]
+
+{ #category : #all }
+Behavior >> installMethodDictionary: aMethodDictionary [
+	methodDict := aMethodDictionary.
+	aMethodDictionary valuesDo: [ :each | each bindClassVariables ]
+]

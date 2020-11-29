@@ -171,6 +171,15 @@ CompiledMethod >> install [
 ]
 
 { #category : #all }
+CompiledMethod >> bindClassVariables [
+
+	"Bind class variables to the receiver (replace literal association with class variable association).
+	Assume the receiver is already bound to a class."
+
+	self bindClassVariablesTo: self methodClass instanceSide
+]
+
+{ #category : #all }
 CompiledMethod >> bindClassVariablesTo: aClass [
 
 	"Bind class variables to the receiver (replace literal association with class variable association)"

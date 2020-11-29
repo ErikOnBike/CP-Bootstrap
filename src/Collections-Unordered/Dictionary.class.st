@@ -214,6 +214,11 @@ Dictionary >> keysDo: aBlock [
 ]
 
 { #category : #all }
+Dictionary >> valuesDo: aBlock [
+	self associationsDo: [ :association | aBlock value: association value ]
+]
+
+{ #category : #all }
 Dictionary >> keysAndValuesDo: aBlock [
 	self associationsDo: [ :assoc | aBlock value: assoc key value: assoc value ]
 ]
