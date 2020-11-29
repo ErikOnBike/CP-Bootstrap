@@ -167,6 +167,7 @@ System class >> start [
 	self log: 'Fixing the world'.
 	Smalltalk at: #GlobalVariable put: Association.
 	Smalltalk at: #ClassVariable put: Association.
+	Smalltalk at: #BlockClosure put: Block.
 
 	self log: 'Creating Symbol table'.
 	Symbol initSymbolTable.
