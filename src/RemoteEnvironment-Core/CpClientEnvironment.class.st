@@ -356,11 +356,9 @@ CpClientEnvironment >> release [
 { #category : #all }
 CpClientEnvironment >> serverAnnounce: anAnnouncement [
 
-	"Send the specified Announcement back to the server by encoding it as a message.
-	Implementation: The message sent to the server will also contain the
-	receiver's id for identification of the environment at the server side."
+	"Send the specified Announcement back to the server"
 
-	self sendMessage: (CpObjectEncoder new
+	self sendEncodedMessage: (CpObjectEncoder new
 		encode: id ;
 		encode: anAnnouncement ;
 		bytes)
