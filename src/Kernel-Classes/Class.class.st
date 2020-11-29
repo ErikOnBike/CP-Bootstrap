@@ -204,3 +204,11 @@ Class >> classVariableNamed: aSymbol [
 Class >> cpEncodeWith: anEncoder [
 	anEncoder encodeSymbol: self name
 ]
+
+{ #category : #all }
+Class >> beLoaded [
+
+	"Empty method, but referring to this method directly (ie [[[ CpTransition beLoaded ]]])
+	from a method to be installed in a ClientEnvironment will also install the receiver (class)
+	in the ClientEnvironment"
+]
