@@ -39,7 +39,7 @@ Context >> sender [
 Context >> receiver [
 	"Answer the context from which the message that created the receiver was sent."
 
-	^ receiver
+	^ sender ifNotNil: [ sender receiver ]
 ]
 
 { #category : #all }
