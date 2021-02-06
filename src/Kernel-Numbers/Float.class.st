@@ -54,6 +54,13 @@ Float class >> initialize [
 ]
 
 { #category : #all }
+Float class >> infinity [
+	"Answer the constant, Infinity."
+
+	^ Infinity
+]
+
+{ #category : #all }
 Float class >> pi [
 	"Answer the constant, Pi."
 
