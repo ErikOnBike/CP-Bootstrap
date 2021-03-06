@@ -136,6 +136,11 @@ Symbol >> species [
 ]
 
 { #category : #all }
+Symbol >> flushCache [
+	<primitive: 119>
+]
+
+{ #category : #all }
 Symbol >> cpEncodeWith: anEncoder [
 	anEncoder encodeSymbol: self
 ]

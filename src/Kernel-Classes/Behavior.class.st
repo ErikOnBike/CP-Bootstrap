@@ -237,7 +237,7 @@ Behavior >> methodDictionary: aMethodDictionary [
 { #category : #all }
 Behavior >> addSelector: aSymbol withMethod: aCompiledMethod [
 	self methodDict at: aSymbol put: aCompiledMethod.
-	self primitiveFlushMethodCacheForSelector: aSymbol.
+	self flushMethodCacheForSelector: aSymbol.
 ]
 
 { #category : #all }
@@ -246,8 +246,8 @@ Behavior >> selectorAndMethodsDo: aTwoArgBlock [
 ]
 
 { #category : #all }
-Behavior >> primitiveFlushMethodCacheForSelector: aSelector [
-	<primitive: 119>
+Behavior >> flushMethodCacheForSelector: aSelector [
+	aSelector flushCache
 ]
 
 { #category : #all }
