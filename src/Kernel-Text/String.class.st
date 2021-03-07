@@ -13,13 +13,6 @@ Class {
 }
 
 { #category : #all }
-String class >> cr [
-	"Answer a string containing a carriage return character."
-
-	^ self with: Character cr
-]
-
-{ #category : #all }
 String class >> initialize [
 	"self initialize"
 
@@ -147,14 +140,7 @@ String >> asString [
 String >> asSymbol [
 	"This is the only place that new Symbols are created. A Symbol is created if and only if there is not already a Symbol with its contents in existance."
 
-"
-	Symbol
-		allInstancesDo: [ :sym | 
-			self = sym
-				ifTrue: [ ^ sym ] ].
-	^ (Symbol basicNew: self size) initFrom: self
-"
-	^Symbol fromString: self
+	^ Symbol fromString: self
 ]
 
 { #category : #all }

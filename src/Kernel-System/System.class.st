@@ -64,6 +64,11 @@ System class >> quit [
 ]
 
 { #category : #all }
+System class >> snapshot [
+	System snapshotPrimitive
+]
+
+{ #category : #all }
 System class >> snapshotAndQuit [
 	| snapshotResult isImageStarting | 
 	snapshotResult := System snapshotPrimitive.	"<--  frozen here on image file"
@@ -168,6 +173,7 @@ System class >> start [
 	Smalltalk at: #GlobalVariable put: Association.
 	Smalltalk at: #ClassVariable put: Association.
 	Smalltalk at: #BlockClosure put: Block.
+	Smalltalk at: #String put: (Smalltalk at: #OptimizedString).
 
 	self log: 'Creating Symbol table'.
 	Symbol initSymbolTable.

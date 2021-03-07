@@ -1,20 +1,15 @@
 Class {
-	#name : #ByteArray,
+	#name : #WordArray,
 	#superclass : #ArrayedCollection,
-	#type : #bytes,
+	#type : #words,
 	#category : #'Collections-Arrayed'
 }
 
 { #category : #all }
-ByteArray >> asByteArray [
-	^ self
-]
+WordArray >> asString [
 
-{ #category : #all }
-ByteArray >> asString [
-	"Answer the receiver converted to a String."
-
-	<primitive: 'primitiveByteArrayAsString' module: 'CpSystemPlugin'>
+	<primitive: 'primitiveWordArrayAsString' module: 'CpSystemPlugin'>
+self crTrace: 'Oops primitiveWordArrayAsString failed'.
 	^ (String new: self size)
 		replaceFrom: 1
 		to: self size
@@ -23,7 +18,7 @@ ByteArray >> asString [
 ]
 
 { #category : #all }
-ByteArray >> replaceFrom: startIndex to: stopIndex with: source startingAt: srcStartIndex [
+WordArray >> replaceFrom: startIndex to: stopIndex with: source startingAt: srcStartIndex [
 	"Primitive. Destructively replace the elements from startIndex to stopIndex in the receiver with the elements starting at srcStartIndex in the source collection. Answer the receiver. Range checks are performed in the primitive. Optional. See Object documentation whatIsAPrimitive."
 
 	<primitive: 105>
@@ -32,16 +27,4 @@ ByteArray >> replaceFrom: startIndex to: stopIndex with: source startingAt: srcS
 		to: stopIndex
 		with: source
 		startingAt: srcStartIndex
-]
-
-{ #category : #all }
-ByteArray >> byteAt: index [
-	<primitive: 60>
-	^self at: index
-]
-
-{ #category : #all }
-ByteArray >> byteAt: index put: value [
-	<primitive: 61>
-	^self at: index put: value
 ]

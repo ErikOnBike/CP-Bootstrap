@@ -27,30 +27,14 @@ Symbol class >> new: size [
 { #category : #all }
 Symbol class >> fromString: aString [
 
-	| symbolInstance |
-
-	symbolInstance := self primRegistered: aString.
-	symbolInstance ifNil: [
-		symbolInstance := (Symbol basicNew: aString size) initFrom: aString.
-		self primRegister: symbolInstance ].
-	^symbolInstance
-]
-
-{ #category : #all }
-Symbol class >> primRegistered: aString [
-
-	<primitive: 'primitiveSymbolRegistered:' module: 'CpSystemPlugin'>
-	self allInstancesDo: [ :sym | 
-		aString = sym
-			ifTrue: [ ^ sym ] ].
-	^ nil
+	<primitive: 'primitiveSymbolFromString:' module: 'CpSystemPlugin'>
+	self primitiveFailed
 ]
 
 { #category : #all }
 Symbol class >> primRegister: aSymbol [
 
 	<primitive: 'primitiveSymbolRegister:' module: 'CpSystemPlugin'>
-	^nil
 ]
 
 { #category : #all }
@@ -105,19 +89,6 @@ Symbol >> errorNoModification [
 { #category : #all }
 Symbol >> hash [
 	^ self identityHash
-]
-
-{ #category : #all }
-Symbol >> initFrom: aString [
-	"Warning! Use only to initialize new Symbols. Symbols are assumed to be immutable there after."
-
-	self size = aString size
-		ifFalse: [ self error: 'size mismatch' ].
-	super
-		replaceFrom: 1
-		to: self size
-		with: aString
-		startingAt: 1
 ]
 
 { #category : #all }

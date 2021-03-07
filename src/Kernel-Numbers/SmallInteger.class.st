@@ -313,31 +313,6 @@ SmallInteger >> isSmallInteger [
 ]
 
 { #category : #all }
-SmallInteger >> printOn: aStream base: b [
-	"Refer to the comment in Integer|printOn:base:."
-
-	"self maxVal printStringBase: 2"
-
-	| digitsInReverse x i |
-	self < 0
-		ifTrue: [ aStream nextPut: $-.
-			^ self negated printOn: aStream base: b ].
-	b = 10
-		ifFalse: [ b printOn: aStream.
-			aStream nextPut: $r ].
-	digitsInReverse := Array new: 32.
-	x := self.
-	i := 0.
-	[ x >= b ]
-		whileTrue: [ digitsInReverse at: (i := i + 1) put: x \\ b.
-			x := x // b ].
-	digitsInReverse at: (i := i + 1) put: x.
-	[ i > 0 ]
-		whileTrue: [ aStream nextPut: (Character digitValue: (digitsInReverse at: i)).
-			i := i - 1 ]
-]
-
-{ #category : #all }
 SmallInteger >> quo: aNumber [
 	"Primitive. Divide the receiver by the argument and answer with the result. Round the result down towards zero to make it a whole integer. Fail if the argument is 0 or is not a MSmallInteger. Optional. See Object documentation whatIsAPrimitive."
 

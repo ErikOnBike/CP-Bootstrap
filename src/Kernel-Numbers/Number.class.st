@@ -268,18 +268,26 @@ Number >> negative [
 ]
 
 { #category : #all }
+Integer >> printString [
+	^ self printStringBase: 10
+]
+
+{ #category : #all }
 Number >> printOn: aStream [
 	"Default print radix is 10"
 
-	self printOn: aStream base: 10
+	aStream nextPutAll: (self printStringBase: 10)
+]
+
+{ #category : #all }
+Number >> printOn: aStream base: b [
+
+	aStream nextPutAll: (self printStringBase: b)
 ]
 
 { #category : #all }
 Number >> printStringBase: base [
-	| stream |
-	stream := WriteStream on: (String new: 100).
-	self printOn: stream base: base.
-	^ stream contents
+	<primitive: 'primitiveNumberPrintStringBase:' module: 'CpSystemPlugin'>
 ]
 
 { #category : #all }
