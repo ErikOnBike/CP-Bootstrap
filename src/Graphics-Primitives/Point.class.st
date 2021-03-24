@@ -250,3 +250,11 @@ Point >> y [
 Point >> isPoint [
 	^ true
 ]
+
+{ #category : #all }
+Point >> cpEncodeWith: anEncoder [
+
+	<clientEnvironment>
+
+	anEncoder encodeAnnouncement: self
+]
