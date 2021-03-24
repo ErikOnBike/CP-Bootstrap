@@ -13,8 +13,13 @@ SubscriptionRegistry >> initialize [
 
 	super initialize.
 
-	subscriptions := OrderedCollection new.
-	subscriptionsMutex := Mutex new
+	subscriptionsMutex := Mutex new.
+	self reset
+]
+
+{ #category : #all }
+SubscriptionRegistry >> reset [
+	subscriptions := OrderedCollection new
 ]
 
 { #category : #all }

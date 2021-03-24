@@ -15,6 +15,12 @@ Announcer >> initialize [
 ]
 
 { #category : #all }
+Announcer >> subscriptions [
+
+	^ registry
+]
+
+{ #category : #all }
 Announcer >> announce: anAnnouncement [
 
 	| announcement |
