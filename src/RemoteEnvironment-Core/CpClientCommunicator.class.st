@@ -43,6 +43,15 @@ CpClientCommunicator >> hasReconnectStrategy [
 ]
 
 { #category : #all }
+CpClientCommunicator >> initialize [
+
+	super initialize.
+
+	"By default always use reconnect strategy"
+	self reconnectStrategy: CpCommunicatorReconnectStrategy new
+]
+
+{ #category : #all }
 CpClientCommunicator >> messageChannel: aMessageChannel [
 
 	"Set the receiver's MessageChannel. If nil the existing MessageChannel closed."
