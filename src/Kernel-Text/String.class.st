@@ -126,6 +126,7 @@ String >> asUppercase [
 String >> asLowercase [
 	"Answer a String made up from the receiver whose characters are all lowercase."
 
+	<primitive: 'primitiveStringAsLowercase' module: 'CpSystemPlugin'>
 	| result |
 	result := self copy asString.
 	self
