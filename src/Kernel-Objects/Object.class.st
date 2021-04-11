@@ -503,7 +503,11 @@ Object >> pointsTo: anObject [
 Object >> primitiveFailed [
 	"Announce that a primitive has failed."
 
-	self error: 'a primitive has failed'
+	| origin |
+
+	origin := thisContext sender method.
+
+	self error: 'a primitive has failed in ', origin methodClass asString, ' >> #', origin selector asString
 ]
 
 { #category : #all }

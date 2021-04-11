@@ -1,13 +1,13 @@
 Class {
 	#name : #Symbol,
-	#superclass : #String,
+	#superclass : #ByteString,
 	#type : #bytes,
 	#category : #'Kernel-Text'
 }
 
 { #category : #all }
 Symbol class >> streamSpecies [
-	^ String
+	^ ByteString
 ]
 
 { #category : #all }
@@ -93,16 +93,29 @@ Symbol >> hash [
 ]
 
 { #category : #all }
-Symbol >> initFrom: aString [
-	"Warning! Use only to initialize new Symbols. Symbols are assumed to be immutable there after."
+Symbol >> numArgs [
+	"Answer the number of arguments that the receiver would take considered as a selector or -1 if it couldn't be a selector."
 
-	self size = aString size
-		ifFalse: [ self error: 'size mismatch' ].
-	super
-		replaceFrom: 1
-		to: self size
-		with: aString
-		startingAt: 1
+	| firstChar numColons |
+	firstChar := self at: 1.
+	firstChar isLetter
+		ifTrue: [ numColons := 0.
+			self
+				do: [ :ch | 
+					ch tokenish
+						ifFalse: [ ^ -1 ].
+					ch = $:
+						ifTrue: [ numColons := numColons + 1 ] ].
+			numColons > 0 & (self last ~= $:)
+				ifTrue: [ ^ -1 ].
+			^ numColons ].
+	firstChar isSpecial
+		ifTrue: [ self size = 1
+				ifTrue: [ ^ 1 ].
+			(self size = 2 and: [ (self at: 2) isSpecial ])
+				ifTrue: [ ^ 1 ].
+			^ -1 ].
+	^ -1
 ]
 
 { #category : #all }
@@ -117,7 +130,7 @@ Symbol >> replaceFrom: start to: stop with: replacement startingAt: repStart [
 
 { #category : #all }
 Symbol >> species [
-	^ String
+	^ ByteString
 ]
 
 { #category : #all }
