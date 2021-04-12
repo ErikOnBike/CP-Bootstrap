@@ -44,6 +44,15 @@ String class >> with: aCharacter [
 ]
 
 { #category : #all }
+String >> , aString [
+	"Answer a new String consisting of the receiver
+	concatenated with the specified String"
+
+	<primitive: 'primitiveStringConcatenate:' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
 String >> < aString [
 	"Answer whether the receiver sorts before aString.
 	The collation order is simple ascii (with case differences)."
