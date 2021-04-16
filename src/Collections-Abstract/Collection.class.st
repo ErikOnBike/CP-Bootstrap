@@ -161,6 +161,13 @@ Collection >> isEmpty [
 ]
 
 { #category : #all }
+Collection >> isNotEmpty [
+	"Answer whether the receiver does not contain any elements."
+
+	^ self isEmpty not
+]
+
+{ #category : #all }
 Collection >> notEmpty [
 	"Answer whether the receiver does not contain any elements."
 
