@@ -173,6 +173,13 @@ SequenceableCollection >> do: aBlock [
 ]
 
 { #category : #all }
+SequenceableCollection >> withIndexDo: aBlock [
+	"Just like do: except that the iteration index supplies the second argument to the block"
+
+	1 to: self size do: [ :index | aBlock value: (self at: index) value: index ]
+]
+
+{ #category : #all }
 SequenceableCollection >> first [
 	^ self at: 1
 ]
