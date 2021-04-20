@@ -123,6 +123,15 @@ String >> asString [
 ]
 
 { #category : #all }
+String >> asNumber [
+	"Answer the Number created by interpreting the receiver as the string 
+	representation of a number"
+
+	<primitive: 'primitiveStringAsNumber' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
 String >> at: index [
 	"Primitive. Answer the Character stored in the field of the receiver
 	indexed by the argument. Fail if the index argument is not an Integer or
