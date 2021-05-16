@@ -332,3 +332,8 @@ SequenceableCollection >> swap: oneIndex with: anotherIndex [
 	self at: oneIndex put: (self at: anotherIndex).
 	self at: anotherIndex put: element
 ]
+
+{ #category : #all }
+SequenceableCollection >> readStream [
+	^ ReadStream on: self
+]

@@ -132,6 +132,15 @@ String >> asNumber [
 ]
 
 { #category : #all }
+String >> asNumberOrNil [
+	"Answer the Number created by interpreting the receiver as the string 
+	representation of a number"
+
+	<primitive: 'primitiveStringAsNumber' module: 'CpSystemPlugin'>
+	^ nil
+]
+
+{ #category : #all }
 String >> at: index [
 	"Primitive. Answer the Character stored in the field of the receiver
 	indexed by the argument. Fail if the index argument is not an Integer or
@@ -231,10 +240,36 @@ String >> truncateTo: smallSize [
 ]
 
 { #category : #all }
+String >> format: aCollection [
+	"Format the receiver by interpolating elements from collection, as in the following examples:" 
+	"('Five is {1}.' format: { 1 + 4}) >>> 'Five is 5.'"
+	"('Five is {five}.' format: (Dictionary with: #five -> 5)) >>>  'Five is 5.'"
+	"('In {1} you can escape \{ by prefixing it with \\' format: {'strings'}) >>> 'In strings you can escape { by prefixing it with \' "
+	"('In \{1} you can escape \{ by prefixing it with \\' format: {'strings'}) >>> 'In {1} you can escape { by prefixing it with \' "
+
+	^ self class
+		new: self size
+		streamContents: [ :result | 
+			| stream |
+			stream := self readStream.
+			[ stream atEnd ]
+				whileFalse: [ | currentChar |
+					(currentChar := stream next) == ${
+						ifTrue: [ | expression index |
+							expression := stream upTo: $}.
+							index := expression asNumberOrNil ifNil: [ expression ].
+							result nextPutAll: (aCollection at: index) asString ]
+						ifFalse: [ currentChar == $\
+								ifTrue: [ stream atEnd
+										ifFalse: [ result nextPut: stream next ] ]
+								ifFalse: [ result nextPut: currentChar ] ] ] ]
+]
+
+{ #category : #all }
 String >> hash [
 
 	<primitive: 'primitiveStringHash' module: 'CpSystemPlugin'>
-	self primitiveFailed
+	^ self identityHash
 ]
 
 { #category : #all }

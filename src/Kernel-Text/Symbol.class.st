@@ -40,12 +40,21 @@ Symbol class >> primRegister: aSymbol [
 
 { #category : #all }
 Symbol >> = anObject [
+
+	<primitive: 'primitiveSymbolEquals:' module: 'CpSystemPlugin'>
 	^ self == anObject
 ]
 
 { #category : #all }
 Symbol >> isSymbol [
 	^ true
+]
+
+{ #category : #all }
+Symbol >> isLiteralSymbol [
+
+	<primitive: 'primitiveSymbolIsLiteralSymbol' module: 'CpSystemPlugin'>
+	self primitiveFailed
 ]
 
 { #category : #all }
@@ -88,11 +97,6 @@ Symbol >> errorNoModification [
 ]
 
 { #category : #all }
-Symbol >> hash [
-	^ self identityHash
-]
-
-{ #category : #all }
 Symbol >> numArgs [
 	"Answer the number of arguments that the receiver would take considered as a selector or -1 if it couldn't be a selector."
 
@@ -120,7 +124,10 @@ Symbol >> numArgs [
 
 { #category : #all }
 Symbol >> printOn: aStream [
-	aStream nextPutAll: self
+	aStream nextPut: $#.
+	self isLiteralSymbol
+		ifTrue: [ aStream nextPutAll: self ]
+		ifFalse: [ super printOn: aStream ]
 ]
 
 { #category : #all }
