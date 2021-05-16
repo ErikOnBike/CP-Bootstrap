@@ -241,7 +241,7 @@ String >> truncateTo: smallSize [
 
 { #category : #all }
 String >> format: aCollection [
-	"Format the receiver by interpolating elements from collection, as in the following examples:" 
+	"Format the receiver by interpolating elements from collection, as in the following examples:"
 	"('Five is {1}.' format: { 1 + 4}) >>> 'Five is 5.'"
 	"('Five is {five}.' format: (Dictionary with: #five -> 5)) >>>  'Five is 5.'"
 	"('In {1} you can escape \{ by prefixing it with \\' format: {'strings'}) >>> 'In strings you can escape { by prefixing it with \' "
@@ -249,7 +249,7 @@ String >> format: aCollection [
 
 	^ self class
 		new: self size
-		streamContents: [ :result | 
+		streamContents: [ :result |
 			| stream |
 			stream := self readStream.
 			[ stream atEnd ]
