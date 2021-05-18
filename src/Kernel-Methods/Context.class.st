@@ -333,3 +333,14 @@ Context >> return: value through: firstUnwindContext [
 	sender ifNil: [self cannotReturn: value to: sender].
 	sender resume: value through: firstUnwindContext
 ]
+
+{ #category : #all }
+Context >> printOn: aStream [
+	"A quick way to show some context"
+
+	aStream	nextPutAll: 'Context without method'.
+	aStream nextPut: Character lf.
+	sender ifNotNil: [
+		aStream nextPutAll: 'Called from: '.
+		sender printOn: aStream ]
+]

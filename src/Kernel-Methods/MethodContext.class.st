@@ -117,3 +117,42 @@ MethodContext >> aboutToReturn: result through: firstUnwindContext  [
 
 	self methodReturnContext return: result through: firstUnwindContext
 ]
+
+{ #category : #all }
+MethodContext >> printOn: aStream [
+	"A quick way to show some context"
+
+	receiver class printOn: aStream.
+	method
+		ifNotNil: [
+			"Print (implementation class and) method"
+			receiver class == method methodClass
+				ifFalse: [
+					aStream nextPut: $(.
+					method methodClass printOn: aStream.
+					aStream nextPut: $) ].
+			aStream nextPutAll: ' >> '.
+			self method selector printOn: aStream.
+
+			"Print arguments (if no closure)"
+			closureOrNil ifNil: [
+				1 to: self method numArgs do: [ :i |
+					aStream nextPutAll: (i > 1 ifTrue: [ ', ' ] ifFalse: [ ' ' ]).
+					(self argAt: i) printOn: aStream ] ] ]
+		ifNil: [ aStream nextPutAll: ' >> <unknown method>' ].
+
+	closureOrNil
+		ifNotNil: [
+			aStream nextPutAll: ' []' ].
+
+	aStream	nextPut: Character lf.
+	sender ifNotNil: [
+		aStream nextPutAll: 'Called from: '.
+		sender printOn: aStream ]
+]
+
+{ #category : #all }
+MethodContext >> argAt: index [
+	<primitive: 210>
+	^ nil
+]

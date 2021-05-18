@@ -116,7 +116,8 @@ CpClientEnvironment >> alert: aString [
 
 	"Alert user with specified message (please use sparsely)"
 
-	self primAlert: aString
+	<primitive: 'primitiveEnvironmentAlert:' module: 'CpSystemPlugin'>
+	^ self
 
 ]
 
@@ -125,7 +126,8 @@ CpClientEnvironment >> confirm: aString [
 
 	"Confirm specified message with user (please use sparsely)"
 
-	^ self primConfirm: aString
+	<primitive: 'primitiveEnvironmentConfirm:' module: 'CpSystemPlugin'>
+	^ false
 
 ]
 
@@ -162,6 +164,16 @@ CpClientEnvironment >> createInstanceOf: className withId: identifier [
 ]
 
 { #category : #all }
+CpClientEnvironment >> globalApply: aSymbol withArguments: anArray [
+
+	"Perform the specified symbol on the global scope (ie 'window' in the browser
+	environment) with the specified arguments"
+
+	<primitive: 'primitiveEnvironmentGlobalApply:withArguments:' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
 CpClientEnvironment >> invalidSession [
 
 	"An invalid session is encountered, ask user whether to start new session"
@@ -179,7 +191,8 @@ CpClientEnvironment >> reload [
 
 	"Reload the receiver (changes might get lost, use sparsely)"
 
-	self primReload
+	<primitive: 'primitiveEnvironmentReload' module: 'CpSystemPlugin'>
+	^ self
 ]
 
 { #category : #all }
@@ -244,6 +257,10 @@ CpClientEnvironment >> handleMessageSend: aMessageSend [
 	"Perform the message send"
 	[ aMessageSend value ] on: Error do: [ :error |
 
+		self crTrace: 'Error when sent message ', aMessageSend selector, ' to ', aMessageSend receiver printString.
+		self crTrace: error printString.
+		self crTrace: error signalerContext printString.
+
 		"Restore receiver id and send Announcement of error to server"
 		aMessageSend receiver: receiverId.
 		self serverAnnounce: (CpClientMessageSendFailed
@@ -299,7 +316,8 @@ CpClientEnvironment >> log: aString [
 
 	"Log message on Transcript/console"
 
-	self primLog: aString
+	<primitive: 'primitiveEnvironmentLog:' module: 'CpSystemPlugin'>
+	^ self
 
 ]
 
@@ -310,37 +328,6 @@ CpClientEnvironment >> objectRegistry [
 	to be able to address individual objects in the receiver."
 
 	^ objectRegistry
-]
-
-{ #category : #all }
-CpClientEnvironment >> primAlert: aString [
-
-	<primitive: 'primitiveEnvironmentAlert:' module: 'CpSystemPlugin'>
-	^ self
-
-]
-
-{ #category : #all }
-CpClientEnvironment >> primConfirm: aString [
-
-	<primitive: 'primitiveEnvironmentConfirm:' module: 'CpSystemPlugin'>
-	^ false
-
-]
-
-{ #category : #all }
-CpClientEnvironment >> primLog: aString [
-
-	<primitive: 'primitiveEnvironmentLog:' module: 'CpSystemPlugin'>
-	^ self
-
-]
-
-{ #category : #all }
-CpClientEnvironment >> primReload [
-
-	<primitive: 'primitiveEnvironmentReload' module: 'CpSystemPlugin'>
-	^ self
 ]
 
 { #category : #all }

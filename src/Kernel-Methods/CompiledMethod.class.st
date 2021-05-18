@@ -106,6 +106,13 @@ CompiledMethod >> isCompiledMethod [
 ]
 
 { #category : #all }
+CompiledMethod >> numArgs [
+	"Answer the number of arguments the receiver takes."
+
+	^ (self header bitShift: -24) bitAnd: 16r0F
+]
+
+{ #category : #all }
 CompiledMethod >> numLiterals [
 	"Answer the number of literals used by the receiver."
 
@@ -198,8 +205,8 @@ CompiledMethod >> bindClassVariablesTo: aClass [
 CompiledMethod >> printOn: aStream [
 	aStream
 		nextPutAll: self methodClass name ;
-		nextPutAll: '>>#' ;
-		nextPutAll: self selector
+		nextPutAll: ' >> '.
+	self selector printOn: aStream
 ]
 
 { #category : #all }
