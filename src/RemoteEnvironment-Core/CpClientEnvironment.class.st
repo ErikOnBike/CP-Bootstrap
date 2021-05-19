@@ -421,3 +421,36 @@ CpClientEnvironment >> removeVariableAt: nameString [
 	<primitive: 'primitiveEnvironmentRemoveVariableAt:' module: 'CpSystemPlugin'>
 	^ self
 ]
+
+{ #category : #all }
+CpClientEnvironment >> persistentVariableAt: nameString [
+
+	"Answer the value (a String) of the persisted environment variable with the specified name
+	or nil if a variable with the specified name does not exist.
+	Persisted variables will, in contrast with regular variables, survive beyond the session lifetime."
+
+	<primitive: 'primitiveEnvironmentPersistentVariableAt:' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
+CpClientEnvironment >> persistentVariableAt: nameString put: valueString [
+
+	"Set the persisted environment variable with the specified name to the specified value.
+	Persisted variables will, in contrast with regular variables, survive beyond the session lifetime.
+	Case sensitivity is not defined, for compatibilty best use all uppercase names."
+
+	<primitive: 'primitiveEnvironmentPersistentVariableAt:put:' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
+CpClientEnvironment >> removePersistentVariableAt: nameString [
+
+	"Remove the persisted environment variable with the specified name.
+	Persisted variables will, in contrast with regular variables, survive beyond the session lifetime.
+	Case sensitivity is not defined, for compatibilty best use all uppercase names."
+
+	<primitive: 'primitiveEnvironmentRemovePersistentVariableAt:' module: 'CpSystemPlugin'>
+	^ self
+]
