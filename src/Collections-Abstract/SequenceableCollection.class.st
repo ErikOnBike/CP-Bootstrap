@@ -226,6 +226,13 @@ SequenceableCollection >> last [
 ]
 
 { #category : #all }
+SequenceableCollection >> nextToLast [
+	"Answer the next to last element of the receiver."
+
+	^ self at: self size - 1
+]
+
+{ #category : #all }
 SequenceableCollection >> beginsWith: aSequenceableCollection [
 	"Answer true if the receiver starts with the argument collection."
 	
