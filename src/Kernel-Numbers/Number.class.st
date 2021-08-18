@@ -122,6 +122,15 @@ Number >> \\ aNumber [
 ]
 
 { #category : #all }
+Number >> @ y  [
+	"Primitive. Answer a Point whose x value is the receiver and whose y 
+	value is the argument."
+
+	<primitive: 18>
+	^ Point x: self y: y
+]
+
+{ #category : #all }
 Number >> abs [
 	"Answer a Number that is the absolute value (positive magnitude) of the 
 	receiver."
