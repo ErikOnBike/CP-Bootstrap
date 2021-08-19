@@ -256,5 +256,5 @@ Point >> cpEncodeWith: anEncoder [
 
 	<clientEnvironment>
 
-	anEncoder encodeAnnouncement: self
+	anEncoder encodePoint: self
 ]
