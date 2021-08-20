@@ -174,6 +174,12 @@ CpClientEnvironment >> globalApply: aSymbol withArguments: anArray [
 ]
 
 { #category : #all }
+CpClientEnvironment >> removeSession [
+
+	self removeVariableAt: #CLIENT_ID
+]
+
+{ #category : #all }
 CpClientEnvironment >> invalidSession [
 
 	"An invalid session is encountered, ask user whether to start new session"
@@ -182,8 +188,9 @@ CpClientEnvironment >> invalidSession [
 		ifFalse: [ ^ self ].
 
 	"Reset client identifier and (fully) reload"
-	self removeVariableAt: #CLIENT_ID.
-	self reload
+	self
+		removeSession ;
+		reload
 ]
 
 { #category : #all }
@@ -203,9 +210,8 @@ CpClientEnvironment >> exit [
 
 	self
 		stopCommunication ;
-		variableAt: #CLIENT_ID put: nil.
-
-	self release
+		removeSession ;
+		release
 ]
 
 { #category : #all }
