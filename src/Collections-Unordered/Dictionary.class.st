@@ -40,7 +40,12 @@ Dictionary >> associationAt: key ifAbsentPut: aBlock [
 
 { #category : #all }
 Dictionary >> associations [
-	^ self asArray
+	"Return an array whose elements are the associations of the receiver"
+
+	| s |
+	s := WriteStream on: (Array new: self size).
+	self associationsDo: [ :el | s nextPut: el ].
+	^ s contents
 ]
 
 { #category : #all }
