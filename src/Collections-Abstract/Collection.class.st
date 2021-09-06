@@ -240,7 +240,7 @@ Collection >> removeAllSuchThat: aBlock [
 	the receiver for that aBlock evaluates to true.  Use a copy to enumerate 
 	collections whose order changes when an element is removed (i.e. Sets)."
 
-	self copy do: [:each | (aBlock value: each) ifTrue: [self remove: each] ]
+	self copy do: [:each | (aBlock value: each) ifTrue: [self remove: each ] ]
 ]
 
 { #category : #all }

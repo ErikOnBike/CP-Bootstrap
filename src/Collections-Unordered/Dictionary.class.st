@@ -282,6 +282,15 @@ Dictionary >> removeKey: key ifAbsent: aBlock [
 ]
 
 { #category : #all }
+Dictionary >> removeAllSuchThat: aBlock [
+	"Evaluate aBlock for each element and remove all that elements from
+	the receiver for that aBlock evaluates to true.  Use a copy (in the form of
+	the associations) to allow updating the receiver while iterating."
+
+	self associations do: [:each | (aBlock value: each value) ifTrue: [self removeKey: each key ] ]
+]
+
+{ #category : #all }
 Dictionary >> scanFor: anObject [
 	"Scan the key array for the first slot containing either a nil (indicating an empty slot) or an element that matches anObject. Answer the index of that slot or zero if no slot is found. This method will be overridden in various subclasses that have different interpretations for matching elements."
 
