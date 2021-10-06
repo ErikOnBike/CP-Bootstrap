@@ -155,6 +155,12 @@ Number >> adaptToInteger: rcvr andSend: selector [
 ]
 
 { #category : #all }
+Number >> adaptToPoint: rcvr andSend: selector [
+	"If I am involved in arithmetic with a Point, convert me to a Point."
+	^ rcvr perform: selector with: self @ self
+]
+
+{ #category : #all }
 Number >> arcCos [
 	"The receiver is the cosine of an angle. Answer the angle measured in 
 	radians."
@@ -321,6 +327,8 @@ Number >> radiansToDegrees [
 { #category : #all }
 Number >> raisedTo: aNumber [
 	"Answer the receiver raised to aNumber."
+
+	<primitive: 'primitiveNumberRaisedTo:' module: 'CpSystemPlugin'>
 
 	aNumber isInteger
 		ifTrue:

@@ -489,6 +489,8 @@ Float >> radiansToDegrees [
 Float >> raisedTo: aNumber [
 	"Answer the receiver raised to aNumber."
 
+	<primitive: 'primitiveNumberRaisedTo:' module: 'CpSystemPlugin'>
+
 	0.0 = aNumber
 		ifTrue: [ ^ 1.0 ].	"special case for 0.0 raisedTo: 0.0"
 	^ (self ln * aNumber asFloat) exp
