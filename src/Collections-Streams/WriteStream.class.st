@@ -48,6 +48,13 @@ WriteStream >> nextPutAll: aCollection [
 ]
 
 { #category : #all }
+WriteStream >> print: anObject [
+	"Have anObject print itself on the receiver."
+
+	anObject printOn: self
+]
+
+{ #category : #all }
 WriteStream >> on: aCollection [
 	super on: aCollection.
 	readLimit := 0.
