@@ -382,6 +382,13 @@ Object >> notNil [
 ]
 
 { #category : #all }
+Object >> isNotNil [
+	"Answer true if the receiver is not nil."
+
+	^ true
+]
+
+{ #category : #all }
 Object >> isNumber [
 	"Overridden to return true in Number, natch"
 

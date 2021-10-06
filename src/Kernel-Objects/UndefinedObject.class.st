@@ -54,6 +54,13 @@ UndefinedObject >> notNil [
 ]
 
 { #category : #all }
+UndefinedObject >> isNotNil [
+	"Answer true if the receiver is not nil."
+
+	^ false
+]
+
+{ #category : #all }
 UndefinedObject >> printOn: aStream [
 	aStream nextPutAll: 'nil'
 ]
