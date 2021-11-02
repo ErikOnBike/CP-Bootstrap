@@ -75,6 +75,12 @@ SequenceableCollection >> at: index ifAbsent: absentBlock [
 ]
 
 { #category : #all }
+SequenceableCollection >> detectIndex: aBlock ifNone: exceptionBlock [
+	self withIndexDo: [ :each :index | (aBlock value: each) ifTrue: [ ^ index ] ].
+	^ exceptionBlock value
+]
+
+{ #category : #all }
 SequenceableCollection >> collect: aBlock [
 	"Refer to the comment in Collection|collect:."
 
