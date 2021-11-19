@@ -253,8 +253,5 @@ Point >> isPoint [
 
 { #category : #all }
 Point >> cpEncodeWith: anEncoder [
-
-	<clientEnvironment>
-
 	anEncoder encodePoint: self
 ]

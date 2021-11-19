@@ -110,6 +110,12 @@ SequenceableCollection >> allButLast: n [
 	^ self copyFrom: 1 to: self size - n
 ]
 
+
+{ #category : #all }
+SequenceableCollection >> allButFirstDo: aBlock [
+	2 to: self size do: [ :index | aBlock value: (self at: index) ]
+]
+
 { #category : #all }
 SequenceableCollection >> copyFrom: start to: stop [
 	"Answer a copy of a subset of the receiver, starting from element at 
@@ -273,6 +279,22 @@ SequenceableCollection >> findFirst: aBlock [
 	[ (index := index + 1) <= currentSize ] whileTrue:
 		[ (aBlock value: (self at: index)) ifTrue: [ ^ index ] ].
 	
+	^ 0
+]
+
+{ #category : #all }
+SequenceableCollection >> findNext: aBlock after: anInteger [
+
+	"Return the index of the next element (start after the specified index) for which aBlock evaluates as true"
+
+	| index |
+
+	index := anInteger.
+
+	[ (index := index + 1) <= self size ] whileTrue: [
+		(aBlock value: (self at: index))
+			ifTrue: [ ^ index ] ].
+
 	^ 0
 ]
 

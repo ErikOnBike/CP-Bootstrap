@@ -141,6 +141,26 @@ String >> asNumberOrNil [
 ]
 
 { #category : #all }
+String >> asKebabCase [
+
+	"Answer the receiver using kebab-case.
+	Assume the receiver has either camelCase or PascalCase value (ie no spaces present).
+	"
+
+	self ifEmpty: [ ^ '' ].
+
+	^ self class streamContents: [ :stream |
+
+		"Simply copy first character"
+		stream nextPut: self first asLowercase.
+
+		self allButFirstDo: [ :each |
+			each isUppercase
+				ifTrue: [ stream nextPut: $- ].
+			stream nextPut: each asLowercase ] ]
+]
+
+{ #category : #all }
 String >> at: index [
 	"Primitive. Answer the Character stored in the field of the receiver
 	indexed by the argument. Fail if the index argument is not an Integer or
@@ -237,6 +257,15 @@ String >> truncateTo: smallSize [
 	^ self size <= smallSize
 		ifTrue: [ self ]
 		ifFalse: [ self copyFrom: 1 to: smallSize ]
+]
+
+{ #category : #all }
+String >> withoutSuffix: suffix [
+	"Remove the given suffix, if present."
+
+	^ (self endsWith: suffix)
+		ifTrue: [ self copyFrom: 1 to: self size - suffix size ]
+		ifFalse: [ self ]
 ]
 
 { #category : #all }

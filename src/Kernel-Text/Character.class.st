@@ -161,15 +161,14 @@ Character >> hash [
 Character >> isDigit [
 	"Answer whether the receiver is a digit."
 
-	^ self asciiValue >= 48 and: [ self asciiValue <= 57 ]
+	^ self asciiValue between: 48 and: 57
 ]
 
 { #category : #all }
 Character >> isLetter [
 	"Answer whether the receiver is a letter."
 
-	^ (65 <= self asciiValue and: [ self asciiValue <= 90 ])
-		or: [ 97 <= self asciiValue and: [ self asciiValue <= 122 ] ]
+	^ self isLowercase or: [ self isUppercase ]
 ]
 
 { #category : #all }
@@ -180,10 +179,17 @@ Character >> isSpecial [
 ]
 
 { #category : #all }
+Character >> isLowercase [
+	"Answer whether the receiver is an uppercase letter."
+
+	^ self asciiValue between: 97 and: 122
+]
+
+{ #category : #all }
 Character >> isUppercase [
 	"Answer whether the receiver is an uppercase letter."
 
-	^ 65 <= self asciiValue and: [ self asciiValue <= 90 ]
+	^ self asciiValue between: 65 and: 90
 ]
 
 { #category : #all }
