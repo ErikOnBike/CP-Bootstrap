@@ -173,7 +173,22 @@ Class >> subclass: subclassName instanceVariableNames: someInstVarNames classVar
 
 { #category : #all }
 Class >> postInstall [
-	"Extension for client side initialization of classes when installed through CpBaseWebApplicationClient or its subclasses"
+	"Perform any necessary initialization after receiver is installed in the ClientEnvironment.
+	In contrast with a class side #initialize, this method should be called from subclasses
+	using [[[ super postInstall ]]].
+	In case initialization is strictly for the class itself (and should not be re-executed for
+	any subclasses), use #postInstallOnce"
+
+	(self classSide includesSelector: #postInstallOnce)
+		ifTrue: [ self postInstallOnce ]
+]
+
+{ #category : #all }
+Class >> postInstallOnce [
+
+	"Perform any necessary initialization after receiver is installed in the ClientEnvironment.
+	In contrast with #postInstall, this method should NOT chain post install methods from the
+	super class."
 ]
 
 { #category : #all }
