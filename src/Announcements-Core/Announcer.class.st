@@ -57,5 +57,5 @@ Announcer >> when: anAnnouncementClass send: aSelector to: anObject [
 
 { #category : #all }
 Announcer >> removeSubscription: anAnnouncementSubscription [
-	registry remove: anAnnouncementSubscription
+	^ registry remove: anAnnouncementSubscription
 ]

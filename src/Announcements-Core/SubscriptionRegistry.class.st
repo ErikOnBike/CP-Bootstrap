@@ -69,6 +69,12 @@ SubscriptionRegistry >> remove: subscription [
 ]
 
 { #category : #all }
+SubscriptionRegistry >> removeSubscriber: subscriber [
+	^ subscriptionsMutex critical: [
+		subscriptions removeAllSuchThat: [ :subscription | subscription subscriber == subscriber ] ]
+]
+
+{ #category : #all }
 SubscriptionRegistry >> subscriptionsHandling: anAnnouncement [
 	^ subscriptions select: [ :each | each handlesAnnouncement: anAnnouncement ]
 ]

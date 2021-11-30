@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'announcementClass',
-		'action'
+		'action',
+		'subscriber'
 	],
 	#category : #'Announcement-Core'
 }
@@ -14,8 +15,19 @@ AnnouncementSubscription >> action [
 ]
 
 { #category : #all }
+AnnouncementSubscription >> subscriber [
+	^ subscriber
+]
+
+{ #category : #all }
 AnnouncementSubscription >> action: anObject [
 	action := anObject
+]
+
+{ #category : #all }
+AnnouncementSubscription >> valuable: aValuable [
+	self action: aValuable.
+	self subscriber: aValuable receiver
 ]
 
 { #category : #all }
