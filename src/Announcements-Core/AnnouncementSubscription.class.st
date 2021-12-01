@@ -25,6 +25,11 @@ AnnouncementSubscription >> action: anObject [
 ]
 
 { #category : #all }
+AnnouncementSubscription >> subscriber: anObject [
+	subscriber := anObject
+]
+
+{ #category : #all }
 AnnouncementSubscription >> valuable: aValuable [
 	self action: aValuable.
 	self subscriber: aValuable receiver

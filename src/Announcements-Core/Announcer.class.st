@@ -39,7 +39,7 @@ Announcer >> when: anAnnouncementClass do: aValuable [
 	^ registry add: (
 		AnnouncementSubscription new 
 			announcementClass: anAnnouncementClass;
-			action: aValuable ;
+			valuable: aValuable ;
 			yourself)
 ]
 
