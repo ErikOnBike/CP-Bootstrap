@@ -372,3 +372,16 @@ SequenceableCollection >> swap: oneIndex with: anotherIndex [
 SequenceableCollection >> readStream [
 	^ ReadStream on: self
 ]
+
+{ #category : #all }
+SequenceableCollection >> printOn: aStream [
+	"Refer to the comment in Object|printOn:."
+
+	aStream nextPutAll: self class name , ' ('.
+	1 to: (1000 min: self size) do: [ :index | 
+		(self at: index) printOn: aStream.
+		aStream space ].
+	self size > 1000
+		ifTrue: [ aStream nextPutAll: ', ...' ].
+	aStream nextPut: $)
+]
