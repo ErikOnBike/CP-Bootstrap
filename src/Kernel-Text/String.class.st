@@ -182,6 +182,13 @@ String >> at: index put: aCharacter [
 ]
 
 { #category : #all }
+String >> indexOf: aCharacter [
+
+	<primitive: 'primitiveStringIndexOf:' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
 String >> isString [
 	^ true
 ]

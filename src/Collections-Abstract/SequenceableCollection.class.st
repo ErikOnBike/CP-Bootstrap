@@ -91,6 +91,11 @@ SequenceableCollection >> collect: aBlock [
 ]
 
 { #category : #all }
+SequenceableCollection >> first: n [
+	^ self copyFrom: 1 to: n
+]
+
+{ #category : #all }
 SequenceableCollection >> allButFirst [
 	^ self allButFirst: 1
 ]
