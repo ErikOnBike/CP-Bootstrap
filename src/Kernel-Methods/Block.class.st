@@ -101,6 +101,11 @@ Block >> outerContext [
 ]
 
 { #category : #all }
+Block >> receiver [
+	^ outerContext receiver
+]
+
+{ #category : #all }
 Block >> startpc [
 	^startpc
 ]
