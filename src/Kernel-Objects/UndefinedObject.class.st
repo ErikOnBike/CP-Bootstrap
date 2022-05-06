@@ -26,6 +26,13 @@ UndefinedObject >> ifNil: aBlock [
 ]
 
 { #category : #all }
+UndefinedObject >> ifNotNil: ifNotNilBlock ifNil: nilBlock [
+	"Evaluate the block for nil because I'm == nil"
+
+	^ nilBlock value
+]
+
+{ #category : #all }
 UndefinedObject >> ifNil: nilBlock ifNotNil: ifNotNilBlock [
 	"Evaluate the block for nil because I'm == nil"
 

@@ -64,6 +64,13 @@ Dictionary >> at: key [
 ]
 
 { #category : #all }
+Dictionary >> at: key ifPresent: aBlock ifAbsent: exceptionBlock [
+	^ (array at: (self findElementOrNil: key)) 
+		ifNil: [ exceptionBlock value ] 
+		ifNotNil: [ :assoc | aBlock cull: assoc value ]
+]
+
+{ #category : #all }
 Dictionary >> at: key ifAbsent: aBlock [
 	^ ((array at: (self findElementOrNil: key)) 
 		ifNil: [ aBlock ] 
