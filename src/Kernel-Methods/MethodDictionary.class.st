@@ -54,13 +54,6 @@ MethodDictionary >> at: key put: value [
 ]
 
 { #category : #all }
-MethodDictionary >> copy [
-	"Copy my values array."
-
-	^ self basicCopy withArray: array basicCopy
-]
-
-{ #category : #all }
 MethodDictionary >> do: aBlock [
 	tally = 0
 		ifTrue: [ ^ self ].

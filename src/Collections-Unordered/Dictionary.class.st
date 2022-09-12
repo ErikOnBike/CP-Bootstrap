@@ -78,6 +78,18 @@ Dictionary >> at: key ifAbsent: aBlock [
 ]
 
 { #category : #all }
+Dictionary >> at: key ifPresent: presentBlock [
+
+	^ self at: key ifPresent: presentBlock ifAbsent: [ "ignore" ]
+]
+
+{ #category : #all }
+Dictionary >> at: key ifPresent: presentBlock ifAbsentPut: absentBlock [
+
+	^ self at: key ifPresent: presentBlock ifAbsent: [ self at: key put: absentBlock value ]
+]
+
+{ #category : #all }
 Dictionary >> at: key ifAbsentPut: aBlock [
 	"Answer the element at the given index. If I do not contain an element at that index, put the result of evaluating aBlock into the specified location and answer that result."
 
@@ -110,16 +122,15 @@ Dictionary >> collect: aBlock [
 ]
 
 { #category : #all }
-Dictionary >> copy [
+Dictionary >> postCopy [
 	"Must copy all my associations or later stores into either dictionary will effect both the original and the copy."
 
-	^ self basicCopy
-		withArray:
-			(array
-				collect: [ :assoc | 
-					assoc
-						ifNil: [ nil ]
-						ifNotNil: [ Association key: assoc key value: assoc value ] ])
+	super postCopy.
+	array withIndexDo: [ :each :index |
+		each ifNotNil: [
+			array
+				at: index
+				put: (Association key: each key value: each value) ] ]
 ]
 
 { #category : #all }

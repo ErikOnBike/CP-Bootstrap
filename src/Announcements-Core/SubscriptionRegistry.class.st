@@ -36,12 +36,15 @@ SubscriptionRegistry >> add: aSubscription [
 SubscriptionRegistry >> deliver: anAnnouncement [
 	|  interestedSubscriptions |
 	"using a copy, so subscribers can unsubscribe from announcer "
-	
+
 	subscriptions isEmpty ifTrue: [ ^ self ].
-	subscriptionsMutex critical: [ 
-		interestedSubscriptions := self subscriptionsHandling: anAnnouncement ].
+	subscriptionsMutex critical: [
+		interestedSubscriptions := subscriptions copy ].
 	interestedSubscriptions isEmpty ifTrue: [ ^ self ].
-	
+
+	"Prevent duplicate validation of all announcements: if any announcement matches, assume delivery"
+	(interestedSubscriptions anySatisfy: [ :each | each handlesAnnouncement: anAnnouncement ])
+		ifFalse: [ ^ self ].
 	anAnnouncement prepareForDelivery.
 	self deliver: anAnnouncement to: interestedSubscriptions
 ]
@@ -53,10 +56,10 @@ SubscriptionRegistry >> deliver: anAnnouncement to: subs [
 
 { #category : #all }
 SubscriptionRegistry >> deliver: anAnnouncement to: subs startingAt: startIndex [
-	
+
 	startIndex to: subs size do: [ :index| | subscription |
 		subscription := subs at: index.
-		[ subscription deliver: anAnnouncement ] 
+		[ subscription deliver: anAnnouncement ]
 			"Ensure delivery to remaining announcements"
 			ifCurtailed: [
 				self deliver: anAnnouncement to: subs startingAt: index + 1 ] ]
@@ -77,4 +80,16 @@ SubscriptionRegistry >> removeSubscriber: subscriber [
 { #category : #all }
 SubscriptionRegistry >> subscriptionsHandling: anAnnouncement [
 	^ subscriptions select: [ :each | each handlesAnnouncement: anAnnouncement ]
+]
+
+{ #category : #all }
+SubscriptionRegistry >> subscriptionsOf: aSubscriber do: aBlock [
+	| copy |
+
+	subscriptionsMutex critical: [ copy := subscriptions copy ].
+
+	copy do:
+		[:subscription |
+			subscription subscriber == aSubscriber
+				ifTrue: [ aBlock value: subscription ]	]
 ]

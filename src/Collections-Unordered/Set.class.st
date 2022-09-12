@@ -89,8 +89,9 @@ Set >> collect: aBlock [
 ]
 
 { #category : #all }
-Set >> copy [
-	^ self basicCopy withArray: array basicCopy
+Set >> postCopy [
+	super postCopy.
+	array := array copy
 ]
 
 { #category : #all }

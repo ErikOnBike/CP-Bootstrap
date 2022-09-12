@@ -188,9 +188,17 @@ Object >> class [
 
 { #category : #all }
 Object >> copy [
-	"Answer a copy of me. Subclasses should usually override this method to change copying behavior, not basicCopy. The exception is classes with unique instances, such as Symbol. This operation does not generally copy all the objects that I refer to.."
+	"Answer a copy of me. Subclasses should usually override this method to change copying behavior, not basicCopy.
+	The exception is classes with unique instances, such as Symbol.
+	This operation does not generally copy all the objects that I refer to.
+	Implement postCopy to copy any referred objects."
 
-	^ self basicCopy
+	^ self basicCopy postCopy
+]
+
+{ #category : #all }
+Object >> postCopy [
+	"Perform any post copy behavior (see comments in #copy)"
 ]
 
 { #category : #all }
@@ -588,6 +596,12 @@ Object >> tryPrimitive: primIndex withArgs: argumentArray [
 { #category : #all }
 Object >> yourself [
 	"Answer the receiver. Useful in cascaded message expressions."
+
+	^ self
+]
+
+{ #category : #all }
+Object >> value [
 
 	^ self
 ]

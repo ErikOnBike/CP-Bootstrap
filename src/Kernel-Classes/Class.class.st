@@ -75,6 +75,12 @@ Class >> allSubclassesDo: aBlock [
 ]
 
 { #category : #all }
+Class >> withAllSubclassesDo: aBlock [
+	aBlock value: self.
+	self allSubclassesDo: aBlock
+]
+
+{ #category : #all }
 Class >> subclassesDo: aBlock [
 	subclasses
 		ifNotNil: [ subclasses do: aBlock ]
@@ -113,6 +119,12 @@ Class >> addSubclass: aSubclass [
 
 	subclasses do: [ :each | each == aSubclass ifTrue: [ ^ self ] ].	"Already my subclass"
 	subclasses := subclasses copyWith: aSubclass
+]
+
+{ #category : #all }
+Class >> removeSubclass: aSubclass [
+	subclasses ifNil: [ ^ self ].
+	subclasses := subclasses select: [ :each | each ~~ aSubclass ]
 ]
 
 { #category : #all }

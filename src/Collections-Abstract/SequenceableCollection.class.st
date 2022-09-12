@@ -185,8 +185,15 @@ SequenceableCollection >> copyWith: newElement [
 { #category : #all }
 SequenceableCollection >> do: aBlock [
 	"Refer to the comment in Collection|do:."
+	"Inline by hand for performance"
 
-	1 to: self size do: [ :index | aBlock value: (self at: index) ]
+	| index size |
+	index := 1.
+	size := self size.
+	[ index <= size ]
+		whileTrue: [
+			aBlock value: (self at: index).
+			index := index + 1 ]
 ]
 
 { #category : #all }

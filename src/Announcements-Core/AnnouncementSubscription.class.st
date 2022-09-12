@@ -47,7 +47,8 @@ AnnouncementSubscription >> announcementClass: anAnnouncementClass [
 
 { #category : #all }
 AnnouncementSubscription >> deliver: anAnnouncement [
-	^ self action cull: anAnnouncement
+	(self handlesAnnouncement: anAnnouncement)
+		ifTrue: [ self action cull: anAnnouncement ]
 ]
 
 { #category : #all }

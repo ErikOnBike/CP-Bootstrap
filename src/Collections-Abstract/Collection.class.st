@@ -249,6 +249,11 @@ Collection >> remove: oldObject ifAbsent: anExceptionBlock [
 ]
 
 { #category : #all }
+Collection >> removeAll [
+	self do: [ :each | self remove: each ]
+]
+
+{ #category : #all }
 Collection >> removeAllSuchThat: aBlock [
 	"Evaluate aBlock for each element and remove all that elements from
 	the receiver for that aBlock evaluates to true.  Use a copy to enumerate 

@@ -13,7 +13,7 @@ Metaclass >> initMethodDict: newMethodDict [
 
 	superclass := Class.
 	methodDict := newMethodDict.
-	format := Class format.	"all metaclasses have the same format as lass"
+	format := Class format.	"all metaclasses have the same format as Class"
 	soleInstance := self basicNew
 ]
 

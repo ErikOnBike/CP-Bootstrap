@@ -84,6 +84,12 @@ OrderedCollection >> collect: aBlock [
 ]
 
 { #category : #all }
+OrderedCollection >> postCopy [
+	super postCopy.
+	array := array copy
+]
+
+{ #category : #all }
 OrderedCollection >> copyFrom: startIndex to: endIndex [
 	"Answer a copy of the receiver that contains elements from position
 	startIndex to endIndex."
@@ -251,6 +257,14 @@ OrderedCollection >> removeFirst [
 ]
 
 { #category : #all }
+OrderedCollection >> removeAt: index [
+	| removed |
+	removed := self at: index.
+	self removeIndex: index + firstIndex - 1.
+	^removed
+]
+
+{ #category : #all }
 OrderedCollection >> removeIndex: removedIndex [
 	| index |
 	index := removedIndex.
@@ -272,6 +286,11 @@ OrderedCollection >> removeLast [
 	array at: lastIndex put: nil.
 	lastIndex := lastIndex - 1.
 	^ lastObject
+]
+
+{ #category : #all }
+OrderedCollection >> removeAll [
+	self setCollection: (Array new: 8)
 ]
 
 { #category : #all }

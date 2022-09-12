@@ -305,7 +305,7 @@ CpClientEnvironment >> installClass: aClass [
 	"Only perform post installation initialization here.
 	Class is already installed in CpObjectDecoder during decoding
 	otherwise no class could be answered as part of the decoding."
-System log: 'Installed class ', aClass name.
+	self crTrace: 'Installed class ', aClass name.
 	aClass postInstall
 ]
 
@@ -370,10 +370,11 @@ CpClientEnvironment >> serverUrl [
 { #category : #all }
 CpClientEnvironment >> app [
 
-	"Answer a String identifying the application that is running.
+	"Answer a Symbol identifying the application that is running.
 	The environment variable #APP should provide this information."
 
 	^ (self variableAt: #APP)
+		ifNotNil: [ :appString | appString asSymbol ]
 		ifNil: [ self fatal: 'The environment variable #APP is not properly set' ]
 ]
 
