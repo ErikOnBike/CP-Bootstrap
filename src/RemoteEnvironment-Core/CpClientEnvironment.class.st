@@ -112,6 +112,13 @@ CpClientEnvironment class >> release [
 ]
 
 { #category : #all }
+CpClientEnvironment class >> installReconnectStrategy: aReconnectStrategy [
+
+	self current communicator
+		reconnectStrategy: aReconnectStrategy
+]
+
+{ #category : #all }
 CpClientEnvironment >> alert: aString [
 
 	"Alert user with specified message (please use sparsely)"
