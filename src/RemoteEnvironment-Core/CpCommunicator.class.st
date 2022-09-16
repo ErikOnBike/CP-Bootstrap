@@ -215,3 +215,9 @@ CpCommunicator >> unsentMessagesCount [
 
 	unsentMessagesMutex critical: [ ^ unsentMessages size ]
 ]
+
+{ #category : #all }
+CpCommunicator >> hasUnsentMessages [
+
+	^ self unsentMessagesCount > 0
+]
