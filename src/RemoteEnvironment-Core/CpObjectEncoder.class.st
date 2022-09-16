@@ -2,7 +2,9 @@ Class {
 	#name : #CpObjectEncoder,
 	#superclass : #Object,
 	#instVars : [
-		'writeStream'
+		'writeStream',
+		'stringTable',
+		'symbolTable'
 	],
 	#category : #'RemoteEnvironment-Core'
 }
@@ -67,7 +69,7 @@ CpObjectEncoder >> encodeAdditionalMethodState: anAdditionalMethodState [
 
 	writeStream nextPut: 19.
 
-	self writeString: anAdditionalMethodState selector.
+	self writeSymbol: anAdditionalMethodState selector.
 	self writeArray: anAdditionalMethodState pragmas asArray
 ]
 
@@ -87,7 +89,7 @@ CpObjectEncoder >> encodeAnnouncement: anAnnouncement [
 	writeStream nextPut: 26.
 
 	"Write class name"
-	self writeString: announcementClass name.
+	self writeSymbol: announcementClass name.
 
 	"Write instance variables"
 	self writeArray: (self class instVarsOf: anAnnouncement)
@@ -147,8 +149,8 @@ CpObjectEncoder >> encodeClass: aClass [
 	writeStream nextPut: 25.
 
 	"Write class and superclass names"
-	self writeString: aClass name.
-	self writeString: aClass superclass name.
+	self writeSymbol: aClass name.
+	self writeSymbol: aClass superclass name.
 
 	"Write instance variable and class variable names (name collections might be Set or OrderedCollection)"
 	self writeArray: aClass instVarNames asArray.
@@ -163,7 +165,7 @@ CpObjectEncoder >> encodeClass: aClass [
 CpObjectEncoder >> encodeClassReference: aClass [
 
 	writeStream nextPut: 21.
-	self writeString: aClass name
+	self writeSymbol: aClass name
 ]
 
 { #category : #all }
@@ -172,7 +174,7 @@ CpObjectEncoder >> encodeClassVariable: aClassVariable [
 	"Encode aClassVariable"
 
 	writeStream nextPut: 23.
-	self writeString: aClassVariable key
+	self writeSymbol: aClassVariable key
 ]
 
 { #category : #all }
@@ -235,7 +237,7 @@ CpObjectEncoder >> encodeGlobalVariable: aGlobalVariable [
 		ifFalse: [ self error: 'Only classes are supported as global variables' ].
 
 	writeStream nextPut: 24.
-	self writeString: aGlobalVariable key
+	self writeSymbol: aGlobalVariable key
 ]
 
 { #category : #all }
@@ -280,7 +282,7 @@ CpObjectEncoder >> encodeMessageSend: aMessageSend [
 	aMessageSend receiver cpEncodeWith: self.
 
 	"Write selector (a Symbol)"
-	self writeString: aMessageSend selector.
+	self writeSymbol: aMessageSend selector.
 
 	"Encode arguments (either nil or Array)"
 	aMessageSend arguments cpEncodeWith: self
@@ -306,7 +308,7 @@ CpObjectEncoder >> encodeMessage: aMessage [
 	writeStream nextPut: 28.
 
 	"Write selector (a Symbol)"
-	self writeString: aMessage selector.
+	self writeSymbol: aMessage selector.
 
 	"Encode arguments (either nil or Array)"
 	aMessage arguments cpEncodeWith: self
@@ -316,7 +318,7 @@ CpObjectEncoder >> encodeMessage: aMessage [
 CpObjectEncoder >> encodeMetaclassReference: aClass [
 
 	writeStream nextPut: 22.
-	self writeString: aClass instanceSide name
+	self writeSymbol: aClass instanceSide name
 ]
 
 { #category : #all }
@@ -330,7 +332,7 @@ CpObjectEncoder >> encodePragma: aPragma [
 
 	writeStream nextPut: 20.
 
-	self writeString: aPragma keyword.
+	self writeSymbol: aPragma keyword.
 	self writeArray: aPragma arguments asArray
 ]
 
@@ -345,7 +347,7 @@ CpObjectEncoder >> encodeString: aString [
 CpObjectEncoder >> encodeSymbol: aSymbol [
 
 	writeStream nextPut: 5.
-	self writeString: aSymbol
+	self writeSymbol: aSymbol
 ]
 
 { #category : #all }
@@ -359,7 +361,10 @@ CpObjectEncoder >> initialize [
 
 	super initialize.
 
-	writeStream := WriteStream on: (ByteArray new: 256)
+	writeStream := WriteStream on: (ByteArray new: 256).
+
+	"Implementation: The stringTable is lazy initialized"
+	symbolTable := OrderedCollection new
 ]
 
 { #category : #all }
@@ -453,10 +458,66 @@ CpObjectEncoder >> writeLength: anInteger [
 { #category : #all }
 CpObjectEncoder >> writeString: aString [
 
+	"Write aString (should not be a Symbol)"
+
+	self basicWriteString: aString usingTable: (stringTable ifNil: [ stringTable := OrderedCollection new ])
+]
+
+{ #category : #all }
+CpObjectEncoder >> writeSymbol: aSymbol [
+
+	"Write aSymbol (should not be a String)"
+
+	self basicWriteString: aSymbol usingTable: symbolTable
+]
+
+{ #category : #all }
+CpObjectEncoder >> basicWriteString: aString [
+
 	"Write aString (can be Symbol) using UTF-8"
 
 	self writeLength: aString size.
 	aString do: [ :char | self writeUTF8CodePoint: char asUnicode ]
+]
+
+{ #category : #all }
+CpObjectEncoder >> basicWriteString: aString usingTable: aCollection [
+
+	"Write aString (can be a Symbol) using the specified table (cache)"
+
+	| index |
+
+	index := aCollection
+		indexOf: aString
+		ifAbsent: [
+			"We have max 11 bits of table space (2 raisedTo: 11), see #basicWriteStringIndex: for an explanation"
+			aCollection size < 2048
+				ifTrue: [ aCollection add: aString ].
+			^ self basicWriteString: aString ].
+
+	self basicWriteStringIndex: index
+]
+
+{ #category : #all }
+CpObjectEncoder >> basicWriteStringIndex: anInteger [
+
+	"Write the specified index (into either the String or Symbol table).
+	Assume anInteger is max 11 bits big.
+
+	Use a 3 byte encoding which is similar to regular Strings, but has an
+	invalid UTF-8 encoding to trigger this special behavior. This prevents
+	additional typing information to be needed in the different locations
+	where Strings and Symbols are used.
+
+	First byte contains the length 2 (for 2 additional bytes).
+	Second byte contains invalid UTF-8 marker and 3 index bits: 11111xxx
+	Third byte contains remaining index bits: yyyyyyyy
+	Index = 02r<xxxyyyyyyyy>"
+
+	self writeLength: 2.
+	writeStream
+		nextPut: 16rf8 + (anInteger bitShift: -8) ;
+		nextPut: (anInteger bitAnd: 16rff)
 ]
 
 { #category : #all }

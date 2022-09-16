@@ -3,6 +3,9 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'readStream',
+		'stringTable',
+		'symbolTable',
+		'readStream',
 		'currentMethod'
 	],
 	#category : #'RemoteEnvironment-Core'
@@ -29,7 +32,7 @@ CpObjectDecoder >> decodeAdditionalMethodState [
 
 	| additionalMethodState selector pragmas |
 
-	selector := self readString asSymbol.
+	selector := self readSymbol.
 	pragmas := self readArray.
 	additionalMethodState := AdditionalMethodState new: pragmas size.
 	pragmas withIndexDo: [ :eachPragma :index | additionalMethodState basicAt: index put: eachPragma ].
@@ -52,7 +55,7 @@ CpObjectDecoder >> decodeAnnouncement [
 	| announcement className instVars |
 
 	"Read class name"
-	className := self readString asSymbol.
+	className := self readSymbol.
 
 	"Read instance variables"
 	instVars := self readArray.
@@ -101,28 +104,66 @@ CpObjectDecoder >> decodeClass [
 		ifFalse: [ ^ self error: 'ClientEnvironment sent Class to ServerEnvironment' ].
 
 	"Read class and superclass name"
-	className := self readString asSymbol.
-	superclassName := self readString asSymbol.
+	className := self readSymbol.
+	superclassName := self readSymbol.
 
 	"Read instance variable, class variable and share pool names"
 	instVarNames := self readArray.
 	classVarNames := self readArray.
 
 	"Retrieve super class"
-	theSuperclass := Smalltalk classNamed: superclassName.
-	theSuperclass ifNil: [
-		"Read both instance and class methods, so the decoder continues correctly"
-		self readArray ; readArray.
-		^ nil ].
+	(theSuperclass := Smalltalk classNamed: superclassName)
+		ifNil: [
 
-	"Create new subclass"
-	newClass := theSuperclass
-		subclass: className
-		instanceVariableNames: instVarNames
-		classVariableNames: classVarNames.
+			"Create temporary class to allow cyclic dependencies"
+self crTrace: 'Create temporary class ', superclassName, ' because installing ', className.
+			theSuperclass := Object
+				subclass: superclassName
+				instanceVariableNames: #()
+				classVariableNames: #().
+			Smalltalk at: superclassName put: theSuperclass ].
 
-	"Store class in Smalltalk globals (for referencing from methods)"
-	Smalltalk at: className put: newClass.
+	"Create new or update existing subclass from our superclass"
+	(Smalltalk classNamed: className)
+		ifNotNil: [ :existingClass |
+
+			"Not actually a new class, but update it to become the 'full' class"
+self crTrace: 'Updating class ', className.
+			superclassName == #Object
+				ifTrue: [ self crTrace: 'Keeping Object as superclass'. newClass := existingClass ]
+				ifFalse: [
+					existingClass superclass == Object
+						ifTrue: [ self crTrace: 'Remove subclass of Object ', existingClass name. Object removeSubclass: existingClass ].
+					newClass := existingClass.
+self crTrace: 'Set superclass ', theSuperclass printString.
+					newClass superclass: theSuperclass.
+self crTrace: 'Set meta superclass ', theSuperclass class printString.
+					newClass class superclass: theSuperclass class.
+self crTrace: 'Set initial init size based on superclass: ', theSuperclass instSize printString.
+					newClass setFormat: newClass format + theSuperclass instSize.
+self crTrace: 'Adding subclass ', newClass name, ' to ', theSuperclass name.
+					theSuperclass addSubclass: newClass ].
+
+			"Update instance variables and class variables"
+			instVarNames
+				ifNotEmpty: [
+self crTrace: 'Adding inst var names ', instVarNames printString.
+					newClass instVarNames: instVarNames.
+					newClass withAllSubclassesDo: [ :each | self crTrace: 'Updating inst size for: ', each name, ' inst size ', each instSize printString. each setFormat: each format + instVarNames size. self crTrace: 'New inst size ', each instSize printString ] ].
+self crTrace: 'Adding class var names ', classVarNames printString.
+			classVarNames do: [ :each | newClass classVariables at: each put: nil ]
+
+.self crTrace: 'Done fixup of class ', className ]
+		ifNil: [
+
+			"Create new subclass"
+			newClass := theSuperclass
+				subclass: className
+				instanceVariableNames: instVarNames
+				classVariableNames: classVarNames.
+
+			"Store class in Smalltalk globals (for referencing from methods)"
+			Smalltalk at: className put: newClass ].
 
 	"Read and install instance and class methods"
 	newClass installMethodDictionary: self readMethodDictionary.
@@ -136,10 +177,20 @@ CpObjectDecoder >> decodeClassReference [
 
 	| name class |
 
-	name := self readString asSymbol.
+	name := self readSymbol.
 	class := Smalltalk classNamed: name.
-	class ifNil: [ self error: 'Unknown class named ', name ].
-
+	class ifNil: [
+		"In the client environment create dummy class (helpful for cyclic dependencies)"
+		CpClientEnvironment isRunning
+			ifTrue: [
+"self crTrace: 'Storing temporary reference for ', name."
+self crTrace: 'Creating temporary class for reference ', name.
+				class := Object
+					subclass: name
+					instanceVariableNames: #()
+					classVariableNames: #().
+				Smalltalk at: name put: class ]
+			ifFalse: [ self error: 'Unknown class named ', name ] ].
 	^ Association key: name value: class
 ]
 
@@ -148,7 +199,7 @@ CpObjectDecoder >> decodeClassVariable [
 
 	| name |
 
-	name := self readString asSymbol.
+	name := self readSymbol.
 
 	^ (Smalltalk at: #ClassVariable)
 		key: name
@@ -222,7 +273,7 @@ CpObjectDecoder >> decodeGlobalVariable [
 
 	| name |
 
-	name := self readString asSymbol.
+	name := self readSymbol.
 
 	^ (Smalltalk at: #GlobalVariable)
 		key: name
@@ -281,7 +332,7 @@ CpObjectDecoder >> decodeMessageSend [
 
 	^ MessageSend
 		receiver: self decodeNext
-		selector: self readString asSymbol
+		selector: self readSymbol
 		arguments: self decodeNext
 ]
 
@@ -291,7 +342,7 @@ CpObjectDecoder >> decodeMessage [
 	"Decode a Message (lookupClass is ignored"
 
 	^ Message
-		selector: self readString asSymbol
+		selector: self readSymbol
 		arguments: self decodeNext
 ]
 
@@ -308,7 +359,7 @@ CpObjectDecoder >> decodeMetaclassReference [
 
 	| name class |
 
-	name := self readString asSymbol.
+	name := self readSymbol.
 	class := Smalltalk classNamed: name.
 	class ifNil: [ self error: 'Unknown class named ', name ].
 
@@ -371,7 +422,7 @@ CpObjectDecoder >> decodePragma [
 	| keyword arguments |
 
 	"The Pragma's method will be set in #decodeAdditionalMethodState just use keyword and arguments"
-	keyword := self readString asSymbol.
+	keyword := self readSymbol.
 	arguments := self readArray.
 
 	^ Pragma keyword: keyword arguments: arguments
@@ -386,7 +437,7 @@ CpObjectDecoder >> decodeString [
 { #category : #all }
 CpObjectDecoder >> decodeSymbol [
 
-	^ self readString asSymbol
+	^ self readSymbol
 ]
 
 { #category : #all }
@@ -421,7 +472,10 @@ CpObjectDecoder >> hasMoreData [
 { #category : #all }
 CpObjectDecoder >> on: aByteStream [
 
-	readStream := ReadStream on: aByteStream
+	readStream := ReadStream on: aByteStream.
+
+	"Implementation: The stringTable is lazy initialized"
+	symbolTable := OrderedCollection new
 ]
 
 { #category : #all }
@@ -528,21 +582,85 @@ CpObjectDecoder >> readPositiveIntegerWithSize: byteSize [
 { #category : #all }
 CpObjectDecoder >> readString [
 
-	"Read a String consisting of UTF-8 characters"
+	"Read a String (should not be a Symbol)"
 
-	| wordArray characterCount isWideString |
+	^ self basicReadStringUsingTable: (stringTable ifNil: [ stringTable := OrderedCollection new ])
+]
+
+{ #category : #all }
+CpObjectDecoder >> readSymbol [
+
+	"Read a Symbol (should not be a String)"
+
+	^ self basicReadStringUsingTable: symbolTable
+]
+
+{ #category : #all }
+CpObjectDecoder >> basicReadStringUsingTable: aCollection [
+
+	"Read a String (can be a Symbol) using the specified table space (cache)"
+
+	| characterCount |
+
+	characterCount := self readLength.
+	(characterCount = 2 and: [ self peekHasStringIndex ])
+		ifTrue: [ ^ self basicReadStringWithIndexUsingTable: aCollection ].
+
+	^ self basicReadStringWithLength: characterCount usingTable: aCollection
+]
+
+{ #category : #all }
+CpObjectDecoder >> basicReadStringWithIndexUsingTable: aCollection [
+
+	"Read an index (into either the String or Symbol table) from the read stream.
+	Assume the index is max 11 bits big.
+
+	See CpObjectEncoder >> #basicWriteStringIndex: for an explanation."
+
+	| index string |
+
+	index := ((readStream next bitAnd: 16r07) bitShift: 8) bitOr: readStream next.
+
+	string := aCollection at: index.
+
+	"For Strings (not Symbols) make a copy since these are unique instances"
+	^ aCollection == stringTable
+		ifTrue: [ string copy ]
+		ifFalse: [ string ]
+]
+
+{ #category : #all }
+CpObjectDecoder >> basicReadStringWithLength: anInteger usingTable: aCollection [
+
+	"Read a String consisting of UTF-8 characters and store it in the specified table space (cache)"
+
+	| wordArray isWideString string |
 
 	"Create and fill the string"
-	characterCount := self readLength.
-	wordArray := WordArray new: characterCount.
+	wordArray := WordArray new: anInteger.
 	isWideString := false.
-	1 to: characterCount do: [  :index |
+	1 to: anInteger do: [  :index |
 		(wordArray at: index put: self readUTF8CodePoint) >= 256
 			ifTrue: [ isWideString := true ] ].
 
-	^ isWideString
+	string := isWideString
 		ifTrue: [ WideString fromWordArray: wordArray ]
-		ifFalse: [ ByteString fromWordArray: wordArray ]
+		ifFalse: [ ByteString fromWordArray: wordArray ].
+
+	aCollection == symbolTable
+		ifTrue: [ string := string asSymbol ].
+
+	^ aCollection add: string
+]
+
+{ #category : #all }
+CpObjectDecoder >> peekHasStringIndex [
+
+	"Answer whether a String index is on the read stream.
+
+	See CpObjectEncoder >> #basicWriteStringIndex: for an explanation."
+
+	^ (readStream peek bitAnd: 16rf8) = 16rf8
 ]
 
 { #category : #all }
