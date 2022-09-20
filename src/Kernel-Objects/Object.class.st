@@ -256,7 +256,7 @@ Object >> handleExceptionName: aString context: aContext [
 	"Not yet implemented. For now, just print the error and exit."
 
 	Object superclass
-		ifNil: [ System log: 'Unhandled Exception: ', aString.
+		ifNil: [ System error: 'Unhandled Exception: ', aString.
 			 System exitToDebugger ]
 		ifNotNil: [ super error: aString ]	"exit to the VM debugger"
 ]

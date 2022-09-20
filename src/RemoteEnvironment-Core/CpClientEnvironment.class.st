@@ -331,7 +331,24 @@ CpClientEnvironment >> log: aString [
 
 	<primitive: 'primitiveEnvironmentLog:' module: 'CpSystemPlugin'>
 	^ self
+]
 
+{ #category : #all }
+CpClientEnvironment >> warn: aString [
+
+	"Log warning message on Transcript/console"
+
+	<primitive: 'primitiveEnvironmentWarn:' module: 'CpSystemPlugin'>
+	^ self
+]
+
+{ #category : #all }
+CpClientEnvironment >> error: aString [
+
+	"Log error message on Transcript/console"
+
+	<primitive: 'primitiveEnvironmentError:' module: 'CpSystemPlugin'>
+	^ self
 ]
 
 { #category : #all }

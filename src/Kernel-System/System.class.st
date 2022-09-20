@@ -160,6 +160,20 @@ System class >> log: aString [
 ]
 
 { #category : #all }
+System class >> warn: aString [
+
+	<primitive: 'primitiveEnvironmentWarn:' module: 'CpSystemPlugin'>
+	^ self
+]
+
+{ #category : #all }
+System class >> error: aString [
+
+	<primitive: 'primitiveEnvironmentError:' module: 'CpSystemPlugin'>
+	^ self
+]
+
+{ #category : #all }
 System class >> start [
 
 	self log: 'Smalltalk client-environment fired up!'.
