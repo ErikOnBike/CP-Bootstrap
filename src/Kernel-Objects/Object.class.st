@@ -656,6 +656,16 @@ Object >> crTrace: aString [
 ]
 
 { #category : #all }
+Object >> crWarn: aString [
+	System warn: aString
+]
+
+{ #category : #all }
+Object >> crError: aString [
+	System error: aString
+]
+
+{ #category : #all }
 Object >> flag: aSymbol [
 	"Ignore"
 ]
