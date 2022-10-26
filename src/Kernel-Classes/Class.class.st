@@ -164,11 +164,11 @@ Class >> nameWithoutPrefix [
 ]
 
 { #category : #all }
-Class >> newClassBuilderForSubclass: subclassName instanceVariableNames: instVarNames classVariableNames: classVarNames [
+Class >> newClassBuilderForSubclass: subclassName instanceVariableNames: someInstVarNames classVariableNames: classVarNames [
 	^ ClassBuilder new
 		superclass: self;
 		name: subclassName;
-		instVarNames: instVarNames;
+		instVarNames: someInstVarNames;
 		classVariableNames: classVarNames;
 		yourself
 ]
