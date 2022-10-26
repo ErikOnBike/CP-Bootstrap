@@ -222,10 +222,3 @@ Set >> swap: oneIndex with: otherIndex [
 
 	array swap: oneIndex with: otherIndex
 ]
-
-{ #category : #all }
-Set >> withArray: anArray [
-	"private -- for use only in copy"
-
-	array := anArray
-]
