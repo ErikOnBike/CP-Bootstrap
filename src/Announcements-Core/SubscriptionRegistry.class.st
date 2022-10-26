@@ -5,7 +5,7 @@ Class {
 		'subscriptions',
 		'subscriptionsMutex'
 	],
-	#category : #'Announcement-Core'
+	#category : #'Announcements-Core'
 }
 
 { #category : #all }

@@ -6,7 +6,7 @@ Class {
 		'action',
 		'subscriber'
 	],
-	#category : #'Announcement-Core'
+	#category : #'Announcements-Core'
 }
 
 { #category : #all }

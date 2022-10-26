@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'registry'
 	],
-	#category : #'Announcement-Core'
+	#category : #'Announcements-Core'
 }
 
 { #category : #all }
