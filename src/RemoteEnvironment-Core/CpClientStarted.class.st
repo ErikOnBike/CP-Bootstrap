@@ -2,27 +2,21 @@ Class {
 	#name : #CpClientStarted,
 	#superclass : #Announcement,
 	#instVars : [
-		'app'
+		'variables'
 	],
 	#category : #'RemoteEnvironment-Core'
 }
 
 { #category : #all }
-CpClientStarted class >> app: identifier [
+CpClientStarted class >> variables: aDictionary [
 
 	^ self new
-		app: identifier ;
+		variables: aDictionary ;
 		yourself
 ]
 
 { #category : #all }
-CpClientStarted >> app [
+CpClientStarted >> variables: aDictionary [
 
-	^ app
-]
-
-{ #category : #all }
-CpClientStarted >> app: identifier [
-
-	app := identifier
+	variables := aDictionary
 ]
