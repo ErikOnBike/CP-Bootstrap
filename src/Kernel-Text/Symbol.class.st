@@ -54,7 +54,7 @@ Symbol >> isSymbol [
 Symbol >> isLiteralSymbol [
 
 	<primitive: 'primitiveSymbolIsLiteralSymbol' module: 'CpSystemPlugin'>
-	self primitiveFailed
+	^ false
 ]
 
 { #category : #all }

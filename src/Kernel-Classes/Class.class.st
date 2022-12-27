@@ -23,6 +23,11 @@ Class >> classVariables [
 ]
 
 { #category : #all }
+Class >> addClassVarNamed: aSymbol [
+	classVariables at: aSymbol put: nil
+]
+
+{ #category : #all }
 Class >> classVarNames [
 	^ classVariables ifNotNil: [ :classVars | classVars keys ]
 ]
@@ -175,12 +180,17 @@ Class >> newClassBuilderForSubclass: subclassName instanceVariableNames: someIns
 
 { #category : #all }
 Class >> subclass: subclassName instanceVariableNames: someInstVarNames classVariableNames: classVarNames [
-	^ (self
+	| newClass |
+	newClass := (self
 		newClassBuilderForSubclass: subclassName
 		instanceVariableNames: someInstVarNames
 		classVariableNames: classVarNames)
-		yourself;
-		build
+			build.
+
+	"Store class in Smalltalk globals (for referencing from methods)"
+	Smalltalk at: subclassName put: newClass.
+
+	^ newClass
 ]
 
 { #category : #all }

@@ -25,6 +25,19 @@ CpObjectDecoder class >> putInstVars: instVars in: anObject [
 ]
 
 { #category : #all }
+CpObjectDecoder >> denormalizeHeader: header [
+
+	"De-normalize the header value of CompiledCode. (See comment of CpObjectEncoder >> #normalizeHeader:)
+
+	Implementation:
+	Reset the position of the sign flag, which is used to indicate secondary bytecode set being used."
+
+	^ (header bitAnd: 16r40000000) ~~ 0
+		ifTrue: [ (header bitAnd: 16r3fffffff) + SmallInteger minVal ]
+		ifFalse: [ header ]
+]
+
+{ #category : #all }
 CpObjectDecoder >> decodeAdditionalMethodState [
 
 	"Decode AdditionalMethodState assuming only Pragmas are relevant.
@@ -140,7 +153,7 @@ self crTrace: 'Set superclass ', theSuperclass printString.
 self crTrace: 'Set meta superclass ', theSuperclass class printString.
 					newClass class superclass: theSuperclass class.
 self crTrace: 'Set initial init size based on superclass: ', theSuperclass instSize printString.
-					newClass setFormat: newClass format + theSuperclass instSize.
+					newClass setFormat: newClass format + theSuperclass instSize.	"Object has no instance vars, so simply add the new inst var count"
 self crTrace: 'Adding subclass ', newClass name, ' to ', theSuperclass name.
 					theSuperclass addSubclass: newClass ].
 
@@ -151,7 +164,7 @@ self crTrace: 'Adding inst var names ', instVarNames printString.
 					newClass instVarNames: instVarNames.
 					newClass withAllSubclassesDo: [ :each | self crTrace: 'Updating inst size for: ', each name, ' inst size ', each instSize printString. each setFormat: each format + instVarNames size. self crTrace: 'New inst size ', each instSize printString ] ].
 self crTrace: 'Adding class var names ', classVarNames printString.
-			classVarNames do: [ :each | newClass classVariables at: each put: nil ]
+			classVarNames do: [ :each | newClass addClassVarNamed: each ]
 
 .self crTrace: 'Done fixup of class ', className ]
 		ifNil: [
@@ -160,10 +173,7 @@ self crTrace: 'Adding class var names ', classVarNames printString.
 			newClass := theSuperclass
 				subclass: className
 				instanceVariableNames: instVarNames
-				classVariableNames: classVarNames.
-
-			"Store class in Smalltalk globals (for referencing from methods)"
-			Smalltalk at: className put: newClass ].
+				classVariableNames: classVarNames ].
 
 	"Read and install instance and class methods"
 	newClass installMethodDictionary: self readMethodDictionary.
@@ -219,7 +229,7 @@ CpObjectDecoder >> decodeCompiledMethod [
 		ifFalse: [ ^ self error: 'ClientEnvironment sent CompiledMethod to ServerEnvironment' ].
 
 	"Read header and bytecode size"
-	header := self readUInt32.
+	header := self denormalizeHeader: self readUInt32.
 	bytecodeSize := self readLength.
 
 	"Create empty method instance"
@@ -240,6 +250,40 @@ CpObjectDecoder >> decodeCompiledMethod [
 	currentMethod := nil.
 
 	^ method
+]
+
+{ #category : #all }
+CpObjectDecoder >> decodeCompiledBlock [
+
+	"Decode a CompiledBlock. It will have its outerCode set,
+	based on the current method being decoded (a CompiledBlock
+	should only be present in context of a CompiledMethod)."
+
+	| block header bytecodeSize initialPC endPC |
+
+	"Raise error if the receiver is not running in the ClientEnvironment"
+	CpClientEnvironment isRunning
+		ifFalse: [ ^ self error: 'ClientEnvironment sent CompiledBlock to ServerEnvironment' ].
+
+	"Read header and bytecode size"
+	header := self denormalizeHeader: self readUInt32.
+	bytecodeSize := self readLength.
+
+	"Create empty block instance"
+	block := CompiledBlock newMethod: bytecodeSize header: header.
+
+	"Add bytecode to the block"
+	initialPC := block initialPC.
+	endPC := block endPC.
+	initialPC to: endPC do: [ :byteIndex | block byteAt: byteIndex put: readStream next ].
+
+	"Add literals  (excl. outerCode which is positioned at index 'numLiterals')"
+	1 to: block numLiterals - 1 do: [ :index | block literalAt: index put: self decodeNext ].
+
+	"Add outerCode (which resides at index 'numLiterals')"
+	block outerCode: currentMethod.
+
+	^ block
 ]
 
 { #category : #all }
@@ -402,7 +446,8 @@ CpObjectDecoder >> decodeNext [
 		decodeMessageSend
 		decodeMessage
 		decodePoint
-	) at: type ifAbsent: [ self error: 'Unknown type in decode stream' ].
+		decodeCompiledBlock
+	) at: type ifAbsent: [ self error: 'Unknown type in decode stream: ', type printString ].
 
 	^ self perform: selector
 ]

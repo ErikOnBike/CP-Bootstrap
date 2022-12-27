@@ -6,7 +6,7 @@ Class {
 		'suspendedContext',
 		'priority',
 		'myList',
-		'threadId'
+		'name'
 	],
 	#category : #'Kernel-Processes'
 }
@@ -42,8 +42,19 @@ Process >> nextLink: aLink [
 ]
 
 { #category : #all }
+Process >> name [
+	^ name
+]
+
+{ #category : #all }
+Process >> name: aString [
+	name := aString
+]
+
+{ #category : #all }
 Process >> printOn: aStream [
 	super printOn: aStream.
+	name ifNotNil: [ aStream nextPutAll: ' (' ; nextPutAll: name ; nextPut: $) ].
 	aStream nextPutAll: ' in '.
 	suspendedContext printOn: aStream
 ]

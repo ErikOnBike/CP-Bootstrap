@@ -207,11 +207,16 @@ Object >> doesNotUnderstand: aMessage [
 	"Testing: (3 activeProcess)"
 		
 	| exception resumeValue |
+
+	self
+		crError: self printString, ' doesNotUnderstand: ', aMessage selector printString ;
+		crError: thisContext printString.
+
 	(exception := MessageNotUnderstood new)
 		message: aMessage ;
 		receiver: self.
 	resumeValue := exception signal.
-	^exception reachedDefaultHandler
+	^ (self isNotNil and: [ exception reachedDefaultHandler ])
 		ifTrue: [aMessage sentTo: self]
 		ifFalse: [resumeValue]
 ]
@@ -220,7 +225,7 @@ Object >> doesNotUnderstand: aMessage [
 Object >> error: aString [
 	"Throw a generic Error exception."
 
-	^Error new signal: aString
+	^ Error signal: aString
 ]
 
 { #category : #all }
@@ -256,7 +261,7 @@ Object >> handleExceptionName: aString context: aContext [
 	"Not yet implemented. For now, just print the error and exit."
 
 	Object superclass
-		ifNil: [ System error: 'Unhandled Exception: ', aString.
+		ifNil: [ self crError: 'Unhandled Exception: ', aString.
 			 System exitToDebugger ]
 		ifNotNil: [ super error: aString ]	"exit to the VM debugger"
 ]
@@ -351,6 +356,11 @@ Object >> instVarAt: anInteger put: anObject [
 Object >> isBehavior [
 	"Answer true if I am a subclass of Behavior."
 
+	^ false
+]
+
+{ #category : #all }
+Object >> isCompiledBlock [
 	^ false
 ]
 
@@ -652,17 +662,23 @@ Object >> classVariableNamed: aSymbol [
 
 { #category : #all }
 Object >> crTrace: aString [
-	System log: aString
+
+	<primitive: 'primitiveObjectCrTrace:' module: 'CpSystemPlugin'>
+	^ self
 ]
 
 { #category : #all }
 Object >> crWarn: aString [
-	System warn: aString
+
+	<primitive: 'primitiveObjectCrWarn:' module: 'CpSystemPlugin'>
+	^ self
 ]
 
 { #category : #all }
 Object >> crError: aString [
-	System error: aString
+
+	<primitive: 'primitiveObjectCrError:' module: 'CpSystemPlugin'>
+	^ self
 ]
 
 { #category : #all }

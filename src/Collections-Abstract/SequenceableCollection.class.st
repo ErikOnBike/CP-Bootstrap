@@ -311,6 +311,20 @@ SequenceableCollection >> findNext: aBlock after: anInteger [
 ]
 
 { #category : #all }
+SequenceableCollection >> findLast: aBlock [
+	"Return the index of my last element for which aBlock evaluates as true."
+
+	| index currentSize |
+
+	index := self size + 1.
+
+	[ (index := index - 1) >= 1 ] whileTrue:
+		[ (aBlock value: (self at: index)) ifTrue: [ ^ index ] ].
+
+	^ 0
+]
+
+{ #category : #all }
 SequenceableCollection >> withIndexDo: elementAndIndexBlock [
 	"Just like with:do: except that the iteration index supplies the second argument to the block. "
 

@@ -49,7 +49,7 @@ String >> , aString [
 	concatenated with the specified String"
 
 	<primitive: 'primitiveStringConcatenate:' module: 'CpSystemPlugin'>
-	self primitiveFailed
+	^ super , aString
 ]
 
 { #category : #all }

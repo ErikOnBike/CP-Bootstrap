@@ -32,9 +32,17 @@ Block >> asContextWithSender: aContext [
 { #category : #all }
 Block >> forkAt: priority [
 
+	^ self forkAt: priority name: nil
+]
+
+{ #category : #all }
+Block >> forkAt: priority named: aString [
+
 	"Do not answer forked process, because it might not be running yet leading to unexpected behavior accessing it"
 
-	(Process forContext: self asContext priority: priority) resume.
+	(Process forContext: self asContext priority: priority)
+		name: aString ;
+		resume.
 	^ nil
 ]
 

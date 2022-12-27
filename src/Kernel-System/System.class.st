@@ -44,7 +44,6 @@ System class >> incrementalGarbageCollect [
 	"Primitive. Reclaims recently created garbage fairly quickly and answers the number of bytes of available space."
 
 	<primitive: 131>
-	
 ]
 
 { #category : #all }
@@ -52,7 +51,6 @@ System class >> exitToDebugger [
 	"Tell the VM that we've encountered an unhandled error or halt."
 
 	<primitive: 114>
-	
 ]
 
 { #category : #all }
@@ -60,7 +58,6 @@ System class >> quit [
 	"Exit from the system."
 
 	<primitive: 113>
-	
 ]
 
 { #category : #all }
@@ -77,7 +74,7 @@ System class >> snapshotPrimitive [
 	same format as the Smalltalk-80 release. The file can later be resumed,
 	returning you to this exact state. Return normally after writing the file.
 	Essential. See Object documentation whatIsAPrimitive."
-	
+
 	"I will return 
 		true if the image is starting or
 		false if the image is just resuming"
