@@ -180,17 +180,11 @@ Class >> newClassBuilderForSubclass: subclassName instanceVariableNames: someIns
 
 { #category : #all }
 Class >> subclass: subclassName instanceVariableNames: someInstVarNames classVariableNames: classVarNames [
-	| newClass |
-	newClass := (self
+	^ (self
 		newClassBuilderForSubclass: subclassName
 		instanceVariableNames: someInstVarNames
 		classVariableNames: classVarNames)
-			build.
-
-	"Store class in Smalltalk globals (for referencing from methods)"
-	Smalltalk at: subclassName put: newClass.
-
-	^ newClass
+		build
 ]
 
 { #category : #all }

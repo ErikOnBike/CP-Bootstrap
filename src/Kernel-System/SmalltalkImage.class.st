@@ -15,12 +15,12 @@ SmalltalkImage >> at: aName [
 
 { #category : #all }
 SmalltalkImage >> at: aName ifAbsent: aBlock [
-	^ globals at: aName asSymbol ifAbsent: aBlock
+	^ globals at: aName ifAbsent: aBlock
 ]
 
 { #category : #all }
 SmalltalkImage >> at: aName put: aGlobalObject [
-	globals at: aName asSymbol put: aGlobalObject
+	globals at: aName put: aGlobalObject
 ]
 
 { #category : #all }

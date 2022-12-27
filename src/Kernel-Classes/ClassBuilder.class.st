@@ -68,6 +68,10 @@ ClassBuilder >> build [
 		do: [ :varName | theClass classVariables at: varName put: nil ].
 	metaclass soleInstance: theClass.
 	superclass ifNotNil: [ superclass addSubclass: theClass ].
+
+	"Store class in Smalltalk globals (for referencing from methods)"
+	Smalltalk at: name put: theClass.
+
 	^ theClass
 ]
 
