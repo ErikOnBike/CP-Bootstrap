@@ -44,7 +44,6 @@ System class >> incrementalGarbageCollect [
 	"Primitive. Reclaims recently created garbage fairly quickly and answers the number of bytes of available space."
 
 	<primitive: 131>
-	
 ]
 
 { #category : #all }
@@ -52,7 +51,6 @@ System class >> exitToDebugger [
 	"Tell the VM that we've encountered an unhandled error or halt."
 
 	<primitive: 114>
-	
 ]
 
 { #category : #all }
@@ -60,7 +58,6 @@ System class >> quit [
 	"Exit from the system."
 
 	<primitive: 113>
-	
 ]
 
 { #category : #all }
@@ -77,7 +74,7 @@ System class >> snapshotPrimitive [
 	same format as the Smalltalk-80 release. The file can later be resumed,
 	returning you to this exact state. Return normally after writing the file.
 	Essential. See Object documentation whatIsAPrimitive."
-	
+
 	"I will return 
 		true if the image is starting or
 		false if the image is just resuming"
@@ -153,48 +150,27 @@ System class >> allObjectsDo: aBlock [
 ]
 
 { #category : #all }
-System class >> log: aString [
-
-	<primitive: 'primitiveEnvironmentLog:' module: 'CpSystemPlugin'>
-	^ self
-]
-
-{ #category : #all }
-System class >> warn: aString [
-
-	<primitive: 'primitiveEnvironmentWarn:' module: 'CpSystemPlugin'>
-	^ self
-]
-
-{ #category : #all }
-System class >> error: aString [
-
-	<primitive: 'primitiveEnvironmentError:' module: 'CpSystemPlugin'>
-	^ self
-]
-
-{ #category : #all }
 System class >> start [
 
-	self log: 'Smalltalk client-environment fired up!'.
+	self crTrace: 'Smalltalk client-environment fired up!'.
 
-	self log: 'Fixing the world'.
+	self crTrace: 'Fixing the world'.
 	Smalltalk at: #GlobalVariable put: Association.
 	Smalltalk at: #ClassVariable put: Association.
 	Smalltalk at: #BlockClosure put: Block.
 
-	self log: 'Creating Symbol table'.
+	self crTrace: 'Creating Symbol table'.
 	Symbol initSymbolTable.
 
 	"Create idle process to have at least one process being in a woken state"
-	self log: 'Starting idle process'.
+	self crTrace: 'Starting idle process'.
 	(Process for: [ [ Processor activeProcess idle ] repeat ] priority: 1) resume.
 
-	self log: 'Creating client environment and starting communication'.
+	self crTrace: 'Creating client environment and starting communication'.
 	CpClientEnvironment current startCommunication.
 
 	"Suspend main process until image exits"
 	[
-		self log: 'Main process going to suspend'.
+		self crTrace: 'Main process going to suspend'.
 		Processor activeProcess suspend ] repeat. "Do nothing if we get active again"
 ]

@@ -338,33 +338,6 @@ CpClientEnvironment >> installMethod: aCompiledMethod [
 ]
 
 { #category : #all }
-CpClientEnvironment >> log: aString [
-
-	"Log message on Transcript/console"
-
-	<primitive: 'primitiveEnvironmentLog:' module: 'CpSystemPlugin'>
-	^ self
-]
-
-{ #category : #all }
-CpClientEnvironment >> warn: aString [
-
-	"Log warning message on Transcript/console"
-
-	<primitive: 'primitiveEnvironmentWarn:' module: 'CpSystemPlugin'>
-	^ self
-]
-
-{ #category : #all }
-CpClientEnvironment >> error: aString [
-
-	"Log error message on Transcript/console"
-
-	<primitive: 'primitiveEnvironmentError:' module: 'CpSystemPlugin'>
-	^ self
-]
-
-{ #category : #all }
 CpClientEnvironment >> objectRegistry [
 
 	"Answer the receiver's object registry. The registry is needed for the server

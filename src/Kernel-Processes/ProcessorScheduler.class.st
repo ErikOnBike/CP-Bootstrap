@@ -43,15 +43,6 @@ ProcessorScheduler >> initProcessLists [
 ]
 
 { #category : #all }
-ProcessorScheduler >> installStartProcess [
-	"Install the startup process as the active process. This process will run when Pharo Candle is started."
-
-	activeProcess := Process
-		for: [ System start ] asContext
-		priority: 3
-]
-
-{ #category : #all }
 ProcessorScheduler >> remove: aProcess ifAbsent: aBlock [
 	"Remove the given process from the list on which it is waiting. If the process is not on the queue for it's priority, evaluate the given block. Always answer the process."
 

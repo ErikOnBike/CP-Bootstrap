@@ -57,6 +57,21 @@ CpObjectEncoder >> bytes [
 ]
 
 { #category : #all }
+CpObjectEncoder >> normalizeHeader: header [
+
+	"Normalize the header value of CompiledCode. (See class comment of CompiledCode)
+
+	Implementation:
+	Reposition the sign flag used to indicate secondary bytecode set being used.
+	The sign position is moved to an unused 31st bit in the header (allowing the
+	integer to remain unsigned."
+
+	^ header < 0
+		ifTrue: [ (header - SmallInteger minVal) bitOr: 16r40000000 ]
+		ifFalse: [ header ]
+]
+
+{ #category : #all }
 CpObjectEncoder >> encode: anObject [
 
 	"Encode the specified Object"
@@ -188,7 +203,7 @@ CpObjectEncoder >> encodeCompiledMethod: aCompiledMethod [
 	writeStream nextPut: 18.
 
 	"Write header"
-	self writeUInt32: aCompiledMethod header.
+	self writeUInt32: (self normalizeHeader: aCompiledMethod header).
 
 	"Write bytecode (without creating intermediate collection)"
 	initialPC := aCompiledMethod initialPC.
@@ -199,6 +214,44 @@ CpObjectEncoder >> encodeCompiledMethod: aCompiledMethod [
 	"Write literals"
 	1 to: aCompiledMethod numLiterals do: [ :literalIndex |
 		(aCompiledMethod literalAt: literalIndex) cpEncodeWith: self ]
+]
+
+{ #category : #all }
+CpObjectEncoder >> encodeCompiledBlock: aCompiledBlock [
+
+	"Encode aCompiledBlock based on the block's header, bytecode and literals.
+	This will not include the Method the block is part of."
+
+	| initialPC endPC |
+
+	writeStream nextPut: 30.
+
+	"Write header"
+	self writeUInt32: (self normalizeHeader: aCompiledBlock header).
+
+	"Write bytecode (without creating intermediate collection)"
+	initialPC := aCompiledBlock initialPC.
+	endPC := aCompiledBlock endPC.
+	self writeLength: endPC - initialPC + 1.
+
+	initialPC to: endPC do: [ :byteIndex | writeStream nextPut: (aCompiledBlock byteAt: byteIndex) ].
+
+	"Write literals (excl. outerCode which is positioned at index 'numLiterals', otherwise we get into infinite loop)"
+	1 to: aCompiledBlock numLiterals - 1 do: [ :literalIndex |
+		(aCompiledBlock literalAt: literalIndex) cpEncodeWith: self ]
+]
+
+{ #category : #all }
+CpObjectEncoder >> encodeConstantBlockClosure: aConstantBlockClosure [
+
+	"Encode aConstantBlockClosure using its number of arguments
+	and the literal representing its constant value"
+
+	writeStream nextPut: 31.
+
+	self writeLength: aConstantBlockClosure numArgs.
+
+	aConstantBlockClosure literal cpEncodeWith: self
 ]
 
 { #category : #all }

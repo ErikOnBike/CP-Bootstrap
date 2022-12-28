@@ -23,6 +23,11 @@ Class >> classVariables [
 ]
 
 { #category : #all }
+Class >> addClassVarNamed: aSymbol [
+	classVariables at: aSymbol put: nil
+]
+
+{ #category : #all }
 Class >> classVarNames [
 	^ classVariables ifNotNil: [ :classVars | classVars keys ]
 ]
@@ -179,7 +184,6 @@ Class >> subclass: subclassName instanceVariableNames: someInstVarNames classVar
 		newClassBuilderForSubclass: subclassName
 		instanceVariableNames: someInstVarNames
 		classVariableNames: classVarNames)
-		yourself;
 		build
 ]
 
