@@ -129,7 +129,6 @@ CpObjectDecoder >> decodeClass [
 		ifNil: [
 
 			"Create temporary class to allow cyclic dependencies"
-self crTrace: 'Create temporary class ', superclassName, ' because installing ', className.
 			theSuperclass := Object
 				subclass: superclassName
 				instanceVariableNames: #()
@@ -141,32 +140,23 @@ self crTrace: 'Create temporary class ', superclassName, ' because installing ',
 		ifNotNil: [ :existingClass |
 
 			"Not actually a new class, but update it to become the 'full' class"
-self crTrace: 'Updating class ', className.
 			superclassName == #Object
-				ifTrue: [ self crTrace: 'Keeping Object as superclass'. newClass := existingClass ]
+				ifTrue: [ newClass := existingClass ]
 				ifFalse: [
 					existingClass superclass == Object
-						ifTrue: [ self crTrace: 'Remove subclass of Object ', existingClass name. Object removeSubclass: existingClass ].
+						ifTrue: [ Object removeSubclass: existingClass ].
 					newClass := existingClass.
-self crTrace: 'Set superclass ', theSuperclass printString.
 					newClass superclass: theSuperclass.
-self crTrace: 'Set meta superclass ', theSuperclass class printString.
 					newClass class superclass: theSuperclass class.
-self crTrace: 'Set initial init size based on superclass: ', theSuperclass instSize printString.
 					newClass setFormat: newClass format + theSuperclass instSize.	"Object has no instance vars, so simply add the new inst var count"
-self crTrace: 'Adding subclass ', newClass name, ' to ', theSuperclass name.
 					theSuperclass addSubclass: newClass ].
 
 			"Update instance variables and class variables"
 			instVarNames
 				ifNotEmpty: [
-self crTrace: 'Adding inst var names ', instVarNames printString.
 					newClass instVarNames: instVarNames.
-					newClass withAllSubclassesDo: [ :each | self crTrace: 'Updating inst size for: ', each name, ' inst size ', each instSize printString. each setFormat: each format + instVarNames size. self crTrace: 'New inst size ', each instSize printString ] ].
-self crTrace: 'Adding class var names ', classVarNames printString.
-			classVarNames do: [ :each | newClass addClassVarNamed: each ]
-
-.self crTrace: 'Done fixup of class ', className ]
+					newClass withAllSubclassesDo: [ :each | each setFormat: each format + instVarNames size ] ].
+			classVarNames do: [ :each | newClass addClassVarNamed: each ] ]
 		ifNil: [
 
 			"Create new subclass"
@@ -193,8 +183,6 @@ CpObjectDecoder >> decodeClassReference [
 		"In the client environment create dummy class (helpful for cyclic dependencies)"
 		CpClientEnvironment isRunning
 			ifTrue: [
-"self crTrace: 'Storing temporary reference for ', name."
-self crTrace: 'Creating temporary class for reference ', name.
 				class := Object
 					subclass: name
 					instanceVariableNames: #()
@@ -284,6 +272,22 @@ CpObjectDecoder >> decodeCompiledBlock [
 	block outerCode: currentMethod.
 
 	^ block
+]
+
+{ #category : #all }
+CpObjectDecoder >> decodeConstantBlockClosure [
+
+	| numArgs literal |
+
+	"Raise error if the receiver is not running in the ClientEnvironment"
+	CpClientEnvironment isRunning
+		ifFalse: [ ^ self error: 'ClientEnvironment sent CompiledBlock to ServerEnvironment' ].
+
+	"Read number of arguments and literal"
+	numArgs := self readLength.
+	literal := self decodeNext.
+
+	^ ConstantBlockClosure numArgs: numArgs literal: literal
 ]
 
 { #category : #all }
@@ -447,6 +451,7 @@ CpObjectDecoder >> decodeNext [
 		decodeMessage
 		decodePoint
 		decodeCompiledBlock
+		decodeConstantBlockClosure
 	) at: type ifAbsent: [ self error: 'Unknown type in decode stream: ', type printString ].
 
 	^ self perform: selector
