@@ -4,8 +4,8 @@ Class {
 	#instVars : [
 		'superclass',
 		'name',
-		'instVarNames',
-		'classVariablesNames',
+		'instanceVariableNames',
+		'classVariableNames',
 		'formats'
 	],
 	#category : #'Kernel-Classes'
@@ -51,22 +51,19 @@ ClassBuilder >> beWords [
 { #category : #all }
 ClassBuilder >> build [
 	| metaclass theClass supermetaclass |
-	
+
 	supermetaclass := superclass
 		ifNil: [ Class ]
 		ifNotNil: [ superclass class ].
 	metaclass := Metaclass new.
 	metaclass superclass: supermetaclass.
 	metaclass setFormat: supermetaclass format.
-	theClass := metaclass basicNew initialize.
+	theClass := metaclass new.
 	theClass superclass: superclass.
 	theClass setFormat: self newClassFormat.
-	theClass instVarNames: instVarNames asArray.
+	theClass instVarNames: instanceVariableNames.
 	theClass name: name.
-	theClass classVariables: Dictionary new.
-	self classVariableNames
-		do: [ :varName | theClass classVariables at: varName put: nil ].
-	metaclass soleInstance: theClass.
+	theClass classPool: (classVariableNames collect: [ :classVarName | Association key: classVarName value: nil ]) asDictionary.
 	superclass ifNotNil: [ superclass addSubclass: theClass ].
 
 	"Store class in Smalltalk globals (for referencing from methods)"
@@ -77,12 +74,12 @@ ClassBuilder >> build [
 
 { #category : #all }
 ClassBuilder >> classVariableNames [
-	^ classVariablesNames
+	^ classVariableNames
 ]
 
 { #category : #all }
 ClassBuilder >> classVariableNames: anArray [
-	classVariablesNames := anArray
+	classVariableNames := anArray
 ]
 
 { #category : #all }
@@ -92,16 +89,16 @@ ClassBuilder >> compactClassIndex [
 
 { #category : #all }
 ClassBuilder >> compactClassIndexFor: aClassName [
-	^ #(#CompiledMethod nil #Array #LargeNegativeInteger #LargePositiveInteger #Float nil #Association #Point #Rectangle #String #Block nil #MethodContext nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil)
+	^ #(#CompiledMethod nil #Array #LargeNegativeInteger #LargePositiveInteger #Float nil #Association #Point #Rectangle #ByteString #BlockClosure nil #Context nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil)
 		indexOf: aClassName
-		ifAbsent: [ 0 ]	"#Bitmap"
+		ifAbsent: [ 0 ]
 ]
 
 { #category : #all }
 ClassBuilder >> initialize [
 	super initialize.
-	instVarNames := #().
-	classVariablesNames := #().
+	instanceVariableNames := #().
+	classVariableNames := #().
 	superclass := Object.
 	self bePointers
 ]
@@ -109,7 +106,7 @@ ClassBuilder >> initialize [
 { #category : #all }
 ClassBuilder >> instSize [
 	^ (superclass ifNil: [ 0 ] ifNotNil: [ superclass instSize ])
-		+ instVarNames size
+		+ instanceVariableNames size
 ]
 
 { #category : #all }
@@ -118,7 +115,7 @@ ClassBuilder >> instSpec [
 	 0 = 0 sized objects (UndefinedObject True False et al)
 	 1 = non-indexable objects with inst vars (Point et al)
 	 2 = indexable objects with no inst vars (Array et al)
-	 3 = indexable objects with inst vars (MethodContext AdditionalMethodState et al)
+	 3 = indexable objects with inst vars (Context AdditionalMethodState et al)
 	 4 = weak indexable objects with inst vars (WeakArray et al)
 	 5 = weak non-indexable objects with inst vars (ephemerons) (Ephemeron)
 	 6 = reserved
@@ -146,7 +143,7 @@ ClassBuilder >> instSpec [
 
 { #category : #all }
 ClassBuilder >> instVarNames: anArray [
-	instVarNames := anArray
+	instanceVariableNames := anArray
 ]
 
 { #category : #all }

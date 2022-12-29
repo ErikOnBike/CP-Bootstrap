@@ -1,6 +1,6 @@
 Class {
 	#name : #Object,
-	#superclass : #nil,
+	#superclass : #ProtoObject,
 	#category : #'Kernel-Objects'
 }
 
@@ -262,7 +262,7 @@ Object >> handleExceptionName: aString context: aContext [
 
 	Object superclass
 		ifNil: [ self crError: 'Unhandled Exception: ', aString.
-			 System exitToDebugger ]
+			 Smalltalk exitToDebugger ]
 		ifNotNil: [ super error: aString ]	"exit to the VM debugger"
 ]
 

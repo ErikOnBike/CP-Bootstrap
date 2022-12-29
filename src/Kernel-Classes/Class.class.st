@@ -2,8 +2,8 @@ Class {
 	#name : #Class,
 	#superclass : #Behavior,
 	#instVars : [
-		'instVarNames',
-		'classVariables',
+		'instanceVariableNames',
+		'classPool',
 		'subclasses',
 		'name'
 	],
@@ -11,55 +11,52 @@ Class {
 }
 
 { #category : #all }
+Class >> instanceSide [
+	"Answer the class's instance (ie myself)"
+	^ self
+]
+
+{ #category : #all }
 Class >> classSide [
+	"Answer the class's class"
 	^ self class
 ]
 
 { #category : #all }
-Class >> classVariables [
+Class >> classPool [
 	"Answer the dictionary of class variables that I share with my sole instance, or nil if I have none."
 
-	^ classVariables
+	^ classPool
 ]
 
 { #category : #all }
-Class >> addClassVarNamed: aSymbol [
-	classVariables at: aSymbol put: nil
+Class >> classPool: aDictionary [
+	"Set my (private) class pool dictionary"
+
+	classPool := aDictionary
 ]
 
 { #category : #all }
 Class >> classVarNames [
-	^ classVariables ifNotNil: [ :classVars | classVars keys ]
+	^ classPool keys
 ]
 
 { #category : #all }
-Class >> classVariables: aDictionary [
-	"Answer the dictionary of class variables that I share with my sole instance, or nil if I have none."
-
-	^ classVariables := aDictionary
-]
-
-{ #category : #all }
-Class >> immediateSubclass: subclassName instanceVariableNames: someInstVarNames classVariableNames: classVarNames [
-	^ (self
-		newClassBuilderForSubclass: subclassName
-		instanceVariableNames: someInstVarNames
-		classVariableNames: classVarNames)
-		beImmediate;
-		build
+Class >> addClassVarNamed: aSymbol [
+	"Add an entry to the receiver's class pool for the specified name"
+	classPool at: aSymbol put: nil
 ]
 
 { #category : #all }
 Class >> instVarNames [
 	"Answer an Array of the receiver's instance variable names."
 
-	instVarNames ifNil: [ ^ #() ].
-	^ instVarNames
+	^ instanceVariableNames ifNil: [ #() ]
 ]
 
 { #category : #all }
 Class >> instVarNames: anArray [
-	instVarNames := anArray
+	instanceVariableNames := anArray
 ]
 
 { #category : #all }
@@ -129,7 +126,32 @@ Class >> addSubclass: aSubclass [
 { #category : #all }
 Class >> removeSubclass: aSubclass [
 	subclasses ifNil: [ ^ self ].
-	subclasses := subclasses select: [ :each | each ~~ aSubclass ]
+	subclasses withIndexDo: [ :each :index | each == aSubclass ifTrue: [
+		| newSubclasses |
+		newSubclasses := Array new: subclasses size - 1.
+		index > 1 ifTrue: [
+			newSubclasses
+				replaceFrom: 1
+				to: index - 1
+				with: subclasses
+				startingAt: 1 ].
+		newSubclasses
+			replaceFrom: index
+			to: newSubclasses size
+			with: subclasses
+			startingAt: index + 1.
+		subclasses = newSubclasses.
+		^ self ] ]
+]
+
+{ #category : #all }
+Class >> subclass: subclassName instanceVariableNames: instVarNames classVariableNames: classVarNames [
+	^ ClassBuilder new
+		superclass: self ;
+		name: subclassName ;
+		instVarNames: instVarNames ;
+		classVariableNames: classVarNames ;
+		build
 ]
 
 { #category : #all }
@@ -169,25 +191,6 @@ Class >> nameWithoutPrefix [
 ]
 
 { #category : #all }
-Class >> newClassBuilderForSubclass: subclassName instanceVariableNames: someInstVarNames classVariableNames: classVarNames [
-	^ ClassBuilder new
-		superclass: self;
-		name: subclassName;
-		instVarNames: someInstVarNames;
-		classVariableNames: classVarNames;
-		yourself
-]
-
-{ #category : #all }
-Class >> subclass: subclassName instanceVariableNames: someInstVarNames classVariableNames: classVarNames [
-	^ (self
-		newClassBuilderForSubclass: subclassName
-		instanceVariableNames: someInstVarNames
-		classVariableNames: classVarNames)
-		build
-]
-
-{ #category : #all }
 Class >> postInstall [
 	"Perform any necessary initialization after receiver is installed in the ClientEnvironment.
 	In contrast with a class side #initialize, this method should be called from subclasses
@@ -208,53 +211,8 @@ Class >> postInstallOnce [
 ]
 
 { #category : #all }
-Class >> theNonMetaClass [
-	^ self
-]
-
-{ #category : #all }
-Class >> variableByteSubclass: subclassName instanceVariableNames: someInstVarNames classVariableNames: classVarNames [
-	^ (self
-		newClassBuilderForSubclass: subclassName
-		instanceVariableNames: someInstVarNames
-		classVariableNames: classVarNames)
-		beBytes;
-		build
-]
-
-{ #category : #all }
-Class >> variableSubclass: subclassName instanceVariableNames: someInstVarNames classVariableNames: classVarNames [
-	^ (self
-		newClassBuilderForSubclass: subclassName
-		instanceVariableNames: someInstVarNames
-		classVariableNames: classVarNames)
-		beVariable;
-		build
-]
-
-{ #category : #all }
-Class >> variableWordSubclass: subclassName instanceVariableNames: someInstVarNames classVariableNames: classVarNames [
-	^ (self
-		newClassBuilderForSubclass: subclassName
-		instanceVariableNames: someInstVarNames
-		classVariableNames: classVarNames)
-		beWords;
-		build
-]
-
-{ #category : #all }
-Class >> weakSubclass: subclassName instanceVariableNames: someInstVarNames classVariableNames: classVarNames [
-	^ (self
-		newClassBuilderForSubclass: subclassName
-		instanceVariableNames: someInstVarNames
-		classVariableNames: classVarNames)
-		beWeak;
-		build
-]
-
-{ #category : #all }
 Class >> classVariableNamed: aSymbol [
-	^ self classVariables associationAt: aSymbol ifAbsent: [ self superclass classVariableNamed: aSymbol ]
+	^ classPool associationAt: aSymbol ifAbsent: [ self superclass classVariableNamed: aSymbol ]
 ]
 
 { #category : #all }

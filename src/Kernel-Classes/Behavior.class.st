@@ -11,12 +11,12 @@ Class {
 
 { #category : #all }
 Behavior >> >> aSelector [
-	^ self methodDict at: aSelector
+	^ methodDict at: aSelector
 ]
 
 { #category : #all }
 Behavior >> selectors [
-	^ self methodDict keys
+	^ methodDict keys
 ]
 
 { #category : #all }
@@ -124,7 +124,7 @@ Behavior >> initialize [
 	"Default initialization."
 
 	superclass := Object.
-	format := 2.
+	format := 0.
 	methodDict := MethodDictionary new
 ]
 
@@ -144,7 +144,7 @@ Behavior >> instSpec [
 			0	= 0 sized objects (UndefinedObject True False et al)
 			1	= non-indexable objects with inst vars (Point et al)
 			2	= indexable objects with no inst vars (Array et al)
-			3	= indexable objects with inst vars (MethodContext AdditionalMethodState et al)
+			3	= indexable objects with inst vars (Context AdditionalMethodState et al)
 			4	= weak indexable objects with inst vars (WeakArray et al)
 			5	= weak non-indexable objects with inst vars (ephemerons) (Ephemeron)
 			6	= unused
@@ -205,7 +205,7 @@ Behavior >> lookupSelector: selector [
 	| lookupClass mDict |
 	lookupClass := self.
 	[ lookupClass == nil ]
-		whileFalse: [ mDict := lookupClass methodDict.
+		whileFalse: [ mDict := lookupClass methodDictionary.
 			(mDict includesKey: selector)
 				ifTrue: [ ^ mDict at: selector ].
 			lookupClass := lookupClass superclass ].
@@ -217,11 +217,11 @@ Behavior >> includesSelector: aSymbol [
 	"Answer whether the message whose selector is the argument is in the 
 	method dictionary of the receiver's class."
 
-	^ self methodDict includesKey: aSymbol
+	^ methodDict includesKey: aSymbol
 ]
 
 { #category : #all }
-Behavior >> methodDict [
+Behavior >> methodDictionary [
 	"Answer my method dictionary."
 
 	^ methodDict
@@ -235,14 +235,19 @@ Behavior >> methodDictionary: aMethodDictionary [
 ]
 
 { #category : #all }
+Behavior >> addSelectorSilently: aSymbol withMethod: aCompiledMethod [
+	methodDict at: aSymbol put: aCompiledMethod.
+]
+
+{ #category : #all }
 Behavior >> addSelector: aSymbol withMethod: aCompiledMethod [
-	self methodDict at: aSymbol put: aCompiledMethod.
+	methodDict at: aSymbol put: aCompiledMethod.
 	self flushMethodCacheForSelector: aSymbol.
 ]
 
 { #category : #all }
 Behavior >> selectorAndMethodsDo: aTwoArgBlock [
-	^ self methodDict keysAndValuesDo: aTwoArgBlock
+	^ methodDict keysAndValuesDo: aTwoArgBlock
 ]
 
 { #category : #all }
@@ -281,7 +286,7 @@ Behavior >> selectorAtMethod: method setClass: classResultBlock [
 	"Note: This method is here only to support the debugger."
 
 	| sel |
-	sel := self methodDict
+	sel := methodDict
 		keyAtIdentityValue: method
 		ifAbsent: [ superclass
 				ifNil: [ classResultBlock value: self.
@@ -339,11 +344,6 @@ Behavior >> superclass: aBehaviorOrNil [
 	"Set my superclass."
 
 	superclass := aBehaviorOrNil
-]
-
-{ #category : #all }
-Behavior >> instanceSide [
-	^ self theNonMetaClass
 ]
 
 { #category : #all }

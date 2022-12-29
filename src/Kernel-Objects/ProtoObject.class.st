@@ -1,5 +1,5 @@
 Class {
 	#name : #ProtoObject,
-	#superclass : #nil,
+	#superclass : nil,
 	#category : #'Kernel-Objects'
 }
