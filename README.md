@@ -12,6 +12,8 @@ cd work
 ls -l client-environment.image
 ```
 
+The above script will create a 32 bit image for the client environment. This will work with a 64 bit server environment, since both have a serializer/deserializer which takes care of any necessary byte handling. The bytecode for compiled code does not depend on this. A 32 bit client environment image is smaller in size and matches the Javascript environment better.
+
 ## Image content
 
 All Classes in the tiny image are 'minimal' to keep the image tiny in size. Furthermore a set of classes is added to create a `ClientEnvironment` which allows to communicate with a `ServerEnvironment` using WebSockets. This code is based on the knowledge that this tiny image will be run in a Javascript environment (using SqueakJS VM). For further explanation go to [CodeParadise](https://github.com/ErikOnBike/CodeParadise).
