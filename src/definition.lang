@@ -1,5 +1,0 @@
-PBRepository { 
-	#languageName : #codeParadiseWithSystemDictionary,
-	#tonelPath: #'.',
-	#languageDefinitionClass: #PBLanguageDefinitionPharoCodeParadise
-}
