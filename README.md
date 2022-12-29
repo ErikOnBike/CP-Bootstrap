@@ -41,6 +41,7 @@ This later list of classes is probably used mostly in business logic, more than 
 
 This source code is based on Pharo Candle. The most relevant changes:
 * All class names are changed to reflect regular class names (ie removed the PC prefix)
+* Added Block/Context classes for newer Pharo images (classes BlockContext, CleanBlockClosure, ConstantBlockClosure, etc)
 * Added Exception handling (classes Exception, Error, MessageNotUnderstood and the Block>>#on:do:, Context>>#unwindTo:, etc)
 * Added Announcements (classes Announcer, Announcement, AnnouncementSubscription and SubscriptionRegistry)
 * Added class Mutex
