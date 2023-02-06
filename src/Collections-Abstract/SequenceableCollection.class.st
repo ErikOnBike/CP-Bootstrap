@@ -197,6 +197,22 @@ SequenceableCollection >> do: aBlock [
 ]
 
 { #category : #all }
+SequenceableCollection >> reverseDo: aBlock [
+	"Evaluate aBlock with each of the receiver's elements as the argument, 
+	starting with the last element and taking each in sequence up to the 
+	first. For SequenceableCollections, this is the reverse of the enumeration 
+	for do:.
+	Inline by hand for performance"
+
+	| index |
+	index := self size.
+	[ index >= 1 ]
+		whileTrue: [
+			aBlock value: (self at: index).
+			index := index - 1 ]
+]
+
+{ #category : #all }
 SequenceableCollection >> withIndexDo: aBlock [
 	"Just like do: except that the iteration index supplies the second argument to the block"
 
@@ -236,6 +252,26 @@ SequenceableCollection >> indexOf: anObject startingAt: startIndex ifAbsent: abs
 
 	startIndex to: self size do: [ :i | 
 		(self at: i) = anObject
+			ifTrue: [ ^ i ] ].
+	^ absentBlock value
+]
+
+{ #category : #all }
+SequenceableCollection >> lastIndexOf: anObject ifAbsent: absentBlock [
+	"Answer the index of the last occurence of anElement within the
+	receiver. If the receiver does not contain anElement, answer the
+	result of evaluating the argument, exceptionBlock."
+	^ self lastIndexOf: anElement startingAt: self size ifAbsent: exceptionBlock
+]
+
+{ #category : #all }
+SequenceableCollection >> lastIndexOf: anElement startingAt: lastIndex ifAbsent: absentBlock [
+	"Answer the index of the last occurence of anElement within the  
+	receiver. If the receiver does not contain anElement, answer the
+	result of evaluating the argument, absentBlock."
+
+	lastIndex to: 1 by: -1 do: [ :i |
+		(self at: i) = anElement
 			ifTrue: [ ^ i ] ].
 	^ absentBlock value
 ]

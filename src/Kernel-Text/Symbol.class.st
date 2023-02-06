@@ -39,6 +39,15 @@ Symbol class >> primRegister: aSymbol [
 ]
 
 { #category : #all }
+Symbol class >> , otherSymbolOrString [
+	"Concatenate the receiver with otherSymbolOrString and return the result.
+	Overwritten to always return Symbol results,
+	whether the argument is a Symbol or a String"
+	
+	^ (super , otherSymbolOrString) asSymbol
+]
+
+{ #category : #all }
 Symbol >> = anObject [
 
 	<primitive: 'primitiveSymbolEquals:' module: 'CpSystemPlugin'>
@@ -55,6 +64,11 @@ Symbol >> isLiteralSymbol [
 
 	<primitive: 'primitiveSymbolIsLiteralSymbol' module: 'CpSystemPlugin'>
 	^ false
+]
+
+{ #category : #all }
+Symbol >> capitalized [
+	^ self asString capitalized asSymbol
 ]
 
 { #category : #all }
