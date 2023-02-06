@@ -17,7 +17,8 @@ UnhandledError class >> signalForException: anError [
 
 { #category : #all }
 UnhandledError >> defaultAction [
-	self signaler handleException: self exception
+	self crError: 'UnhandledError: ', exception printString.
+	^ nil
 ]
 
 { #category : #all }
