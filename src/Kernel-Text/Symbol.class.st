@@ -58,6 +58,11 @@ Symbol >> isLiteralSymbol [
 ]
 
 { #category : #all }
+Symbol >> capitalized [
+	^ self asString capitalized asSymbol
+]
+
+{ #category : #all }
 Symbol >> asString [
 	"Answer a string containing my characters."
 
