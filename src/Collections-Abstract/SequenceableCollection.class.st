@@ -401,6 +401,24 @@ SequenceableCollection >> replaceFrom: start to: stop with: replacement starting
 ]
 
 { #category : #all }
+SequenceableCollection >> replaceAll: oldObject with: newObject [
+	"Replace all occurences of oldObject with newObject"
+	| index |
+	index := self
+		indexOf: oldObject
+		startingAt: 1
+		ifAbsent: [ 0 ].
+
+	[ index = 0 ]
+		whileFalse: [
+			self at: index put: newObject.
+			index := self
+				indexOf: oldObject
+				startingAt: index + 1
+				ifAbsent: [ 0 ] ]
+]
+
+{ #category : #all }
 SequenceableCollection >> select: aBlock [
 	"Refer to the comment in Collection|select:."
 
