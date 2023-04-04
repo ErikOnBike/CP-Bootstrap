@@ -724,6 +724,15 @@ CpObjectDecoder >> peekHasStringIndex [
 ]
 
 { #category : #all }
+CpObjectDecoder >> cacheString: aString [
+
+	"Add the specified String to the receiver's cache (String table)"
+
+	(stringTable ifNil: [ stringTable := OrderedCollection new ])
+		addIfNotPresent: aString
+]
+
+{ #category : #all }
 CpObjectDecoder >> readUInt32 [
 
 	"Read uint32 using little endian (least significant byte first) order"
