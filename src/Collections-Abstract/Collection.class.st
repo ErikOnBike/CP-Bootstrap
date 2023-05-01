@@ -297,6 +297,16 @@ Collection >> inject: thisValue into: binaryBlock [
 ]
 
 { #category : #all }
+Collection >> allSatisfy: aBlock [
+	"Evaluate aBlock with the elements of the receiver.
+	If aBlock returns true for all elements return true.
+	Otherwise return false"
+
+	self do:[:item | (aBlock value: item) ifFalse: [^ false]].
+	^ true
+]
+
+{ #category : #all }
 Collection >> anySatisfy: aBlock [
 	"Evaluate aBlock with the elements of the receiver.
 	If aBlock returns true for any element return true.
