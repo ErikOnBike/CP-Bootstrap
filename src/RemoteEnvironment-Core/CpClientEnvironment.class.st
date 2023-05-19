@@ -260,10 +260,7 @@ CpClientEnvironment >> handleMessageReceived: aByteArray [
 			self serverAnnounce: (CpClientDecodeFailed description: error description).
 			^ self ].
 
-		self handleMessageSend: messageSend ].
-
-	"Perform post install methods for installed classes"
-	self postInstallClasses
+		self handleMessageSend: messageSend ]
 ]
 
 { #category : #all }
@@ -349,6 +346,7 @@ CpClientEnvironment >> postInstallClasses [
 	installedClasses ifEmpty: [ ^ self ].
 
 	installedClasses do: [ :each |
+		self crTrace: 'Installed class ', each name.
 		[ each postInstall ] on: Error do: [ :error |
 
 			"Announce error but continu post installation process"
