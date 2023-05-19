@@ -2,7 +2,8 @@ Class {
 	#name : #CpClientEnvironment,
 	#superclass : #CpEnvironment,
 	#instVars : [
-		'objectRegistry'
+		'objectRegistry',
+		'installedClasses'
 	],
 	#classVars : [
 		'Current',
@@ -252,11 +253,17 @@ CpClientEnvironment >> handleMessageReceived: aByteArray [
 		| messageSend |
 		messageSend := [ decoder decodeNext ] on: Error do: [ :error |
 
+			"Finish class installation"
+			self postInstallClasses.
+
 			"Announce error and stop handling the message"
 			self serverAnnounce: (CpClientDecodeFailed description: error description).
 			^ self ].
 
-		self handleMessageSend: messageSend ]
+		self handleMessageSend: messageSend ].
+
+	"Perform post install methods for installed classes"
+	self postInstallClasses
 ]
 
 { #category : #all }
@@ -314,7 +321,8 @@ CpClientEnvironment >> initialize [
 
 	id := self variableAt: #CLIENT_ID.
 
-	objectRegistry := CpObjectRegistry new
+	objectRegistry := CpObjectRegistry new.
+	installedClasses := OrderedCollection new
 ]
 
 { #category : #all }
@@ -322,11 +330,7 @@ CpClientEnvironment >> installClass: aClass [
 
 	"Install (decoded) Class"
 
-	"Only perform post installation initialization here.
-	Class is already installed in CpObjectDecoder during decoding
-	otherwise no class could be answered as part of the decoding."
-	self crTrace: 'Installed class ', aClass name.
-	aClass postInstall
+	installedClasses add: aClass
 ]
 
 { #category : #all }
@@ -335,6 +339,22 @@ CpClientEnvironment >> installMethod: aCompiledMethod [
 	"Install (decoded) CompiledMethod"
 	aCompiledMethod install
 
+]
+
+{ #category : #all }
+CpClientEnvironment >> postInstallClasses [
+
+	"Perform the post install method for all installed classes"
+
+	installedClasses ifEmpty: [ ^ self ].
+
+	installedClasses do: [ :each |
+		[ each postInstall ] on: Error do: [ :error |
+
+			"Announce error but continu post installation process"
+			self serverAnnounce: (CpClientDecodeFailed description: error description) ] ].
+
+	installedClasses removeAll
 ]
 
 { #category : #all }
