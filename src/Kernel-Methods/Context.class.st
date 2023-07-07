@@ -35,6 +35,22 @@ Context >> sender [
 ]
 
 { #category : #all }
+Context >> numArgs [
+
+	^ closureOrNil
+		ifNotNil: [ closureOrNil numArgs ]
+		ifNil: [ method numArgs ]
+]
+
+{ #category : #all }
+Context >> numTemps [
+
+	^ closureOrNil
+		ifNotNil: [ closureOrNil numTemps ]
+		ifNil: [ method numTemps ]
+]
+
+{ #category : #all }
 Context >> tempAt: index [
 	"Answer the value of the temporary variable whose index is the
 	 argument, index.  Primitive. Assumes receiver is indexable. Answer the

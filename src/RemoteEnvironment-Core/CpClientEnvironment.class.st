@@ -253,6 +253,10 @@ CpClientEnvironment >> handleMessageReceived: aByteArray [
 		| messageSend |
 		messageSend := [ decoder decodeNext ] on: Error do: [ :error |
 
+			"Show debugger (development tool) if present"
+			(Smalltalk classNamed: #CpDebuggerView)
+				ifNotNil: [ :debuggerViewClass | debuggerViewClass debug: error ].
+
 			"Finish class installation"
 			self postInstallClasses.
 
@@ -286,6 +290,10 @@ CpClientEnvironment >> handleMessageSend: aMessageSend [
 
 	"Perform the message send"
 	[ aMessageSend value ] on: Error do: [ :error |
+
+		"Show debugger (development tool) if present"
+		(Smalltalk classNamed: #CpDebuggerView)
+			ifNotNil: [ :debuggerViewClass | debuggerViewClass debug: error ].
 
 		self crError: 'Error when sent message ', aMessageSend selector, ' to ', aMessageSend receiver printString.
 		self crError: error printString.
@@ -348,6 +356,10 @@ CpClientEnvironment >> postInstallClasses [
 	installedClasses do: [ :each |
 		self crTrace: 'Installed class ', each name.
 		[ each postInstall ] on: Error do: [ :error |
+
+			"Show debugger (development tool) if present"
+			(Smalltalk classNamed: #CpDebuggerView)
+				ifNotNil: [ :debuggerViewClass | debuggerViewClass debug: error ].
 
 			"Announce error but continu post installation process"
 			self serverAnnounce: (CpClientDecodeFailed description: error description) ] ].

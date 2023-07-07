@@ -196,3 +196,14 @@ CpJavascriptWebSocketChannel >> updateState [
 	eventSemaphore wait.
 	state := self readyState
 ]
+
+{ #category : #all }
+CpJavascriptWebSocketChannel >> handleMessageHandlerError: anError [
+
+	"Open debugger on error (if debugger is present)"
+
+	(Smalltalk classNamed: #CpDebuggerView)
+		ifNotNil: [ :debuggerViewClass | debuggerViewClass debug: anError ].
+
+	super handleMessageHandlerError: anError
+]

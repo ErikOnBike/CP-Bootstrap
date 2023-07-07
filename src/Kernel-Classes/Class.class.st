@@ -55,6 +55,17 @@ Class >> instVarNames [
 ]
 
 { #category : #all }
+Class >> allInstVarNames [
+	"Answer an Array of the names of the receiver's instance variables. The 
+	Array ordering is the order in which the variables are stored and 
+	accessed by the interpreter."
+
+	^ self superclass
+		ifNotNil: [ :sup | sup allInstVarNames , self instVarNames ]
+		ifNil: [ self instVarNames ]
+]
+
+{ #category : #all }
 Class >> instVarNames: anArray [
 	instanceVariableNames := anArray
 ]
