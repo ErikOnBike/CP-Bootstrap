@@ -23,7 +23,7 @@ CpClientEnvironment class >> current [
 
 	"Answer the current instance of the receiver"
 
-	^ Current ifNil: [ Current := self basicNew initialize ]
+	^ Current ifNil: [ Current := self basicNew initialize ; yourself ]
 ]
 
 { #category : #all }
@@ -53,54 +53,12 @@ CpClientEnvironment class >> new [
 { #category : #all }
 CpClientEnvironment class >> preInstalledClasses [
 
-	"Answer the Classes which are pre-installed in the receiver (image/environment)"
+	"Answer the Classes which are pre-installed in the receiver (image/environment).
+	This implementation differs from what's inside the server side version, since
+	it is not used within the client. Removing it would be an option, but this way
+	the differences are easier to spot."
 
-	^ PreInstalledClasses ifNil: [
-		PreInstalledClasses := Set new
-			add: CpClientEnvironment ;
-			add: CpClientCommunicator ;
-			add: CpJavascriptWebSocketChannel ;
-			add: CpObjectDecoder ;
-			add: CpObjectEncoder ;
-			add: Announcement ;
-			add: AnnouncementDeliveryCondition ;
-			add: AnnouncementSet ;
-			add: AnnouncementSetWithExclusions ;
-			add: CpClientStarted ;
-			add: ProtoObject ;
-			add: Object ;
-			add: UndefinedObject ;
-			add: Array ;
-			add: ByteArray ;
-			add: Collection ;
-			add: ArrayedCollection ;
-			add: SequenceableCollection ;
-			add: OrderedCollection ;
-			add: Dictionary ;
-			add: IdentityDictionary ;
-			add: Set ;
-			add: IdentitySet ;
-			add: Association ;
-			add: ValueLink ;
-			add: LinkedList ;
-			add: Interval ;
-			add: String ;
-			add: Symbol ;
-			add: Magnitude ;
-			add: Number ;
-			add: SmallInteger ;
-			add: Integer ;
-			add: LargePositiveInteger ;
-			add: LargeNegativeInteger ;
-			add: Float ;
-			add: Character ;
-			add: True ;
-			add: False ;
-			add: Process ;
-			add: Semaphore ;
-			add: Mutex ;
-			add: Context ;
-		yourself ]
+	^ PreInstalledClasses ifNil: [ PreInstalledClasses := Set new ]
 ]
 
 { #category : #all }
@@ -253,9 +211,8 @@ CpClientEnvironment >> handleMessageReceived: aByteArray [
 		| messageSend |
 		messageSend := [ decoder decodeNext ] on: Error do: [ :error |
 
-			"Show debugger (development tool) if present"
-			(Smalltalk classNamed: #CpDebuggerView)
-				ifNotNil: [ :debuggerViewClass | debuggerViewClass debug: error ].
+			"Announce the error (for debugger or otherwise)"
+			CpExceptionAnnouncer announceException: error.
 
 			"Finish class installation"
 			self postInstallClasses.
@@ -291,9 +248,8 @@ CpClientEnvironment >> handleMessageSend: aMessageSend [
 	"Perform the message send"
 	[ aMessageSend value ] on: Error do: [ :error |
 
-		"Show debugger (development tool) if present"
-		(Smalltalk classNamed: #CpDebuggerView)
-			ifNotNil: [ :debuggerViewClass | debuggerViewClass debug: error ].
+		"Announce the error (for debugger or otherwise)"
+		CpExceptionAnnouncer announceException: error.
 
 		self crError: 'Error when sent message ', aMessageSend selector, ' to ', aMessageSend receiver printString.
 		self crError: error printString.
@@ -357,9 +313,8 @@ CpClientEnvironment >> postInstallClasses [
 		self crTrace: 'Installed class ', each name.
 		[ each postInstall ] on: Error do: [ :error |
 
-			"Show debugger (development tool) if present"
-			(Smalltalk classNamed: #CpDebuggerView)
-				ifNotNil: [ :debuggerViewClass | debuggerViewClass debug: error ].
+			"Announce the error (for debugger or otherwise)"
+			CpExceptionAnnouncer announceException: error.
 
 			"Announce error but continu post installation process"
 			self serverAnnounce: (CpClientDecodeFailed description: error description) ] ].

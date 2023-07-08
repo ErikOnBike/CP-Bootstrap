@@ -200,10 +200,8 @@ CpJavascriptWebSocketChannel >> updateState [
 { #category : #all }
 CpJavascriptWebSocketChannel >> handleMessageHandlerError: anError [
 
-	"Open debugger on error (if debugger is present)"
-
-	(Smalltalk classNamed: #CpDebuggerView)
-		ifNotNil: [ :debuggerViewClass | debuggerViewClass debug: anError ].
+	"Announce the error (for debugger or otherwise)"
+	CpExceptionAnnouncer announceException: anError.
 
 	super handleMessageHandlerError: anError
 ]
