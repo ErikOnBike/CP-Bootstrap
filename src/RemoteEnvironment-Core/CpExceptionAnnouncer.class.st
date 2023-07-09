@@ -26,6 +26,10 @@ CpExceptionAnnouncer class >> new [
 { #category : #all }
 CpExceptionAnnouncer class >> announce: anAnnouncement [
 
+	"In case no one is listening, simply answer nil and do not create my current instance"
+	self hasCurrent
+		ifFalse: [ ^ nil ].
+
 	^ self current
 		announce: anAnnouncement
 ]
@@ -48,4 +52,9 @@ CpExceptionAnnouncer class >> when: anAnnouncement do: aBlock [
 
 	^ self current
 		when: anAnnouncement do: aBlock
+]
+
+{ #category : #all }
+CpExceptionAnnouncer class >> hasCurrent [
+	^ Current isNotNil
 ]
