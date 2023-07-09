@@ -37,6 +37,10 @@ CpExceptionAnnouncer class >> announce: anAnnouncement [
 { #category : #all }
 CpExceptionAnnouncer class >> announceException: anException [
 
+	"In case no one is listening, simply answer nil and do not create announcement or my current instance"
+	self hasCurrent
+		ifFalse: [ ^ nil ].
+
 	^ self announce: (CpExceptionAnnouncement exception: anException)
 ]
 
