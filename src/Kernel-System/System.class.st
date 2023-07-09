@@ -152,7 +152,7 @@ System class >> allObjectsDo: aBlock [
 { #category : #all }
 System class >> start [
 
-	self crTrace: 'CodeParadise tiny image (build v8-20230708)'.
+	self crTrace: 'CodeParadise tiny image (build v8-20230709)'.
 	self crTrace: 'Smalltalk client-environment fired up!'.
 
 	self crTrace: 'Fixing the world'.
