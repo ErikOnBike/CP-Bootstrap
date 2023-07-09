@@ -84,6 +84,24 @@ CpClientEnvironment class >> variableNameApp [
 ]
 
 { #category : #all }
+CpClientEnvironment class >> isPlatformLinux [
+
+	^ self current isPlatformLinux
+]
+
+{ #category : #all }
+CpClientEnvironment class >> isPlatformMacOS [
+
+	^ self current isPlatformMacOS
+]
+
+{ #category : #all }
+CpClientEnvironment class >> isPlatformWindows [
+
+	^ self current isPlatformWindows
+]
+
+{ #category : #all }
 CpClientEnvironment >> alert: aString [
 
 	"Alert user with specified message (please use sparsely)"
@@ -481,4 +499,28 @@ CpClientEnvironment >> removePersistentVariableAt: nameString [
 
 	<primitive: 'primitiveEnvironmentRemovePersistentVariableAt:' module: 'CpSystemPlugin'>
 	^ self
+]
+
+{ #category : #all }
+CpClientEnvironment >> currentPlatform [
+
+	^ self variableAt: #OS
+]
+
+{ #category : #all }
+CpClientEnvironment >> isPlatformLinux [
+
+	^ self currentPlatform = #linux
+]
+
+{ #category : #all }
+CpClientEnvironment >> isPlatformMacOS [
+
+	^ self currentPlatform = #macos
+]
+
+{ #category : #all }
+CpClientEnvironment >> isPlatformWindows [
+
+	^ self currentPlatform = #windows
 ]
