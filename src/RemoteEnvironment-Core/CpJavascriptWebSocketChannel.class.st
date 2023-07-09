@@ -196,3 +196,12 @@ CpJavascriptWebSocketChannel >> updateState [
 	eventSemaphore wait.
 	state := self readyState
 ]
+
+{ #category : #all }
+CpJavascriptWebSocketChannel >> handleMessageHandlerError: anError [
+
+	"Announce the error (for debugger or otherwise)"
+	CpExceptionAnnouncer announceException: anError.
+
+	super handleMessageHandlerError: anError
+]

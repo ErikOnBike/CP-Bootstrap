@@ -32,6 +32,22 @@ Context >> sender [
 ]
 
 { #category : #all }
+Context >> numArgs [
+
+	^ closureOrNil
+		ifNotNil: [ closureOrNil numArgs ]
+		ifNil: [ method numArgs ]
+]
+
+{ #category : #all }
+Context >> numTemps [
+
+	^ closureOrNil
+		ifNotNil: [ closureOrNil numTemps ]
+		ifNil: [ method numTemps ]
+]
+
+{ #category : #all }
 Context >> receiver [
 	"Answer the context from which the message that created the receiver was sent."
 

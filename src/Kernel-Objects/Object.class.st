@@ -267,6 +267,11 @@ Object >> handleExceptionName: aString context: aContext [
 ]
 
 { #category : #all }
+Object >> halt [
+	Error signal: 'Halt Encountered'
+]
+
+{ #category : #all }
 Object >> hash [
 	"Answer a SmallInteger whose value is related to the receiver's identity.
 	May be overridden, and should be overridden in any classes that define = "

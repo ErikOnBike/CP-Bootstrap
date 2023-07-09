@@ -94,6 +94,12 @@ Block >> numArgs [
 ]
 
 { #category : #all }
+Block >> numTemps [
+	"Fake no temporaries for now"
+	^ 0
+]
+
+{ #category : #all }
 Block >> numCopiedValues [
 	"Answer the number of copied values of the receiver.  Since these are
 	 stored in the receiver's indexable fields this is the receiver's basic size.
