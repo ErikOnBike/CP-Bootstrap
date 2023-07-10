@@ -427,3 +427,13 @@ LinkedList >> swap: ix1 with: ix2 [
 LinkedList >> validIndex: index [
 	^ index > 0 and: [ index <= self size ]
 ]
+
+{ #category : #all }
+LinkedList >> size [
+	"Answer how many elements the receiver contains."
+
+	| tally |
+	tally := 0.
+	self do: [:each | tally := tally + 1].
+	^ tally
+]

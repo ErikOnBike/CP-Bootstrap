@@ -86,19 +86,19 @@ CpClientEnvironment class >> variableNameApp [
 { #category : #all }
 CpClientEnvironment class >> isPlatformLinux [
 
-	^ self current isPlatformLinux
+	^ self current platform == #linux
 ]
 
 { #category : #all }
 CpClientEnvironment class >> isPlatformMacOS [
 
-	^ self current isPlatformMacOS
+	^ self current platform == #macos
 ]
 
 { #category : #all }
 CpClientEnvironment class >> isPlatformWindows [
 
-	^ self current isPlatformWindows
+	^ self current platform == #windows
 ]
 
 { #category : #all }
@@ -502,25 +502,7 @@ CpClientEnvironment >> removePersistentVariableAt: nameString [
 ]
 
 { #category : #all }
-CpClientEnvironment >> currentPlatform [
+CpClientEnvironment >> platform [
 
 	^ self variableAt: #OS
-]
-
-{ #category : #all }
-CpClientEnvironment >> isPlatformLinux [
-
-	^ self currentPlatform = #linux
-]
-
-{ #category : #all }
-CpClientEnvironment >> isPlatformMacOS [
-
-	^ self currentPlatform = #macos
-]
-
-{ #category : #all }
-CpClientEnvironment >> isPlatformWindows [
-
-	^ self currentPlatform = #windows
 ]
