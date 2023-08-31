@@ -37,10 +37,9 @@ String class >> lf [
 { #category : #all }
 String class >> with: aCharacter [
 	"Answer a string containing the specified character"
-
-	^ aCharacter asInteger < 256
-		ifTrue: [ ByteString with: aCharacter ]
-		ifFalse: [ WideString with: aCharacter ]
+	^ ((aCharacter asInteger < 256 ifTrue: [ ByteString ] ifFalse: [ WideString ]) new: 1)
+		at: 1 put: aCharacter ;
+		yourself
 ]
 
 { #category : #all }
