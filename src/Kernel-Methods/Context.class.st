@@ -43,6 +43,12 @@ Context >> numArgs [
 ]
 
 { #category : #all }
+Context >> argAt: index [
+	<primitive: 210>
+	^ nil
+]
+
+{ #category : #all }
 Context >> numTemps [
 
 	^ closureOrNil
@@ -465,10 +471,4 @@ Context >> printOn: aStream [
 	sender ifNotNil: [
 		aStream nextPutAll: 'Called from: '.
 		sender printOn: aStream ]
-]
-
-{ #category : #all }
-Context >> argAt: index [
-	<primitive: 210>
-	^ nil
 ]
