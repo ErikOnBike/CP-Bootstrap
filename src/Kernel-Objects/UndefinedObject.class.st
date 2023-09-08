@@ -83,11 +83,6 @@ UndefinedObject >> subclass: subclassName instanceVariableNames: instVarNames cl
 ]
 
 { #category : #all }
-UndefinedObject >> cpEncodeWith: anEncoder [
-	anEncoder encodeNil
-]
-
-{ #category : #all }
 UndefinedObject >>  handleSignal: exception [
 	"When no more handler (on:do:) context left in sender chain this gets called.  Return from signal with default action."
 
@@ -99,4 +94,9 @@ UndefinedObject >>  canHandleSignal: exception [
 	"When no more handler (on:do:) context left in sender chain this gets called"
 
 	^ false
+]
+
+{ #category : #all }
+UndefinedObject >> cpEncodeWith: anEncoder [
+	anEncoder encodeNil
 ]

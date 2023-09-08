@@ -51,7 +51,7 @@ ClassBuilder >> beWords [
 { #category : #all }
 ClassBuilder >> build [
 	| metaclass theClass supermetaclass |
-	
+
 	supermetaclass := superclass
 		ifNil: [ Class ]
 		ifNotNil: [ superclass class ].

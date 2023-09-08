@@ -69,12 +69,6 @@ MessageSend >> collectArguments: anArgArray [
 ]
 
 { #category : #all }
-MessageSend >> cpEncodeWith: anEncoder [
-
-	anEncoder encodeMessageSend: self
-]
-
-{ #category : #all }
 MessageSend >> cull: arg [
 	^ selector numArgs = 0 
 		ifTrue: [ self value ]
@@ -178,4 +172,10 @@ MessageSend >> valueWithArguments: anArray [
 	^ receiver 
 		perform: selector 
 		withArguments: (self collectArguments: anArray)
+]
+
+{ #category : #all }
+MessageSend >> cpEncodeWith: anEncoder [
+
+	anEncoder encodeMessageSend: self
 ]

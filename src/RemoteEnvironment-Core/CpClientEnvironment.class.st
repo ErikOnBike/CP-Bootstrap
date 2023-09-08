@@ -23,7 +23,7 @@ CpClientEnvironment class >> current [
 
 	"Answer the current instance of the receiver"
 
-	^ Current ifNil: [ Current := self basicNew initialize ]
+	^ Current ifNil: [ Current := self basicNew initialize ; yourself ]
 ]
 
 { #category : #all }

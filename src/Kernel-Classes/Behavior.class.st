@@ -11,12 +11,12 @@ Class {
 
 { #category : #all }
 Behavior >> >> aSelector [
-	^ self methodDict at: aSelector
+	^ methodDict at: aSelector
 ]
 
 { #category : #all }
 Behavior >> selectors [
-	^ self methodDict keys
+	^ methodDict keys
 ]
 
 { #category : #all }
@@ -237,7 +237,7 @@ Behavior >> includesSelector: aSymbol [
 	"Answer whether the message whose selector is the argument is in the 
 	method dictionary of the receiver's class."
 
-	^ self methodDict includesKey: aSymbol
+	^ methodDict includesKey: aSymbol
 ]
 
 { #category : #all }
@@ -256,13 +256,13 @@ Behavior >> methodDictionary: aMethodDictionary [
 
 { #category : #all }
 Behavior >> addSelector: aSymbol withMethod: aCompiledMethod [
-	self methodDict at: aSymbol put: aCompiledMethod.
+	methodDict at: aSymbol put: aCompiledMethod.
 	self flushMethodCacheForSelector: aSymbol.
 ]
 
 { #category : #all }
 Behavior >> selectorAndMethodsDo: aTwoArgBlock [
-	^ self methodDict keysAndValuesDo: aTwoArgBlock
+	^ methodDict keysAndValuesDo: aTwoArgBlock
 ]
 
 { #category : #all }
@@ -301,7 +301,7 @@ Behavior >> selectorAtMethod: method setClass: classResultBlock [
 	"Note: This method is here only to support the debugger."
 
 	| sel |
-	sel := self methodDict
+	sel := methodDict
 		keyAtIdentityValue: method
 		ifAbsent: [ superclass
 				ifNil: [ classResultBlock value: self.

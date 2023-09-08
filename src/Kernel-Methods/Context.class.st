@@ -56,7 +56,7 @@ Context >> receiver [
 
 { #category : #all }
 Context >> tempAt: index [
-	"Answer the value of the temporary variable whose index is the 
+	"Answer the value of the temporary variable whose index is the
 	 argument, index.  Primitive. Assumes receiver is indexable. Answer the
 	 value of an indexable element in the receiver. Fail if the argument index
 	 is not an Integer or is out of bounds. Essential. See Object documentation
@@ -64,12 +64,12 @@ Context >> tempAt: index [
 	 VM in context management."
 
 	<primitive: 210>
-	^self at: index
+	^ self at: index
 ]
 
 { #category : #all }
 Context >> tempAt: index put: value [
-	"Store the argument, value, as the temporary variable whose index is the 
+	"Store the argument, value, as the temporary variable whose index is the
 	 argument, index.  Primitive. Assumes receiver is indexable. Answer the
 	 value of an indexable element in the receiver. Fail if the argument index
 	 is not an Integer or is out of bounds. Essential. See Object documentation
@@ -77,7 +77,7 @@ Context >> tempAt: index put: value [
 	 the VM in context management."
 
 	<primitive: 211>
-	
+	^ self at: index put: value
 ]
 
 { #category : #all }
@@ -100,13 +100,13 @@ Context >> cannotReturn: result to: aContext [
 
 { #category : #all }
 Context >> evaluateSignal: exception [
-	"The following primitive is just a marker used to find the evaluation context. 
+	"The following primitive is just a marker used to find the evaluation context.
 	See MethodContext>>#isHandlerOrSignalingContext. "
 
 	<primitive: 199>
 	| value |
 	exception privHandlerContext: self.
-	value := self exceptionHandlerBlock cull: exception.	
+	value := self exceptionHandlerBlock cull: exception.
 	"return from self if not otherwise directed in handle block"
 	self return: value
 ]
@@ -118,7 +118,7 @@ Context >> findContextSuchThat: testBlock [
 	| context |
 	context := self.
 	[ context isNil ] whileFalse: [
-		(testBlock value: context) 
+		(testBlock value: context)
 			ifTrue: [ ^ context ].
 		context := context sender ].
 	^ nil
@@ -142,13 +142,13 @@ Context >> findNextHandlerContext [
 
 { #category : #all }
 Context >> findNextHandlerOrSignalingContext [
-	"Return the next handler/signaling marked context, answering nil if there is none. 
+	"Return the next handler/signaling marked context, answering nil if there is none.
 	Search starts with self and proceeds up to nil."
 
 	"<primitive: 197>"
 	| context |
 	context := self.
-	[ 
+	[
 	context isHandlerOrSignalingContext
 		ifTrue: [ ^ context ].
 	(context := context sender) == nil ] whileFalse.
@@ -188,7 +188,7 @@ Context >> isHandlerContext [
 
 { #category : #all }
 Context >> isHandlerOrSignalingContext [
-	"Both BlockClosure>>on:do: (handler) and Context>>evaluateSignal: (signaling) 
+	"Both BlockClosure>>on:do: (handler) and Context>>evaluateSignal: (signaling)
 	are marked with primitive 199."
 	^ false
 ]
@@ -215,7 +215,7 @@ Context >> isDead [
 { #category : #all }
 Context >> resume: value [
 	"Unwind thisContext to self and resume with value as result of last send.  Execute unwind blocks when unwinding.  ASSUMES self is a sender of thisContext"
-	
+
 	self resume: value through: (thisContext findNextUnwindContextUpTo: self)
 ]
 
@@ -227,10 +227,10 @@ Context >> resume: value through: firstUnwindContext [
 
 	| context unwindBlock |
 
-	self isDead 
+	self isDead
 		ifTrue: [ self cannotReturn: value to: self ].
 	context := firstUnwindContext.
-	[ context isNil ] whileFalse: [	
+	[ context isNil ] whileFalse: [
 		context unwindComplete ifNil:[
 			context unwindComplete: true.
 			unwindBlock := context unwindBlock.
@@ -254,7 +254,7 @@ Context >> hasSender: context [
 	"Answer whether the receiver is strictly above context on the stack."
 
 	| senderContext |
-	self == context 
+	self == context
 		ifTrue: [ ^ false ].
 	senderContext := sender.
 	[ senderContext == nil ]

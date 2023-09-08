@@ -53,13 +53,7 @@ Class >> immediateSubclass: subclassName instanceVariableNames: someInstVarNames
 Class >> instVarNames [
 	"Answer an Array of the receiver's instance variable names."
 
-	instVarNames ifNil: [ ^ #() ].
-	^ instVarNames
-]
-
-{ #category : #all }
-Class >> instVarNames: anArray [
-	instVarNames := anArray
+	^ instVarNames ifNil: [ #() ]
 ]
 
 { #category : #all }
@@ -71,6 +65,11 @@ Class >> allInstVarNames [
 	^ self superclass
 		ifNotNil: [ :sup | sup allInstVarNames , self instVarNames ]
 		ifNil: [ self instVarNames ]
+]
+
+{ #category : #all }
+Class >> instVarNames: anArray [
+	instVarNames := anArray
 ]
 
 { #category : #all }
@@ -154,32 +153,6 @@ Class >> name: aSymbol [
 ]
 
 { #category : #all }
-Class >> nameWithoutPrefix [
-
-	"Answer a String representing the receiver's name without any prefixes.
-
-	Implementation: Prefixes are either 2 or 3 character Strings coming before a
-	capitalized name. For prefixes with all uppercase characters the first lowercase
-	character indicates where the name starts (just one character before it ;-).
-	If no prefix can be found the full name is answered.
-	"
-
-	| firstLowercaseIndex secondUppercaseIndex |
-
-	firstLowercaseIndex := name findFirst: [ :each | each isLowercase ].
-	firstLowercaseIndex < 2
-		ifTrue: [ ^ name asString ].
-
-	secondUppercaseIndex := name findNext: [ :each | each isUppercase ] after: firstLowercaseIndex.
-	secondUppercaseIndex = 0
-		ifTrue: [ ^ name asString allButFirst: firstLowercaseIndex - 2 ].
-
-	^ secondUppercaseIndex <= 4
-		ifTrue: [ name asString allButFirst: secondUppercaseIndex - 1 ]
-		ifFalse: [ name asString allButFirst: firstLowercaseIndex - 2 ]
-]
-
-{ #category : #all }
 Class >> newClassBuilderForSubclass: subclassName instanceVariableNames: someInstVarNames classVariableNames: classVarNames [
 	^ ClassBuilder new
 		superclass: self;
@@ -215,50 +188,6 @@ Class >> postInstallOnce [
 
 	"Perform any necessary initialization after receiver is installed in the ClientEnvironment.
 	In contrast with #postInstall, this method should NOT chain post install methods from the
-	super class."
-]
-
-{ #category : #all }
-Class >> postSnapshot [
-
-	"Perform any necessary initialization after receiver is (re)started in the ClientEnvironment.
-	In contrast with a class side #initialize, this method should be called from subclasses
-	using [[[ super postSnapshot ]]].
-	In case initialization is strictly for the class itself (and should not be re-executed for
-	any subclasses), use #postSnapshotOnce"
-
-	(self classSide includesSelector: #postSnapshotOnce)
-		ifTrue: [ self postSnapshotOnce ].
-
-	self postInstall
-]
-
-{ #category : #all }
-Class >> postSnapshotOnce [
-
-	"Perform any necessary initialization after receiver is (re)started in the ClientEnvironment.
-	In contrast with #postSnapshot, this method should NOT chain post snapshot methods from the
-	super class."
-]
-
-{ #category : #all }
-Class >> preSnapshot [
-
-	"Perform any necessary preparation before receiver is saved in the ClientEnvironment.
-	In contrast with a class side #initialize, this method should be called from subclasses
-	using [[[ super preSnapshot ]]].
-	In case preparation is strictly for the class itself (and should not be re-executed for
-	any subclasses), use #preSnapshotOnce"
-
-	(self classSide includesSelector: #preSnapshotOnce)
-		ifTrue: [ self preSnapshotOnce ]
-]
-
-{ #category : #all }
-Class >> preSnapshotOnce [
-
-	"Perform any necessary preparation before receiver is saved in the ClientEnvironment.
-	In contrast with #preSnapshot, this method should NOT chain post snapshot methods from the
 	super class."
 ]
 
@@ -315,12 +244,4 @@ Class >> classVariableNamed: aSymbol [
 { #category : #all }
 Class >> cpEncodeWith: anEncoder [
 	anEncoder encodeSymbol: self name
-]
-
-{ #category : #all }
-Class >> beLoaded [
-
-	"Empty method, but referring to this method directly (ie [[[ CpTransition beLoaded ]]])
-	from a method to be installed in a ClientEnvironment will also install the receiver (class)
-	in the ClientEnvironment"
 ]
