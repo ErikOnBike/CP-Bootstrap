@@ -504,5 +504,6 @@ CpClientEnvironment >> removePersistentVariableAt: nameString [
 { #category : #all }
 CpClientEnvironment >> platform [
 
-	^ self variableAt: #OS
+	^ (self variableAt: #OS)
+		ifNotNil: [ :platform | platform asSymbol ]
 ]
