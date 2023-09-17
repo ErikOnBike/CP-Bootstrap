@@ -53,7 +53,7 @@ Behavior >> allInstancesDo: aBlock [
 ]
 
 { #category : #all }
-Behavior >> basicIdentityHash [
+Behavior >> identityHash [
 	"Answer a 22 bits unsigned SmallInteger, whose value is related to the receiver's identity
 	 and unique among the behaviors (i.e. 2 different Behaviors cannot have the same identityHash).
 
