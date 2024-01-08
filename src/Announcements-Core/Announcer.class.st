@@ -61,6 +61,13 @@ Announcer >> removeSubscription: anAnnouncementSubscription [
 ]
 
 { #category : #all }
+Announcer >> unsubscribe: anObject [
+	"Unsubscribe all subscriptions of anObject from the receiver"
+
+	registry removeSubscriber: anObject
+]
+
+{ #category : #all }
 Announcer >> removeInterestIn: anAnnouncementClass for: anObject [
 
 	"Remove interest in the specified AnnouncementClass for the specified subscriber"
