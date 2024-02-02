@@ -12,10 +12,10 @@ Class {
 }
 
 { #category : #all }
-CpObjectDecoder class >> on: aByteStream [
+CpObjectDecoder class >> on: aByteArray [
 
 	^ self new
-		on: aByteStream
+		on: aByteArray
 ]
 
 { #category : #all }
@@ -520,9 +520,9 @@ CpObjectDecoder >> hasMoreData [
 ]
 
 { #category : #all }
-CpObjectDecoder >> on: aByteStream [
+CpObjectDecoder >> on: aByteArray [
 
-	readStream := ReadStream on: aByteStream.
+	readStream := ReadStream on: aByteArray.
 
 	"Implementation: The stringTable is lazy initialized"
 	symbolTable := OrderedCollection new
