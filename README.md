@@ -10,7 +10,7 @@ This source code is based on Pharo Candle. The most relevant changes:
 * Added Announcements (classes Announcer, Announcement, AnnouncementSubscription and SubscriptionRegistry)
 * Added class Mutex
 * Added SystemDictionary (empty subclass of Dictionary to allow SqueakJS VM to recognize the Smalltalk globals)
-* Removed some classes (PCFile, PCBitBlt, PCForm, PCWordArray)
+* Removed some classes (PCFile, PCBitBlt, PCForm)
 * Removed some test and benchmark code
 * Reorganised some of the package structure
 * Changed bits and pieces to allow the resulting image to be more compatible with regular Pharo/Cuis image
