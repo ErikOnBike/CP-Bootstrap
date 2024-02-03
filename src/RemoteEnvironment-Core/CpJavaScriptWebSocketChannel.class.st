@@ -1,5 +1,5 @@
 Class {
-	#name : #CpJavascriptWebSocketChannel,
+	#name : #CpJavaScriptWebSocketChannel,
 	#superclass : #CpMessageChannel,
 	#instVars : [
 		'state',
@@ -10,7 +10,7 @@ Class {
 }
 
 { #category : #all }
-CpJavascriptWebSocketChannel class >> for: ownerObject connectedToUrl: urlString [
+CpJavaScriptWebSocketChannel class >> for: ownerObject connectedToUrl: urlString [
 
 	"Create for the specified owner, a new instance of the receiver which is connected
 	to the specified URL.
@@ -33,7 +33,7 @@ CpJavascriptWebSocketChannel class >> for: ownerObject connectedToUrl: urlString
 ]
 
 { #category : #all }
-CpJavascriptWebSocketChannel class >> newFor: ownerObject [
+CpJavaScriptWebSocketChannel class >> newFor: ownerObject [
 
 	"Answer a new instance of the receiver with the specified owner"
 
@@ -43,21 +43,21 @@ CpJavascriptWebSocketChannel class >> newFor: ownerObject [
 ]
 
 { #category : #all }
-CpJavascriptWebSocketChannel class >> startServerOnPort: anInteger path: aString do: aValuable [
+CpJavaScriptWebSocketChannel class >> startServerOnPort: anInteger path: aString do: aValuable [
 
 	"Create a server listening on the specified port and path.
 	When a new connection is made a new instance of the receiver is created for the
 	specified owner. The owner Object will need to handle the relevant events.
 	See CpMessageChannel>>#owner:."
 
-	"A Javascript implementation for Node.js is in the making. There will not be
+	"A JavaScript implementation for Node.js is in the making. There will not be
 	a web browser implementation, since web browsers should not allow incoming network
 	connections (because of security reasons)."
-	Error signal: 'Currently the Javascript implementation is still missing'
+	Error signal: 'Currently the JavaScript implementation is still missing'
 ]
 
 { #category : #all }
-CpJavascriptWebSocketChannel >> close [
+CpJavaScriptWebSocketChannel >> close [
 
 	"Close the receiver, thereby making the receiver unusable.
 	Implementation: Closing is performed asynchronously and an event will be signalled when closed."
@@ -67,7 +67,7 @@ CpJavascriptWebSocketChannel >> close [
 ]
 
 { #category : #all }
-CpJavascriptWebSocketChannel >> connectToUrl: urlString [
+CpJavaScriptWebSocketChannel >> connectToUrl: urlString [
 
 	"Connect the receiver to the specified URL and answer whether this succeeded.
 	Implementation: A primitive WebSocket is created which operates asynchronously and uses a Semaphore
@@ -83,7 +83,7 @@ CpJavascriptWebSocketChannel >> connectToUrl: urlString [
 ]
 
 { #category : #all }
-CpJavascriptWebSocketChannel >> initialize [
+CpJavaScriptWebSocketChannel >> initialize [
 
 	"Initialize the receiver.
 	Implementation: Start with an 'unused' state so #isOpen will answer false."
@@ -99,7 +99,7 @@ CpJavascriptWebSocketChannel >> initialize [
 ]
 
 { #category : #all }
-CpJavascriptWebSocketChannel >> isOpen [
+CpJavaScriptWebSocketChannel >> isOpen [
 
 	"Receiver is considered open if state is 'open'.
 	See #updateState"
@@ -107,7 +107,7 @@ CpJavascriptWebSocketChannel >> isOpen [
 	^ state = 1
 ]
 
-CpJavascriptWebSocketChannel >> connectToUrl: urlString withEventSemaphore: semaIndex [
+CpJavaScriptWebSocketChannel >> connectToUrl: urlString withEventSemaphore: semaIndex [
 
 	"Connect the primitive WebSocket to the specified URL and use the specified Semaphore for signaling events"
 
@@ -116,7 +116,7 @@ CpJavascriptWebSocketChannel >> connectToUrl: urlString withEventSemaphore: sema
 ]
 
 { #category : #all }
-CpJavascriptWebSocketChannel >> readyState [
+CpJavaScriptWebSocketChannel >> readyState [
 
 	"Answer the state of the primitive WebSocket.
 	See https://devdocs.io/dom/websocket/readystate"
@@ -127,7 +127,7 @@ CpJavascriptWebSocketChannel >> readyState [
 ]
 
 { #category : #all }
-CpJavascriptWebSocketChannel >> receivedMessage [
+CpJavaScriptWebSocketChannel >> receivedMessage [
 
 	"Answer the next message received or nil if none is available"
 
@@ -137,7 +137,7 @@ CpJavascriptWebSocketChannel >> receivedMessage [
 ]
 
 { #category : #all }
-CpJavascriptWebSocketChannel >> send: aByteArray [
+CpJavaScriptWebSocketChannel >> send: aByteArray [
 
 	"Send the message through the primitive WebSocket (asynchronous).
 	Answer a Boolean indicating whether send was successful."
@@ -148,7 +148,7 @@ CpJavascriptWebSocketChannel >> send: aByteArray [
 ]
 
 { #category : #all }
-CpJavascriptWebSocketChannel >> release [
+CpJavaScriptWebSocketChannel >> release [
 
 	"Release instance variables of the receiver.
 	Implementation: Reset the state to an 'unused' value so #isOpen will answer false."
@@ -165,7 +165,7 @@ CpJavascriptWebSocketChannel >> release [
 ]
 
 { #category : #all }
-CpJavascriptWebSocketChannel >> sendMessage: aByteArray [
+CpJavaScriptWebSocketChannel >> sendMessage: aByteArray [
 
 	"Send the specified message.
 	An Exception should be thrown if sending failed."
@@ -175,7 +175,7 @@ CpJavascriptWebSocketChannel >> sendMessage: aByteArray [
 ]
 
 { #category : #all }
-CpJavascriptWebSocketChannel >> updateState [
+CpJavaScriptWebSocketChannel >> updateState [
 
 	"Update the receiver's state.
 	Implementation: The receiver works asynchronously, so wait for events to be signalled.
@@ -198,7 +198,7 @@ CpJavascriptWebSocketChannel >> updateState [
 ]
 
 { #category : #all }
-CpJavascriptWebSocketChannel >> handleMessageHandlerError: anError [
+CpJavaScriptWebSocketChannel >> handleMessageHandlerError: anError [
 
 	"Announce the error (for debugger or otherwise)"
 	CpExceptionAnnouncer announceException: anError.
