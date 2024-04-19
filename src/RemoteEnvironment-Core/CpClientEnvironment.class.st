@@ -269,9 +269,9 @@ CpClientEnvironment >> handleMessageSend: aMessageSend [
 		"Announce the error (for debugger or otherwise)"
 		CpExceptionAnnouncer announceException: error.
 
-		self crError: 'Error when sent message ', aMessageSend selector, ' to ', aMessageSend receiver printString.
-		self crError: error printString.
-		self crError: error signalerContext printString.
+		self errorCr: 'Error when sent message ', aMessageSend selector, ' to ', aMessageSend receiver printString.
+		self errorCr: error printString.
+		self errorCr: error signalerContext printString.
 
 		"Restore receiver id and send Announcement of error to server"
 		aMessageSend receiver: receiverId.
@@ -328,7 +328,7 @@ CpClientEnvironment >> postInstallClasses [
 	installedClasses ifEmpty: [ ^ self ].
 
 	installedClasses do: [ :each |
-		self crTrace: 'Installed class ', each name.
+		self traceCr: 'Installed class ', each name.
 		[ each postInstall ] on: Error do: [ :error |
 
 			"Announce the error (for debugger or otherwise)"

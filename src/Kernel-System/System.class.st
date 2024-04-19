@@ -152,26 +152,26 @@ System class >> allObjectsDo: aBlock [
 { #category : #all }
 System class >> start [
 
-	self crTrace: 'CodeParadise tiny image (build v8-20230713)'.
-	self crTrace: 'Smalltalk client-environment fired up!'.
+	self traceCr: 'CodeParadise tiny image (build v8-20240419)'.
+	self traceCr: 'Smalltalk client-environment fired up!'.
 
-	self crTrace: 'Fixing the world'.
+	self traceCr: 'Fixing the world'.
 	Smalltalk at: #GlobalVariable put: Association.
 	Smalltalk at: #ClassVariable put: Association.
 	Smalltalk at: #BlockClosure put: Block.
 
-	self crTrace: 'Creating Symbol table'.
+	self traceCr: 'Creating Symbol table'.
 	Symbol initSymbolTable.
 
 	"Create idle process to have at least one process being in a woken state"
-	self crTrace: 'Starting idle process'.
+	self traceCr: 'Starting idle process'.
 	(Process for: [ [ Processor activeProcess idle ] repeat ] priority: 1) resume.
 
-	self crTrace: 'Creating client environment and starting communication'.
+	self traceCr: 'Creating client environment and starting communication'.
 	CpClientEnvironment current startCommunication.
 
 	"Suspend main process until image exits"
 	[
-		self crTrace: 'Main process going to suspend'.
+		self traceCr: 'Main process going to suspend'.
 		Processor activeProcess suspend ] repeat. "Do nothing if we get active again"
 ]
