@@ -161,26 +161,26 @@ SmalltalkImage >> allObjectsDo: aBlock [
 
 { #category : #all }
 SmalltalkImage >> startUp: aString [
-	self crTrace: aString.
+	self traceCr: aString.
 	self startUp
 ]
 
 { #category : #all }
 SmalltalkImage >> startUp [
 
-	self crTrace: 'Creating Symbol table'.
+	self traceCr: 'Creating Symbol table'.
 	Symbol initSymbolTable.
 
 	"Create idle process to have at least one process being in a woken state"
-	self crTrace: 'Starting idle process'.
+	self traceCr: 'Starting idle process'.
 	(Process for: [ [ Processor activeProcess idle ] repeat ] priority: 1) resume.
 
-	self crTrace: 'Creating client environment and starting communication'.
+	self traceCr: 'Creating client environment and starting communication'.
 	CpClientEnvironment current startCommunication.
 
 	"Suspend main process until image exits"
 	[
-		self crTrace: 'Main process going to suspend'.
+		self traceCr: 'Main process going to suspend'.
 		Processor activeProcess suspend ] repeat. "Do nothing if we get active again"
 ]
 

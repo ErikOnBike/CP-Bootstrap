@@ -92,13 +92,13 @@ Context >> canHandleSignal: exception [
 
 { #category : #all }
 Context >> cannotReturn: result [
-	self crError: 'Cannot return, computation has been terminated'.
+	self errorCr: 'Cannot return, computation has been terminated'.
 	self terminate
 ]
 
 { #category : #all }
 Context >> cannotReturn: result to: aContext [
-	self crError: 'Cannot return, computation has been terminated'.
+	self errorCr: 'Cannot return, computation has been terminated'.
 	self terminate
 ]
 

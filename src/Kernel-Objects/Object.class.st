@@ -644,24 +644,57 @@ Object >> classVariableNamed: aSymbol [
 ]
 
 { #category : #all }
+Object >> traceCr: aString [
+
+	<primitive: 'primitiveObjectTraceCr:' module: 'CpSystemPlugin'>
+	^ self
+]
+
+{ #category : #all }
+Object >> warnCr: aString [
+
+	<primitive: 'primitiveObjectWarnCr:' module: 'CpSystemPlugin'>
+	^ self
+]
+
+{ #category : #all }
+Object >> errorCr: aString [
+
+	<primitive: 'primitiveObjectErrorCr:' module: 'CpSystemPlugin'>
+	^ self
+]
+
+{ #category : #all }
 Object >> crTrace: aString [
 
-	<primitive: 'primitiveObjectCrTrace:' module: 'CpSystemPlugin'>
-	^ self
+	"Warn once about deprecation"
+	Smalltalk at: #CpSeenCrTraceDeprecation ifAbsent: [
+		Smalltalk at: #CpSeenCrTraceDeprecation put: true.
+		self warnCr: 'Deprecation: please replace usage of #crTrace by #traceCr' ].
+
+	self traceCr: aString
 ]
 
 { #category : #all }
 Object >> crWarn: aString [
 
-	<primitive: 'primitiveObjectCrWarn:' module: 'CpSystemPlugin'>
-	^ self
+	"Warn once about deprecation"
+	Smalltalk at: #CpSeenCrWarnDeprecation ifAbsent: [
+		Smalltalk at: #CpSeenCrWarnDeprecation put: true.
+		self warnCr: 'Deprecation: please replace usage of #crWarn by #warnCr' ].
+
+	self warnCr: aString
 ]
 
 { #category : #all }
 Object >> crError: aString [
 
-	<primitive: 'primitiveObjectCrError:' module: 'CpSystemPlugin'>
-	^ self
+	"Warn once about deprecation"
+	Smalltalk at: #CpSeenCrErrorDeprecation ifAbsent: [
+		Smalltalk at: #CpSeenCrErrorDeprecation put: true.
+		self warnCr: 'Deprecation: please replace usage of #crError by #errorCr' ].
+
+	self errorCr: aString
 ]
 
 { #category : #all }
