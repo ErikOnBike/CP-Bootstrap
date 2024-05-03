@@ -366,7 +366,7 @@ CpClientEnvironment >> serverAnnounce: anAnnouncement [
 
 	self sendEncodedMessage: (CpObjectEncoder new
 		encode: id ;
-		encode: anAnnouncement ;
+		encode: anAnnouncement asAnnouncement ;
 		bytes)
 ]
 
