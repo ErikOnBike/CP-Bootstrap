@@ -12,11 +12,11 @@ cd work
 ls -l client-environment.image
 ```
 
-The above script will create a 32 bit image for the client environment. This will work with a 64 bit server environment, since both have a serializer/deserializer which takes care of any necessary byte handling. The bytecode for compiled code does not depend on this. A 32 bit client environment image is smaller in size and matches the Javascript environment better.
+The above script will create a 32 bit image for the client environment. This will work with a 64 bit server environment, since both have a serializer/deserializer which takes care of any necessary byte handling. The bytecode for compiled code does not depend on this. A 32 bit client environment image is smaller in size and matches the JavaScript environment better.
 
 ## Image content
 
-All Classes in the tiny image are 'minimal' to keep the image tiny in size. Furthermore a set of classes is added to create a `ClientEnvironment` which allows to communicate with a `ServerEnvironment` using WebSockets. This code is based on the knowledge that this tiny image will be run in a Javascript environment (using SqueakJS VM). For further explanation go to [CodeParadise](https://github.com/ErikOnBike/CodeParadise).
+All Classes in the tiny image are 'minimal' to keep the image tiny in size. Furthermore a set of classes is added to create a `ClientEnvironment` which allows to communicate with a `ServerEnvironment` using WebSockets. This code is based on the knowledge that this tiny image will be run in a JavaScript environment (using SqueakJS VM). For further explanation go to [CodeParadise](https://github.com/ErikOnBike/CodeParadise).
 
 There are still things missing from the tiny image, which might be added in the image itself. Although the ClientEnvironment is capable of installing code dynamically, it is probably easier to install it in the image by default. When installing for example the Duration or Fraction class from a Pharo or Cuis image into the tiny image, all methods for these classes will be installed. This brings a huge overhead since many methods are not necessary in the tiny image. The current Number classes inside the tiny image also have a limited amount of methods installed by default. It is possible to add individual methods dynamically, but not partial classes (at the moment).
 
