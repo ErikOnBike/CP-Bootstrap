@@ -17,7 +17,7 @@ This source code is based on Pharo Candle. The most relevant changes:
 
 All added Classes are 'minimal' to keep the image tiny.
 
-Furthermore a set of classes is added to create a `ClientEnvironment` which allows to communicate with a `ServerEnvironment` using WebSockets. This code is based on the knowledge that this tiny image will be run in a Javascript environment (using SqueakJS VM). For further explanation go to [CodeParadise](https://github.com/ErikOnBike/CodeParadise).
+Furthermore a set of classes is added to create a `ClientEnvironment` which allows to communicate with a `ServerEnvironment` using WebSockets. This code is based on the knowledge that this tiny image will be run in a JavaScript environment (using SqueakJS VM). For further explanation go to [CodeParadise](https://github.com/ErikOnBike/CodeParadise).
 
 ## Creating your own image
 
