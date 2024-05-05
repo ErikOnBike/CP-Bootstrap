@@ -407,7 +407,7 @@ CpClientEnvironment >> stopCommunication [
 
 	"Stop communication with server"
 
-	self serverAnnounce: CpClientStopped new.
+	self serverAnnounce: CpClientStopped.
 
 	super stopCommunication
 ]
