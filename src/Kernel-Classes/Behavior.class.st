@@ -261,7 +261,7 @@ Behavior >> addSelector: aSymbol withMethod: aCompiledMethod [
 ]
 
 { #category : #all }
-Behavior >> selectorAndMethodsDo: aTwoArgBlock [
+Behavior >> selectorsAndMethodsDo: aTwoArgBlock [
 	^ methodDict keysAndValuesDo: aTwoArgBlock
 ]
 
