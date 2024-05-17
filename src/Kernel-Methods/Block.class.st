@@ -222,3 +222,8 @@ Block >> valueNoContextSwitch [
 	<primitive: 221>
 	^ self valueWithArguments: #()
 ]
+
+{ #category : #all }
+Block >> isBlock [
+	^ true
+]

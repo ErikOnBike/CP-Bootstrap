@@ -364,6 +364,11 @@ Object >> isBehavior [
 ]
 
 { #category : #all }
+Object >> isBlock [
+	^ false
+]
+
+{ #category : #all }
 Object >> isCompiledBlock [
 	^ false
 ]
