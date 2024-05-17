@@ -336,9 +336,39 @@ Object >> instVarAt: anInteger put: anObject [
 ]
 
 { #category : #all }
-Object >> isBehavior [
-	"Answer true if I am a subclass of Behavior."
+Object >> isNil [
+	^ false
+]
 
+{ #category : #all }
+Object >> notNil [
+	"Answer true if the receiver is not nil."
+
+	^ true
+]
+
+{ #category : #all }
+Object >> isNotNil [
+	^ true
+]
+
+{ #category : #all }
+Object >> isBehavior [
+	^ false
+]
+
+{ #category : #all }
+Object >> isClass [
+	^ false
+]
+
+{ #category : #all }
+Object >> isMethodProperties [
+	^ false
+]
+
+{ #category : #all }
+Object >> isBlock [
 	^ false
 ]
 
@@ -353,46 +383,12 @@ Object >> isCompiledMethod [
 ]
 
 { #category : #all }
-Object >> isInteger [
-	"Overridden to return true in Integer."
-
-	^ false
-]
-
-{ #category : #all }
-Object >> isKindOf: aClass [
-	"Answer whether the class, aClass, is a superclass or class of the receiver."
-
-	self class == aClass
-		ifTrue: [ ^ true ]
-		ifFalse: [ ^ self class inheritsFrom: aClass ]
-]
-
-{ #category : #all }
-Object >> isNil [
-	"Answer true if the receiver is nil."
-
-	^ false
-]
-
-{ #category : #all }
-Object >> notNil [
-	"Answer true if the receiver is not nil."
-
-	^ true
-]
-
-{ #category : #all }
-Object >> isNotNil [
-	"Answer true if the receiver is not nil."
-
-	^ true
-]
-
-{ #category : #all }
 Object >> isNumber [
-	"Overridden to return true in Number, natch"
+	^ false
+]
 
+{ #category : #all }
+Object >> isInteger [
 	^ false
 ]
 
@@ -412,8 +408,17 @@ Object >> isSymbol [
 ]
 
 { #category : #all }
-Object >> isClass [
+Object >> isPoint [
 	^ false
+]
+
+{ #category : #all }
+Object >> isKindOf: aClass [
+	"Answer whether the class, aClass, is a superclass or class of the receiver."
+
+	self class == aClass
+		ifTrue: [ ^ true ]
+		ifFalse: [ ^ self class inheritsFrom: aClass ]
 ]
 
 { #category : #all }
@@ -617,11 +622,6 @@ Object >> ~~ anObject [
 ]
 
 { #category : #all }
-Object >> isMethodProperties [
-	^ false
-]
-
-{ #category : #all }
 Object >> cpEncoded [
 
 	"Encode the receiver as a ByteArray for transfering over network connection"
@@ -631,11 +631,6 @@ Object >> cpEncoded [
 	encoder := CpObjectEncoder new.
 	self cpEncodeWith: encoder.
 	^ encoder bytes
-]
-
-{ #category : #all }
-Object >> isPoint [
-	^ false
 ]
 
 { #category : #all }

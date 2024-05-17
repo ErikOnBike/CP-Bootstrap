@@ -280,3 +280,8 @@ BlockClosure >> valueNoContextSwitch [
 	<primitive: 209>
 	^ self valueWithArguments: #()
 ]
+
+{ #category : #all }
+BlockClosure >> isBlock [
+	^ true
+]
