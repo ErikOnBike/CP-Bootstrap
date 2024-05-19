@@ -30,16 +30,23 @@ Announcer >> announce: anAnnouncement [
 ]
 
 { #category : #all }
-Announcer >> when: anAnnouncementClass do: aValuable [
+Announcer >> when: anAnnouncementClass do: aBlock [
+	self warnCr: 'Use of any Announcer''s #when:do: is deprecated, please use #when:do:for:'.
 
-	"Declare that when anAnnouncementClass is raised, aValuable is executed.
-	Answer the AnnouncementSubscription created for this. This subsription
-	should be used when removing intereset using #removeSubscription:"
+	^ self when: anAnnouncementClass do: aBlock for: aBlock receiver
+]
+
+{ #category : #all }
+Announcer >> when: anAnnouncementClass do: aBlock for: anObject [
+
+	"Subscribe anObject to announcements of anAnnouncementClass class. 
+	 When announced, aBlock is evaluated."
 	
 	^ registry add: (
 		AnnouncementSubscription new 
 			announcementClass: anAnnouncementClass;
-			valuable: aValuable ;
+			valuable: aBlock ;
+			subscriber: anObject ;
 			yourself)
 ]
 
