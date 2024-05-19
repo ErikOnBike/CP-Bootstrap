@@ -31,8 +31,7 @@ AnnouncementSubscription >> subscriber: anObject [
 
 { #category : #all }
 AnnouncementSubscription >> valuable: aValuable [
-	self action: aValuable.
-	self subscriber: aValuable receiver
+	self action: aValuable
 ]
 
 { #category : #all }
