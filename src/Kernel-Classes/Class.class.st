@@ -201,6 +201,18 @@ Class >> classVariableNamed: aSymbol [
 ]
 
 { #category : #all }
+Class >> installMethod: aCompiledMethod [
+
+	self addSelector: aCompiledMethod selector withMethod: aCompiledMethod.
+	aCompiledMethod bindClassVariablesTo: self instanceSide
+]
+
+{ #category : #all }
+Class >> removeMethod: aCompiledMethod [
+	self removeSelector: aCompiledMethod selector
+]
+
+{ #category : #all }
 Class >> cpEncodeWith: anEncoder [
 	anEncoder encodeSymbol: self name
 ]

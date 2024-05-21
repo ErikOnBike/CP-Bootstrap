@@ -321,6 +321,14 @@ CpClientEnvironment >> installMethod: aCompiledMethod [
 ]
 
 { #category : #all }
+CpClientEnvironment >> removeMethod: aCompiledMethod [
+
+	"Remove (decoded) CompiledMethod"
+	aCompiledMethod remove
+
+]
+
+{ #category : #all }
 CpClientEnvironment >> postInstallClasses [
 
 	"Perform the post install method for all installed classes"

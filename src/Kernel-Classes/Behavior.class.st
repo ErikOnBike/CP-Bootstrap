@@ -262,17 +262,18 @@ Behavior >> addSelectorSilently: aSymbol withMethod: aCompiledMethod [
 { #category : #all }
 Behavior >> addSelector: aSymbol withMethod: aCompiledMethod [
 	methodDict at: aSymbol put: aCompiledMethod.
-	self flushMethodCacheForSelector: aSymbol.
+	aSymbol flushCache.
+]
+
+{ #category : #all }
+Behavior >> removeSelector: aSymbol [
+	methodDict removeKey: aSymbol ifAbsent: [].
+	aSymbol flushCache.
 ]
 
 { #category : #all }
 Behavior >> selectorsAndMethodsDo: aTwoArgBlock [
 	^ methodDict keysAndValuesDo: aTwoArgBlock
-]
-
-{ #category : #all }
-Behavior >> flushMethodCacheForSelector: aSelector [
-	aSelector flushCache
 ]
 
 { #category : #all }

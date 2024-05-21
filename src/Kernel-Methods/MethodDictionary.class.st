@@ -104,9 +104,37 @@ MethodDictionary >> keysDo: aBlock [
 
 { #category : #all }
 MethodDictionary >> removeKey: key ifAbsent: errorBlock [
-	"Pharo Candle does not support method removal."
+	"The interpreter might be using this MethodDictionary while
+	this method is running! Therefore we perform the removal
+	in a copy, and then atomically copy that copy"
 
-	self shouldNotImplement
+	| copy |
+	copy := self copy.
+	copy removeDangerouslyKey: key ifAbsent: [ ^ errorBlock value ].
+	self copyFrom: copy
+]
+
+{ #category : #all }
+MethodDictionary >> removeDangerouslyKey: key ifAbsent: errorBlock [
+	"This is not really dangerous.  But if normal removal
+	were done WHILE a MethodDict were being used, the
+	system might crash.  So instead we make a copy, then do
+	this operation (which is NOT dangerous in a copy that is
+	not being used), and then use the copy after the removal."
+
+	| index element |
+	index := self findElementOrNil: key.
+	(self basicAt: index) ifNil: [ ^ aBlock value ].
+	array at: index put: nil.
+	self basicAt: index put: nil.
+	tally := tally - 1.
+	self fixCollisionsFrom: index.
+]
+
+{ #category : #all }
+MethodDictionary >> copyFrom: anObject [
+	"This is an explicit implementation for MethodDictionary."
+	<primitive: 168>
 ]
 
 { #category : #all }

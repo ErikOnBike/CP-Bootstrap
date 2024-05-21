@@ -76,9 +76,14 @@ CompiledMethod >> classBinding [
 CompiledMethod >> install [
 
 	self methodClass
-		ifNotNil: [ :methodClass | 
-			methodClass addSelector: self selector withMethod: self.
-			self bindClassVariablesTo: methodClass instanceSide ]
+		ifNotNil: [ :methodClass | methodClass installMethod: self ]
+]
+
+{ #category : #all }
+CompiledMethod >> remove [
+
+	self methodClass
+		ifNotNil: [ :methodClass | methodClass removeMethod: self ]
 ]
 
 { #category : #all }
