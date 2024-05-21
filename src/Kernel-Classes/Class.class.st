@@ -202,14 +202,12 @@ Class >> classVariableNamed: aSymbol [
 
 { #category : #all }
 Class >> installMethod: aCompiledMethod [
-
-	self addSelector: aCompiledMethod selector withMethod: aCompiledMethod.
-	aCompiledMethod bindClassVariablesTo: self instanceSide
+	self installInstanceMethod: aCompiledMethod
 ]
 
 { #category : #all }
 Class >> removeMethod: aCompiledMethod [
-	self removeSelector: aCompiledMethod selector
+	self removeInstanceMethod: aCompiledMethod
 ]
 
 { #category : #all }

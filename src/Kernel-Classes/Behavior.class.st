@@ -372,3 +372,27 @@ Behavior >> installMethodDictionary: aMethodDictionary [
 	methodDict := aMethodDictionary.
 	aMethodDictionary valuesDo: [ :each | each bindClassVariables ]
 ]
+
+{ #category : #all }
+Behavior >> installClassMethod: aCompiledMethod [
+
+	self classSide addSelector: aCompiledMethod selector withMethod: aCompiledMethod.
+	aCompiledMethod bindClassVariablesTo: self classSide
+]
+
+{ #category : #all }
+Behavior >> removeClassMethod: aCompiledMethod [
+	self classSide removeSelector: aCompiledMethod selector
+]
+
+{ #category : #all }
+Behavior >> installInstanceMethod: aCompiledMethod [
+
+	self instanceSide addSelector: aCompiledMethod selector withMethod: aCompiledMethod.
+	aCompiledMethod bindClassVariablesTo: self instanceSide
+]
+
+{ #category : #all }
+Behavior >> removeInstanceMethod: aCompiledMethod [
+	self instanceSide removeSelector: aCompiledMethod selector
+]

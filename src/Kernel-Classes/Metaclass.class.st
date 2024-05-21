@@ -41,3 +41,13 @@ Metaclass >> classSide [
 	"Answer the class's class (ie myself)"
 	^ self
 ]
+
+{ #category : #all }
+Metaclass >> installMethod: aCompiledMethod [
+	self instanceSide installClassMethod: aCompiledMethod
+]
+
+{ #category : #all }
+Metaclass >> removeMethod: aCompiledMethod [
+	self instanceSide removeClassMethod: aCompiledMethod
+]
