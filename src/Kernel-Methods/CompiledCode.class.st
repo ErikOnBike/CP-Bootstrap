@@ -6,7 +6,7 @@ Class {
 }
 
 { #category : #all }
-CompiledCode class >> newMethod: numberOfBytes header: headerWord [
+CompiledCode class >> basicNew: numberOfBytes header: headerWord [
 	"Primitive. Answer an instance of me. The number of literals (and other 
 	 information) is specified by the headerWord.
 	 The first argument specifies the number of fields for bytecodes in the
