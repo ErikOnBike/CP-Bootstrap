@@ -14,9 +14,19 @@ Array >> asArray [
 
 { #category : #all }
 Array >> asDictionary [
+	^ self asDictionary: Dictionary
+]
+
+{ #category : #all }
+Array >> asOrderedDictionary [
+	^ self asDictionary: OrderedDictionary
+]
+
+{ #category : #all }
+Array >> asDictionary: dictionaryClass [
 	| dictionary |
 
-	dictionary := Dictionary new.
+	dictionary := dictionaryClass new.
 	self do: [ :each | dictionary add: each ].
 	^ dictionary
 ]
