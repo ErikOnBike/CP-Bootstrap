@@ -68,6 +68,11 @@ UndefinedObject >> isNotNil [
 ]
 
 { #category : #all }
+UndefinedObject >> isEmptyOrNil [
+	^ true
+]
+
+{ #category : #all }
 UndefinedObject >> printOn: aStream [
 	aStream nextPutAll: 'nil'
 ]

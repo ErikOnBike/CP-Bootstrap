@@ -189,6 +189,11 @@ Collection >> notEmpty [
 ]
 
 { #category : #all }
+Collection >> isEmptyOrNil [
+	^ self isEmpty
+]
+
+{ #category : #all }
 Collection >> ifEmpty: aBlock [
 	^ self isEmpty
 		ifTrue: [ aBlock value ]
