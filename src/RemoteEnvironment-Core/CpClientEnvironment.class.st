@@ -178,6 +178,9 @@ CpClientEnvironment >> invalidSession [
 	(self confirm: 'The session is invalid. Start new session?')
 		ifFalse: [ ^ self ].
 
+	"Stop communicator to prevent trying to reconnect"
+	super stopCommunication.
+
 	"Reset client identifier and (fully) reload"
 	self
 		removeSession ;
