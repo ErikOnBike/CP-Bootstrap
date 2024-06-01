@@ -68,9 +68,8 @@ CpClientCommunicator >> reconnect [
 
 	self connectToUrl: self url.
 
-	"Let the server know we reconnected"
-	CpClientEnvironment current
-		serverAnnounce: CpClientReconnected
+	"Let the server know on which WebSocket we reconnected by restarting communication"
+	CpClientEnvironment current restartCommunication
 ]
 
 { #category : #all }

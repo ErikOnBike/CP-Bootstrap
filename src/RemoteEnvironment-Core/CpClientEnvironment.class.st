@@ -166,7 +166,8 @@ CpClientEnvironment >> globalApply: aSymbol withArguments: anArray [
 { #category : #all }
 CpClientEnvironment >> removeSession [
 
-	self removeVariableAt: #CLIENT_ID
+	self removeVariableAt: #CLIENT_ID.
+	id := nil
 ]
 
 { #category : #all }
@@ -408,6 +409,19 @@ CpClientEnvironment >> startCommunication [
 
 	"Send initial event to server to actually start communication"
 	self serverAnnounce: (CpClientStarted variables: self variables)
+]
+
+{ #category : #all }
+CpClientEnvironment >> restartCommunication [
+
+	"Restart communication (after connection has been restored).
+
+	Implementation:
+	Send reconnected announcement only if we have an actual session to reconnect to."
+
+	id ifNil: [ ^ self ].
+
+	self serverAnnounce: CpClientReconnected
 ]
 
 { #category : #all }
