@@ -16,6 +16,12 @@ Dictionary >> add: anAssociation [
 ]
 
 { #category : #all }
+Dictionary >> addAll: anAssociationCollection [
+	anAssociationCollection associationsDo: [ :each | self add: each ].
+	^ anAssociationCollection
+]
+
+{ #category : #all }
 Dictionary >> associationAt: key [
 	^ self associationAt: key ifAbsent: [ self errorKeyNotFound ]
 ]

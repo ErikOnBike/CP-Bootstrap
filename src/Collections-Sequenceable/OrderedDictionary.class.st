@@ -41,6 +41,12 @@ OrderedDictionary >> add: anAssociation [
 ]
 
 { #category : #all }
+OrderedDictionary >> addAll: anAssociationCollection [
+	anAssociationCollection associationsDo: [ :each | self add: each ].
+	^ anAssociationCollection
+]
+
+{ #category : #all }
 OrderedDictionary >> associationAt: key [
 	^ dictionary associationAt: key
 ]

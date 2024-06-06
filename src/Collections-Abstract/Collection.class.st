@@ -47,6 +47,11 @@ Collection class >>  withAll: aCollection [
 ]
 
 { #category : #all }
+Collection >> , aCollection [
+	^ self copy addAll: aCollection; yourself
+]
+
+{ #category : #all }
 Collection >> add: newObject [
 	"Include newObject as one of my elements. Answer newObject. ArrayedCollections cannot respond to this message."
 
