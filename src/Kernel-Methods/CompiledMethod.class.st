@@ -96,21 +96,6 @@ CompiledMethod >> bindClassVariables [
 ]
 
 { #category : #all }
-CompiledMethod >> bindClassVariablesTo: aClass [
-
-	"Bind class variables to the receiver (replace literal association with class variable association)"
-
-	| classVariableClass |
-
-	classVariableClass := Smalltalk at: #ClassVariable.
-	1 to: self numLiterals do: [ :index |
-		| literal |
-		literal := self literalAt: index.
-		(literal class == classVariableClass and: [ literal value isNil ])
-			ifTrue: [ self literalAt: index put: (aClass classVariableNamed: literal key) ] ]
-]
-
-{ #category : #all }
 CompiledMethod >> primitive [
 	"Answer the primitive index associated with the receiver.
 	 Zero indicates that this is not a primitive method."

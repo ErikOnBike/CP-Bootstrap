@@ -377,7 +377,7 @@ Behavior >> installMethodDictionary: aMethodDictionary [
 Behavior >> installClassMethod: aCompiledMethod [
 
 	self classSide addSelector: aCompiledMethod selector withMethod: aCompiledMethod.
-	aCompiledMethod bindClassVariablesTo: self classSide
+	aCompiledMethod bindClassVariables
 ]
 
 { #category : #all }
@@ -389,7 +389,7 @@ Behavior >> removeClassMethod: aCompiledMethod [
 Behavior >> installInstanceMethod: aCompiledMethod [
 
 	self instanceSide addSelector: aCompiledMethod selector withMethod: aCompiledMethod.
-	aCompiledMethod bindClassVariablesTo: self instanceSide
+	aCompiledMethod bindClassVariables
 ]
 
 { #category : #all }
