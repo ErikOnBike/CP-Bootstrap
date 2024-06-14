@@ -357,6 +357,18 @@ String >> format: aCollection [
 ]
 
 { #category : #all }
+String >> join: aCollection [
+	| seenFirst |
+	seenFirst := false.
+	^ String streamContents: [ :stream |
+		aCollection do: [ :each |
+			seenFirst
+				ifTrue: [ stream nextPutAll: self ]
+				ifFalse: [ seenFirst := true ].
+			stream nextPutAll: each asString ] ]
+]
+
+{ #category : #all }
 String >> hash [
 
 	<primitive: 'primitiveStringHash' module: 'CpSystemPlugin'>
