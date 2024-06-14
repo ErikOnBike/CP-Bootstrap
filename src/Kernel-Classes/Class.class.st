@@ -71,6 +71,28 @@ Class >> instVarNames: anArray [
 ]
 
 { #category : #all }
+Class >> indexOfInstVarName: aSymbol [
+	"Answer the index of the specified variable name (or 0 if name does not exist)"
+	| delta |
+	delta := 0.
+	self classHierarchyDo: [ :each |
+		(each instVarNames indexOf: aSymbol ifAbsent: [ nil ])
+			ifNotNil: [ :index | ^ index + delta ].
+		delta := delta + each instVarNames size ].
+	^ 0
+]
+
+{ #category : #all }
+Class >> classHierarchyDo: aBlock [
+	"Evaluate the specified block for all classes in the receiver's
+	hierarchy, starting at the Class farthest away from the receiver"
+
+	self superclass
+		ifNotNil: [ :sup | sup classHierarchyDo: aBlock. aBlock value: self ]
+		ifNil: [ aBlock value: self ]
+]
+
+{ #category : #all }
 Class >> isClass [
 	^ true
 ]

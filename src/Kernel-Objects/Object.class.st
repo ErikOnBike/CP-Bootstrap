@@ -336,6 +336,16 @@ Object >> instVarAt: anInteger put: anObject [
 ]
 
 { #category : #all }
+Object >> instVarNamed: aSymbol [
+	^ self instVarAt: (self class indexOfInstVarName: aSymbol)
+]
+
+{ #category : #all }
+Object >> instVarNamed: aSymbol put: anObject [
+	^ self instVarAt: (self class indexOfInstVarName: aSymbol) put: anObject
+]
+
+{ #category : #all }
 Object >> isNil [
 	^ false
 ]
