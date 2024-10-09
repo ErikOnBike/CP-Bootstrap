@@ -319,6 +319,27 @@ String >> hash [
 ]
 
 { #category : #all }
+String >> trim [
+
+	<primitive: 'primitiveStringTrim' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
+String >> trimLeft [
+
+	<primitive: 'primitiveStringTrimLeft' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
+String >> trimRight [
+
+	<primitive: 'primitiveStringTrimRight' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
 String >> cpEncodeWith: anEncoder [
 	anEncoder encodeString: self
 ]
