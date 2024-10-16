@@ -125,6 +125,16 @@ String >> capitalized [
 ]
 
 { #category : #all }
+String >> uncapitalized [
+	"Return a copy with the first letter uncapitalized"
+	| uncap |
+	self ifEmpty: [ ^ self copy ].
+	uncap := self copy.
+	uncap at: 1 put: (uncap at: 1) asLowercase.
+	^ uncap
+]
+
+{ #category : #all }
 String >> asString [
 	"Answer this string."
 
