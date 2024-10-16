@@ -423,6 +423,11 @@ Object >> isPoint [
 ]
 
 { #category : #all }
+Object >> isArray [
+	^ false
+]
+
+{ #category : #all }
 Object >> isKindOf: aClass [
 	"Answer whether the class, aClass, is a superclass or class of the receiver."
 

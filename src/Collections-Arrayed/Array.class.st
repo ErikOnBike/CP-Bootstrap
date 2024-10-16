@@ -57,6 +57,11 @@ Array >> hash [
 ]
 
 { #category : #all }
+Array >> isArray [
+	^ true
+]
+
+{ #category : #all }
 Array >> printOn: aStream [
 	aStream nextPutAll: '#('.
 	self
