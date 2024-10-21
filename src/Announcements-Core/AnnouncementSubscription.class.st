@@ -2,7 +2,7 @@ Class {
 	#name : #AnnouncementSubscription,
 	#superclass : #Object,
 	#instVars : [
-		'announcer'
+		'announcer',
 		'announcementClass',
 		'action',
 		'subscriber'
