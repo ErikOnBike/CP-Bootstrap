@@ -44,7 +44,8 @@ Announcer >> when: anAnnouncementClass do: aBlock for: anObject [
 	
 	^ registry add: (
 		AnnouncementSubscription new 
-			announcementClass: anAnnouncementClass;
+			announcer: self ;
+			announcementClass: anAnnouncementClass ;
 			valuable: aBlock ;
 			subscriber: anObject ;
 			yourself)
