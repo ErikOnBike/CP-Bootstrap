@@ -337,6 +337,17 @@ Collection >> noneSatisfy: aBlock [
 ]
 
 { #category : #all }
+Collection >> occurrencesOf: anObject [
+	"Answer how many of the receiver's elements are equal to anObject."
+
+	| tally |
+
+	tally := 0.
+	self do: [ :each | anObject = each ifTrue: [ tally := tally + 1 ] ].
+	^ tally
+]
+
+{ #category : #all }
 Collection >> size [
 	"Answer how many elements the receiver contains."
 
