@@ -6,6 +6,7 @@ Class {
 		'name',
 		'instanceVariableNames',
 		'classVariableNames',
+		'classInstVarNames',
 		'formats'
 	],
 	#category : #'Kernel-Classes'
@@ -57,7 +58,8 @@ ClassBuilder >> build [
 		ifNotNil: [ superclass class ].
 	metaclass := Metaclass new.
 	metaclass superclass: supermetaclass.
-	metaclass setFormat: supermetaclass format.
+	metaclass setFormat: supermetaclass format + classInstVarNames size.
+	metaclass instVarNames: classInstVarNames.
 	theClass := metaclass new.
 	theClass superclass: superclass.
 	theClass setFormat: self newClassFormat.
@@ -83,6 +85,16 @@ ClassBuilder >> classVariableNames: anArray [
 ]
 
 { #category : #all }
+ClassBuilder >> classInstVarNames [
+	^ classInstVarNames
+]
+
+{ #category : #all }
+ClassBuilder >> classInstVarNames: anArray [
+	classInstVarNames := anArray
+]
+
+{ #category : #all }
 ClassBuilder >> compactClassIndex [
 	^ self compactClassIndexFor: name
 ]
@@ -99,6 +111,7 @@ ClassBuilder >> initialize [
 	super initialize.
 	instanceVariableNames := #().
 	classVariableNames := #().
+	classInstVarNames := #().
 	superclass := Object.
 	self bePointers
 ]

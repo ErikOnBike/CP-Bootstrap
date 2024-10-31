@@ -5,7 +5,11 @@ Class {
 		'instanceVariableNames',
 		'classPool',
 		'subclasses',
-		'name'
+		'name',
+		'filler1',
+		'filler2',
+		'filler3',
+		'filler4'
 	],
 	#category : #'Kernel-Classes'
 }
@@ -179,11 +183,17 @@ Class >> removeSubclass: aSubclass [
 
 { #category : #all }
 Class >> subclass: subclassName instanceVariableNames: instVarNames classVariableNames: classVarNames [
+	^ self subclass: subclassName instanceVariableNames: instVarNames classVariableNames: classVarNames instanceVariableNames: #()
+]
+
+{ #category : #all }
+Class >> subclass: subclassName instanceVariableNames: instVarNames classVariableNames: classVarNames classInstanceVariableNames: classInstVarNames [
 	^ ClassBuilder new
 		superclass: self ;
 		name: subclassName ;
 		instVarNames: instVarNames ;
 		classVariableNames: classVarNames ;
+		classInstVarNames: classInstVarNames ;
 		build
 ]
 

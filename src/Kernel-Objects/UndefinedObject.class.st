@@ -79,11 +79,17 @@ UndefinedObject >> printOn: aStream [
 
 { #category : #all }
 UndefinedObject >> subclass: subclassName instanceVariableNames: instVarNames classVariableNames: classVarNames [
+	^ self subclass: subclassName instanceVariableNames: instVarNames classVariableNames: classVarNames instanceVariableNames: #()
+]
+
+{ #category : #all }
+UndefinedObject >> subclass: subclassName instanceVariableNames: instVarNames classVariableNames: classVarNames classInstanceVariableNames: classInstVarNames [
 	^ ClassBuilder new
 		superclass: self;
 		name: subclassName;
 		instVarNames: instVarNames;
 		classVariableNames: classVarNames;
+		classInstVarNames: classInstVarNames;
 		build
 ]
 

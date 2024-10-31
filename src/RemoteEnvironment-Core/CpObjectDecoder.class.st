@@ -110,7 +110,7 @@ CpObjectDecoder >> decodeClass [
 	"Decode a Class and install it. Answer the newly installed Class or nil if this failed.
 	A failure will occur when the superclass specified does not exist."
 
-	| newClass theSuperclass className superclassName instVarNames classVarNames |
+	| newClass theSuperclass className superclassName instVarNames classVarNames classInstVarNames |
 
 	"Raise error if the receiver is not running in the ClientEnvironment"
 	CpClientEnvironment isRunning
@@ -123,6 +123,7 @@ CpObjectDecoder >> decodeClass [
 	"Read instance variable, class variable and share pool names"
 	instVarNames := self readArray.
 	classVarNames := self readArray.
+	classInstVarNames := self readArray.
 
 	"Retrieve super class"
 	(theSuperclass := Smalltalk classNamed: superclassName)
@@ -132,7 +133,8 @@ CpObjectDecoder >> decodeClass [
 			theSuperclass := Object
 				subclass: superclassName
 				instanceVariableNames: #()
-				classVariableNames: #().
+				classVariableNames: #()
+				classInstanceVariableNames: #().
 			Smalltalk at: superclassName put: theSuperclass ].
 
 	"Create new or update existing subclass from our superclass"
@@ -163,7 +165,8 @@ CpObjectDecoder >> decodeClass [
 			newClass := theSuperclass
 				subclass: className
 				instanceVariableNames: instVarNames
-				classVariableNames: classVarNames ].
+				classVariableNames: classVarNames
+				classInstanceVariableNames: classInstVarNames ].
 
 	"Read and install instance and class methods"
 	newClass installMethodDictionary: self readMethodDictionary.
@@ -186,7 +189,8 @@ CpObjectDecoder >> decodeClassReference [
 				class := Object
 					subclass: name
 					instanceVariableNames: #()
-					classVariableNames: #().
+					classVariableNames: #()
+					classInstanceVariableNames: #().
 				Smalltalk at: name put: class ]
 			ifFalse: [ self error: 'Unknown class named ', name ] ].
 	^ Association key: name value: class

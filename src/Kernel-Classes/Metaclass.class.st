@@ -2,7 +2,8 @@ Class {
 	#name : #Metaclass,
 	#superclass : #Behavior,
 	#instVars : [
-		'thisClass'
+		'thisClass',
+		'instanceVariableNames'
 	],
 	#category : #'Kernel-Classes'
 }
@@ -40,6 +41,16 @@ Metaclass >> instanceSide [
 Metaclass >> classSide [
 	"Answer the class's class (ie myself)"
 	^ self
+]
+
+{ #category : #all }
+Metaclass >> instVarNames [
+	^ instanceVariableNames
+]
+
+{ #category : #all }
+Metaclass >> instVarNames: anArray [
+	instanceVariableNames := anArray
 ]
 
 { #category : #all }
