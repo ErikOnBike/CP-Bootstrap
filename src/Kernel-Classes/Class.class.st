@@ -182,11 +182,6 @@ Class >> removeSubclass: aSubclass [
 ]
 
 { #category : #all }
-Class >> subclass: subclassName instanceVariableNames: instVarNames classVariableNames: classVarNames [
-	^ self subclass: subclassName instanceVariableNames: instVarNames classVariableNames: classVarNames instanceVariableNames: #()
-]
-
-{ #category : #all }
 Class >> subclass: subclassName instanceVariableNames: instVarNames classVariableNames: classVarNames classInstanceVariableNames: classInstVarNames [
 	^ ClassBuilder new
 		superclass: self ;
