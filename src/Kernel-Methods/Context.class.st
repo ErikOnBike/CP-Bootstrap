@@ -456,11 +456,13 @@ Context >> printOn: aStream [
 			aStream nextPutAll: ' >> '.
 			self method selector printOn: aStream.
 
-			"Print arguments (if no closure)"
+			"Print argument classes (if no closure), printing argument values might lead to infinite recursion"
 			closureOrNil ifNil: [
+				self method numArgs > 0
+					ifTrue: [ aStream nextPutAll: ' arguments:' ].
 				1 to: self method numArgs do: [ :i |
 					aStream nextPutAll: (i > 1 ifTrue: [ ', ' ] ifFalse: [ ' ' ]).
-					(self argAt: i) printOn: aStream ] ] ]
+					(self argAt: i) class printOn: aStream ] ] ]
 		ifNil: [ aStream nextPutAll: ' >> <unknown method>' ].
 
 	closureOrNil
