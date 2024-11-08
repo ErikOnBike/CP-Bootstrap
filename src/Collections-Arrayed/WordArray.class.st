@@ -16,3 +16,8 @@ WordArray >> replaceFrom: startIndex to: stopIndex with: source startingAt: srcS
 		with: source
 		startingAt: srcStartIndex
 ]
+
+{ #category : #all }
+WordArray >> cpEncodeWith: anEncoder [
+	anEncoder encodeWordArray: self
+]

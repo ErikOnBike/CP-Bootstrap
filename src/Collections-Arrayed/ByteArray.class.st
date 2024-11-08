@@ -44,3 +44,8 @@ ByteArray >> byteAt: index put: value [
 	<primitive: 61>
 	^self at: index put: value
 ]
+
+{ #category : #all }
+ByteArray >> cpEncodeWith: anEncoder [
+	anEncoder encodeByteArray: self
+]
