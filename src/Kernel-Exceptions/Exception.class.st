@@ -104,14 +104,16 @@ Exception >> defaultReturnValue [
 Exception >> description [
 	"Return a textual description of the exception."
 
-	^ String streamContents: [ :stream |
-		| mt |
-		stream nextPutAll: self class name.
-		(mt := self messageText) isEmpty
-			ifFalse: [
-				stream
-					nextPutAll: ': ' ;
-					nextPutAll: mt ] ]
+	^ String streamContents: [ :aStream | self descriptionOn: aStream ]
+]
+
+{ #category : #all }
+Exception >> descriptionOn: aStream [
+	aStream nextPutAll: self class name.
+	self messageText ifNotEmpty: [ :text |
+		aStream
+			nextPutAll: ': ' ;
+			print: text ]
 ]
 
 { #category : #all }
@@ -329,9 +331,8 @@ Exception >> tag: t [
 { #category : #all }
 Exception >> printOn: aStream [
 
-	aStream
-		nextPutAll: self class name ;
-		nextPutAll: ' in '.
+	self descriptionOn: aStream.
+	aStream nextPutAll: ' in '.
 	signalContext
 		ifNotNil: [ signalContext printOn: aStream ]
 		ifNil: [ '<unknown context>' ].
