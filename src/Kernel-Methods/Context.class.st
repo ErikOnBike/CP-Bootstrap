@@ -444,6 +444,11 @@ Context >> aboutToReturn: result through: firstUnwindContext  [
 Context >> printOn: aStream [
 	"A quick way to show some context"
 
+	"Prevent infinite recursion and/or very long Strings"
+	aStream ifPastPrintOnCutOff: [
+		aStream nextPutPrintOnCutOff.
+		^ self ].
+
 	receiver class printOn: aStream.
 	method
 		ifNotNil: [
@@ -456,18 +461,17 @@ Context >> printOn: aStream [
 			aStream nextPutAll: ' >> '.
 			self method selector printOn: aStream.
 
-			"Print argument classes (if no closure), printing argument values might lead to infinite recursion"
+			"Print arguments (if no closure)"
 			closureOrNil ifNil: [
 				self method numArgs > 0
 					ifTrue: [ aStream nextPutAll: ' arguments:' ].
 				1 to: self method numArgs do: [ :i |
 					aStream nextPutAll: (i > 1 ifTrue: [ ', ' ] ifFalse: [ ' ' ]).
-					(self argAt: i) class printOn: aStream ] ] ]
+					(self argAt: i) printOn: aStream ] ] ]
 		ifNil: [ aStream nextPutAll: ' >> <unknown method>' ].
 
-	closureOrNil
-		ifNotNil: [
-			aStream nextPutAll: ' []' ].
+	closureOrNil ifNotNil: [
+		aStream nextPutAll: ' []' ].
 
 	aStream	nextPut: Character lf.
 	sender ifNotNil: [

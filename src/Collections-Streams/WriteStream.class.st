@@ -92,3 +92,22 @@ WriteStream >> space [
 
 	self nextPut: $  "literal space"
 ]
+
+{ #category : #all }
+WriteStream >> ifPastPrintOnCutOff: aBlock [
+	"Evaluate the specified Block if the size of the receiver's contents is too big for #printOn:"
+
+	self size > 16000
+		ifTrue: [ aBlock value ]
+]
+
+{ #category : #all }
+WriteStream >> nextPutPrintOnCutOff [
+	"Add message showing cut off has taken place on #printOn:.
+	Remember this message can be show multiple times if an Object
+	has many relations which are all printed, since a check for the
+	cut off is typically only made on entering a #printOn: method
+	and not after every individual addition."
+
+	self nextPutAll: '... >>> #printOn: cut off because of size'
+]

@@ -459,6 +459,6 @@ SequenceableCollection >> printOn: aStream [
 		(self at: index) printOn: aStream.
 		aStream space ].
 	self size > 1000
-		ifTrue: [ aStream nextPutAll: ', ...' ].
+		ifTrue: [ aStream nextPutAll: ' ...' ].
 	aStream nextPut: $)
 ]

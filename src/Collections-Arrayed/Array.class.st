@@ -64,10 +64,11 @@ Array >> isArray [
 { #category : #all }
 Array >> printOn: aStream [
 	aStream nextPutAll: '#('.
-	self
-		do: [ :each | 
-			each printOn: aStream.
-			aStream space ].
+	1 to: (1000 min: self size) do: [ :index | 
+		(self at: index) printOn: aStream.
+		aStream space ].
+	self size > 1000
+		ifTrue: [ aStream nextPutAll: ' ...' ].
 	aStream nextPut: $)
 ]
 

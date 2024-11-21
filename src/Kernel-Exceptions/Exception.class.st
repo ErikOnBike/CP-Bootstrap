@@ -331,6 +331,11 @@ Exception >> tag: t [
 { #category : #all }
 Exception >> printOn: aStream [
 
+	"Prevent infinite recursion and/or very long Strings"
+	aStream ifPastPrintOnCutOff: [
+		aStream nextPutPrintOnCutOff.
+		^ self ].
+
 	self descriptionOn: aStream.
 	aStream nextPutAll: ' in '.
 	signalContext
