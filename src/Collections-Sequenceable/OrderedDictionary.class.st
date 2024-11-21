@@ -207,6 +207,13 @@ OrderedDictionary >> keysDo: aBlock [
 ]
 
 { #category : #all }
+OrderedDictionary >> values [
+	"Answer an Array containing the receiver's values."
+
+	^ Array new: self size streamContents: [ :stream | self valuesDo: [ :each | stream nextPut: each ] ]
+]
+
+{ #category : #all }
 OrderedDictionary >> valuesDo: aBlock [
 	self keysDo: [ :each | aBlock value: (self at: each) ]
 ]

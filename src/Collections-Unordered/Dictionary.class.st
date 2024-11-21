@@ -224,12 +224,9 @@ Dictionary >> keyAtIdentityValue: value ifAbsent: exceptionBlock [
 
 { #category : #all }
 Dictionary >> keys [
-	"Answer a Set containing the receiver's keys."
+	"Answer an Array containing the receiver's keys."
 
-	| aSet |
-	aSet := Set new: self size.
-	self keysDo: [ :key | aSet add: key ].
-	^ aSet
+	^ Array new: self size streamContents: [ :stream | self keysDo: [ :each | stream nextPut: each ] ]
 ]
 
 { #category : #all }
@@ -237,6 +234,13 @@ Dictionary >> keysDo: aBlock [
 	"Evaluate aBlock for each of the receiver's keys."
 
 	self associationsDo: [ :association | aBlock value: association key ]
+]
+
+{ #category : #all }
+Dictionary >> values [
+	"Answer an Array containing the receiver's values."
+
+	^ Array new: self size streamContents: [ :stream | self valuesDo: [ :each | stream nextPut: each ] ]
 ]
 
 { #category : #all }
