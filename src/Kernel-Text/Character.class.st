@@ -180,7 +180,7 @@ Character >> isSpecial [
 
 { #category : #all }
 Character >> isLowercase [
-	"Answer whether the receiver is an uppercase letter."
+	"Answer whether the receiver is an lowercase letter."
 
 	^ self asciiValue between: 97 and: 122
 ]
