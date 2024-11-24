@@ -200,6 +200,21 @@ Character >> isVowel [
 ]
 
 { #category : #all }
+Character >> isSeparator [
+	"Returns whether the receiver is a separator i.e., a space, tab, lf, cr, and newPage.
+
+	Implementation:
+	Use multiple or: messages since they are compiled inline together with identity comparison."
+
+	| value |
+	^ (value := self asciiValue) == 32 or: [
+		value == 10 or: [
+		value == 13 or: [
+		value == 9 or: [
+		value == 12 ] ] ] ]
+]
+
+{ #category : #all }
 Character >> printOn: aStream [
 	aStream nextPut: $$.
 	aStream nextPut: self
