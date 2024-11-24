@@ -16,6 +16,21 @@ WriteStream >> contents [
 ]
 
 { #category : #all }
+WriteStream >> directContents [
+	"If the receiver's collection is fully matching the contents (no additional elements present),
+	answer the collection itself, otherwise answer a copy of only the contents.
+	Be careful using the result and the receiver after a call to this method, since the receiver's
+	internal structure does not allow external changes.
+	Only use when collection is in the caller's control, like #streamContents:"
+
+	^ position = writeLimit
+		ifTrue: [ collection ]
+		ifFalse: [
+			readLimit := readLimit max: position.
+			collection copyFrom: 1 to: readLimit ]
+]
+
+{ #category : #all }
 WriteStream >> nextPut: anObject [
 	"Insert the argument at the next position in the Stream represented by the receiver. Fail if the collection of this stream is not an Array or a String. Fail if the stream is positioned at its end, or if the position is out of bounds in the collection. Fail if the argument is not of the right type for the collection."
 
