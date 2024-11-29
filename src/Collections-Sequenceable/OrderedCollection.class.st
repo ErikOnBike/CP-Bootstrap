@@ -29,12 +29,17 @@ OrderedCollection class >> new: anInteger [
 { #category : #all }
 OrderedCollection >> add: newObject [
 	"Append newObject to me. Equivalent to addLast:. Answer newObject."
+	^ self addLast: newObject
+]
+
+{ #category : #all }
+OrderedCollection >> addLast: newObject [
+	"Add newObject to the end of the receiver. Answer newObject."
 
 	lastIndex = array size
 		ifTrue: [ self makeRoomAtLast ].
 	lastIndex := lastIndex + 1.
-	array at: lastIndex put: newObject.
-	^ newObject
+	^ array at: lastIndex put: newObject.
 ]
 
 { #category : #all }
@@ -44,8 +49,7 @@ OrderedCollection >> addFirst: newObject [
 	firstIndex = 1
 		ifTrue: [ self makeRoomAtFirst ].
 	firstIndex := firstIndex - 1.
-	array at: firstIndex put: newObject.
-	^ newObject
+	^ array at: firstIndex put: newObject.
 ]
 
 { #category : #all }

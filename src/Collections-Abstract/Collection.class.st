@@ -100,6 +100,27 @@ Collection >> asSet [
 ]
 
 { #category : #all }
+Collection >> asSortedCollection [
+	"Answer a SortedCollection with the elements of the receiver
+	using the default sort block."
+
+	^ self asSortedCollection: nil
+]
+
+{ #category : #all }
+Collection >> asSortedCollection: aSortBlock [
+	"Answer a SortedCollection with the elements of the receiver
+	using the specified sort block"
+
+	| sortedCollection |
+
+	sortedCollection := SortedCollection new: self size.
+	sortedCollection sortBlock: aSortBlock.
+	sortedCollection addAll: self.
+	^ sortedCollection
+]
+
+{ #category : #all }
 Collection >> collect: aBlock [
 	"Evaluate aBlock with each of the receiver's elements as the argument. 
 	Collect the resulting values into a collection like the receiver. Answer 
