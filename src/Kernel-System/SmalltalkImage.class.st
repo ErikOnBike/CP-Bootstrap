@@ -173,12 +173,15 @@ SmalltalkImage >> startUp [
 
 	"Create idle process to have at least one process being in a woken state"
 	self traceCr: 'Starting idle process'.
-	(Process for: [ [ Processor activeProcess idle ] repeat ] priority: 1) resume.
+	(Process forContext: [ [ Processor activeProcess idle ] repeat ] asContext priority: 1)
+		name: 'Idle' ;
+		resume.
 
 	self traceCr: 'Creating client environment and starting communication'.
 	CpClientEnvironment current startCommunication.
 
 	"Suspend main process until image exits"
+	Processor activeProcess name: 'Main'.
 	[
 		self traceCr: 'Main process going to suspend'.
 		Processor activeProcess suspend ] repeat. "Do nothing if we get active again"
