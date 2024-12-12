@@ -93,6 +93,13 @@ SequenceableCollection >> first: n [
 ]
 
 { #category : #all }
+SequenceableCollection >> last: n [
+	| size |
+	size := self size.
+	^ self copyFrom: size - n + 1 to: size
+]
+
+{ #category : #all }
 SequenceableCollection >> allButFirst [
 	^ self allButFirst: 1
 ]
@@ -211,9 +218,29 @@ SequenceableCollection >> reverseDo: aBlock [
 
 { #category : #all }
 SequenceableCollection >> withIndexDo: aBlock [
-	"Just like do: except that the iteration index supplies the second argument to the block"
+	"Just like do: except that the iteration index supplies the second argument to the block.
+	Inline by hand for performance"
 
-	1 to: self size do: [ :index | aBlock value: (self at: index) value: index ]
+	| index size |
+	index := 1.
+	size := self size.
+	[ index <= size ]
+		whileTrue: [
+			aBlock value: (self at: index) value: index.
+			index := index + 1 ]
+]
+
+{ #category : #all }
+SequenceableCollection >> reverseWithIndexDo: aBlock [
+	"Just like reverseDo: except that the iteration index supplies the second argument to the block.
+	Inline by hand for performance"
+
+	| index |
+	index := self size.
+	[ index >= 1 ]
+		whileTrue: [
+			aBlock value: (self at: index) value: index.
+			index := index - 1 ]
 ]
 
 { #category : #all }
