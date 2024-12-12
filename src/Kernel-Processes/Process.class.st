@@ -21,11 +21,6 @@ Process class >> forContext: aContext priority: anInteger [
 ]
 
 { #category : #all }
-Process class >> for: aContext priority: anInteger [
-	^ self forContext: aContext asContext priority: anInteger
-]
-
-{ #category : #all }
 Process >> initSuspendedContext: aContext [
 	suspendedContext := aContext.
 	priority := 1	"lowest priority"
