@@ -1,36 +1,8 @@
 Class {
 	#name : #True,
-	#superclass : #Object,
+	#superclass : #Boolean,
 	#category : #'Kernel-Objects'
 }
-
-{ #category : #all }
-True class >> new [
-	"There is a single unique instance of each boolean."
-
-	self cannotInstantiate
-]
-
-{ #category : #all }
-True >> & alternativeObject [
-	"Answer true if both the receiver AND the argument are true. Unlike and:, the argument is always evaluted."
-
-	^ alternativeObject
-]
-
-{ #category : #all }
-True >> and: alternativeBlock [
-	"Answer true if both the receiver AND the result of evaluating the given block are true. Only evaluate the given block if the receiver is true."
-
-	^ alternativeBlock value
-]
-
-{ #category : #all }
-True >> basicCopy [
-	"There is the only one instance of me, so answer myself."
-
-	^ self
-]
 
 { #category : #all }
 True >> ifFalse: falseBlock [
@@ -61,6 +33,13 @@ True >> not [
 ]
 
 { #category : #all }
+True >> and: alternativeBlock [
+	"Answer true if both the receiver AND the result of evaluating the given block are true. Only evaluate the given block if the receiver is true."
+
+	^ alternativeBlock value
+]
+
+{ #category : #all }
 True >> or: alternativeBlock [
 	"Answer true if either the receiver OR the argument are true. Only evaluate the given block if the receiver is false."
 
@@ -68,15 +47,22 @@ True >> or: alternativeBlock [
 ]
 
 { #category : #all }
-True >> printOn: aStream [
-	aStream nextPutAll: 'true'
+True >> & aBoolean [
+	"Answer true if both the receiver AND the argument are true. Unlike and:, the argument is always evaluated."
+
+	^ aBoolean
 ]
 
 { #category : #all }
 True >> | aBoolean [
-	"Answer true if either the receiver OR the argument are true. Unlike or:, the argument is always evaluted."
+	"Answer true if either the receiver OR the argument are true. Unlike or:, the argument is always evaluated."
 
 	^ true
+]
+
+{ #category : #all }
+True >> printOn: aStream [
+	aStream nextPutAll: 'true'
 ]
 
 { #category : #all }

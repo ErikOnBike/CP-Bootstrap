@@ -1,22 +1,8 @@
 Class {
 	#name : #False,
-	#superclass : #True,
+	#superclass : #Boolean,
 	#category : #'Kernel-Objects'
 }
-
-{ #category : #all }
-False >> & aBoolean [
-	"Answer true if both the receiver AND the argument are true. Unlike and:, the argument is always evaluted."
-
-	^ false
-]
-
-{ #category : #all }
-False >> and: alternativeBlock [
-	"Answer true if both the receiver AND the result of evaluating the given block are true. Only evaluate the given block if the receiver is true."
-
-	^ false
-]
 
 { #category : #all }
 False >> ifFalse: falseBlock [
@@ -47,6 +33,13 @@ False >> not [
 ]
 
 { #category : #all }
+False >> and: alternativeBlock [
+	"Answer true if both the receiver AND the result of evaluating the given block are true. Only evaluate the given block if the receiver is true."
+
+	^ false
+]
+
+{ #category : #all }
 False >> or: alternativeBlock [
 	"Answer true if either the receiver OR the argument are true. Only evaluate the given block if the receiver is false."
 
@@ -54,15 +47,22 @@ False >> or: alternativeBlock [
 ]
 
 { #category : #all }
-False >> printOn: aStream [
-	aStream nextPutAll: 'false'
+False >> & aBoolean [
+	"Answer true if both the receiver AND the argument are true. Unlike and:, the argument is always evaluated."
+
+	^ false
 ]
 
 { #category : #all }
 False >> | aBoolean [
-	"Answer true if either the receiver OR the argument are true. Unlike or:, the argument is always evaluted."
+	"Answer true if either the receiver OR the argument are true. Unlike or:, the argument is always evaluated."
 
 	^ aBoolean
+]
+
+{ #category : #all }
+False >> printOn: aStream [
+	aStream nextPutAll: 'false'
 ]
 
 { #category : #all }
