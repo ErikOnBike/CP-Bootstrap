@@ -45,12 +45,9 @@ BlockClosure >> forkAt: priority [
 { #category : #all }
 BlockClosure >> forkAt: priority named: aString [
 
-	"Do not answer forked process, because it might not be running yet leading to unexpected behavior accessing it"
-
-	(Process forContext: self asContext priority: priority)
+	^ (Process forContext: [ self value. Processor activeProcess terminate ] asContext priority: priority)
 		name: aString ;
-		resume.
-	^ nil
+		resume
 ]
 
 { #category : #all }

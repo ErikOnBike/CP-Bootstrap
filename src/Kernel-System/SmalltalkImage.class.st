@@ -175,6 +175,7 @@ SmalltalkImage >> startUp [
 	self traceCr: 'Starting idle process'.
 	(Process forContext: [ [ Processor activeProcess idle ] repeat ] asContext priority: 1)
 		name: 'Idle' ;
+		beIdleProcess ;
 		resume.
 
 	self traceCr: 'Creating client environment and starting communication'.

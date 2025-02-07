@@ -108,6 +108,22 @@ Process >> terminate [
 ]
 
 { #category : #all }
+Process >> isSuspended [
+	^ suspendedContext isNotNil and: [ myList isNil ]
+]
+
+{ #category : #all }
 Process >> idle [
 	<primitive: 230>
+]
+
+{ #category : #all }
+Process >> beIdleProcess [
+	"Mark the receiver as THE idle Process (internal for CodeParadise VM).
+	If another Process was already marked, it will no longer be recognized as the idle Process.
+	A single (lowest priority) idle Process is required to recognize that no other Process
+	is able to execute. In contrast with default behavior, the CodeParadise VM will then
+	stop the interpretation loop. If events arrive, they will restart the interpretation loop."
+
+	<primitive: 'primitiveProcessBeIdleProcess' module: 'CpSystemPlugin'>
 ]

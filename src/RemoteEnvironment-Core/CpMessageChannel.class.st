@@ -78,13 +78,7 @@ CpMessageChannel >> close [
 CpMessageChannel >> createMessageHandler [
 
 	"Create a forked process which will run the receiver's message handler for messages received"
-	[
-		self runMessageHandler.
-
-		"TODO: Fix this in tiny image. Probably better handling of Processes.
-		The current tiny image requires the Process to be terminated.
-		Otherwise it fails with a #cannotReturn:"
-		Processor activeProcess terminate ] forkAt: Processor highIOPriority named: 'CodeParadise Message Handler'
+	[ self runMessageHandler ] forkAt: Processor highIOPriority named: 'MessageHandler'
 ]
 
 { #category : #all }

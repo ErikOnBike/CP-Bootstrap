@@ -97,7 +97,7 @@ Context >> cannotReturn: result [
 
 { #category : #all }
 Context >> cannotReturn: result to: aContext [
-	self errorCr: 'Cannot return, computation has been terminated'.
+	self errorCr: 'Cannot return, computation has been terminated: ', self printString.
 	self terminate
 ]
 
@@ -198,7 +198,9 @@ Context >> isDead [
 
 { #category : #all }
 Context >> resume: value [
-	"Unwind thisContext to self and resume with value as result of last send.  Execute unwind blocks when unwinding.  ASSUMES self is a sender of thisContext"
+	"Unwind thisContext to self and resume with value as result of last send.
+	Execute unwind blocks when unwinding.
+	ASSUMES self is a sender of thisContext."
 
 	self resume: value through: (thisContext findNextUnwindContextUpTo: self)
 ]
@@ -227,9 +229,11 @@ Context >> resume: value through: firstUnwindContext [
 
 { #category : #all }
 Context >> return: value [
-	"Unwind thisContext to self and return value to self's sender.  Execute any unwind blocks while unwinding.  ASSUMES self is a sender of thisContext"
+	"Unwind thisContext to self and return value to self's sender.
+	Execute any unwind blocks while unwinding.
+	ASSUMES self is a sender of thisContext."
 
-	sender ifNil: [ ^ self cannotReturn: value to: sender ].
+	sender ifNil: [ ^ self cannotReturn: value to: nil ].
 	sender resume: value
 ]
 
