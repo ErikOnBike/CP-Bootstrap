@@ -204,13 +204,13 @@ String >> findTokens: delimiters [
 	"Answer the collection of tokens that result from parsing self. Any character in the String delimiters marks a border. Several delimiters in a row are considered as just one separation.
 	The specified delimiters can also be a Character."
 
-	^ OrderedCollection withAll: (delimiters isString
-		ifTrue: [ self primFindTokens: delimiters ]
-		ifFalse: [ self primFindTokens: (WideString with: delimiters) ])
+	^ OrderedCollection withAll: (self primFindTokens: delimiters asString)
 ]
 
 { #category : #all }
 String >> primFindTokens: delimiters [
+
+	"Answer an Array of tokens/substrings, resulting from parsing the receiver for separator Characters. Several delimiters in a row are considered as just one separation."
 
 	<primitive: 'primitiveStringFindTokens:' module: 'CpSystemPlugin'>
 	self primitiveFailed
