@@ -62,6 +62,11 @@ CompiledMethod >> pragmas [
 ]
 
 { #category : #all }
+CompiledMethod >> pragmaAt: aSymbol [
+	^ self pragmas detect: [ :pragma | pragma selector == aSymbol ] ifNone: [ nil ]
+]
+
+{ #category : #all }
 CompiledMethod >> methodClass [
 	^ self classBinding value
 ]
