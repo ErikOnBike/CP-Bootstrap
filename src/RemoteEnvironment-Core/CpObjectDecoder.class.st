@@ -486,16 +486,16 @@ CpObjectDecoder >> decodeNil [
 { #category : #all }
 CpObjectDecoder >> decodePragma [
 
-	"Decode Pragma using its keyword (aka selector) and arguments.
+	"Decode Pragma using its selector and arguments.
 	A Pragma is only decoded in the context of a CompiledMethod."
 
-	| keyword arguments |
+	| selector arguments |
 
-	"The Pragma's method will be set in #decodeAdditionalMethodState just use keyword and arguments"
-	keyword := self readSymbol.
+	"The Pragma's method will be set in #decodeAdditionalMethodState just use selector and arguments"
+	selector := self readSymbol.
 	arguments := self readArray.
 
-	^ Pragma keyword: keyword arguments: arguments
+	^ Pragma selector: selector arguments: arguments
 ]
 
 { #category : #all }

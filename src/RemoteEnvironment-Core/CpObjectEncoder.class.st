@@ -396,7 +396,7 @@ CpObjectEncoder >> encodePragma: aPragma [
 
 	writeStream nextPut: 20.
 
-	self writeSymbol: aPragma keyword.
+	self writeSymbol: aPragma selector.
 	self writeArray: aPragma arguments asArray
 ]
 

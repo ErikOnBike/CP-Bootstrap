@@ -3,16 +3,16 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'method',
-		'keyword',
+		'selector',
 		'arguments'
 	],
 	#category : #'Kernel-Methods'
 }
 
 { #category : #all }
-Pragma class >> keyword: aSymbol arguments: anArray [ 
+Pragma class >> selector: aSymbol arguments: anArray [ 
 	^ self new
-		keyword: aSymbol;
+		selector: aSymbol;
 		arguments: anArray;
 		yourself
 ]
@@ -23,8 +23,8 @@ Pragma class >> withPragmasIn: aClass do: aBlock [
 ]
 
 { #category : #all }
-Pragma >> keyword: aSymbol [
-	keyword := aSymbol
+Pragma >> selector: aSymbol [
+	selector := aSymbol
 ]
 
 { #category : #all }
@@ -40,11 +40,6 @@ Pragma >> argumentAt: index [
 { #category : #all }
 Pragma >> method: aCompiledMethod [
 	method := aCompiledMethod
-]
-
-{ #category : #all }
-Pragma >> keyword [
-	^ keyword
 ]
 
 { #category : #all }
@@ -64,7 +59,7 @@ Pragma >> method [
 
 { #category : #all }
 Pragma >> selector [
-	^ method selector
+	^ selector
 ]
 
 { #category : #all }
@@ -74,12 +69,12 @@ Pragma >> methodSelector [
 
 { #category : #all }
 Pragma >> key [
-	^ self keyword
+	^ self selector
 ]
 
 { #category : #all }
 Pragma >> message [
-	^ Message selector: self keyword arguments: self arguments
+	^ Message selector: self selector arguments: self arguments
 ]
 
 { #category : #all }
@@ -88,20 +83,20 @@ Pragma >> printOn: aStream [
 
 	super printOn: aStream.
 	aStream
-		nextPutAll: ' keyword: ' , keyword printString ;
+		nextPutAll: ' selector: ' , selector printString ;
 		nextPutAll: ' args: ' , arguments printString
 ]
 
 { #category : #all }
 Pragma >> = anObject [
 	^ self class == anObject class
-	  and: [ keyword == anObject keyword
+	  and: [ selector == anObject selector
 	  and: [ arguments = anObject arguments ] ]
 ]
 
 { #category : #all }
 Pragma >> hash [
-	^ keyword hash + arguments hash
+	^ selector hash + arguments hash
 ]
 
 { #category : #all }
