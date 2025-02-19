@@ -17,8 +17,7 @@ UnhandledError class >> signalForException: anError [
 
 { #category : #all }
 UnhandledError >> defaultAction [
-	self errorCr: 'UnhandledError: ', exception printString.
-	^ nil
+	Processor activeProcess handleError: exception
 ]
 
 { #category : #all }

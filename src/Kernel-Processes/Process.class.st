@@ -126,4 +126,39 @@ Process >> beIdleProcess [
 	stop the interpretation loop. If events arrive, they will restart the interpretation loop."
 
 	<primitive: 'primitiveProcessBeIdleProcess' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
+Process >> allowAwaitPromise [
+
+	"Answer whether the receiver allows awaiting"
+
+	<applicationExtension>
+
+	<primitive: 'primitiveProcessAllowAwaitPromise' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
+Process >> isSyncProcess [
+
+	"Answer a Boolean whether the receiver is a synchronous Process.
+	(Smalltalk) Blocks being used as (JavaScript) Functions are executed in a
+	synchronous Process (prevent synchronous JavaScript Function to become
+	async because of Process switching).
+	Also CpEvent and CpTransition (for use with Browser DOM) are running in a
+	synchronous Process."
+
+	<primitive: 'primitiveProcessIsSyncProcess' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
+Process >> handleError: anError [
+	self errorCr: 'Unhandled Error: ', anError printString.
+	self allowAwaitPromise
+		ifTrue: [
+			self traceCr: 'Terminating Process'.
+			self terminate ]
 ]
