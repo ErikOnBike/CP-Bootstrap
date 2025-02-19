@@ -19,6 +19,8 @@ SubscriptionRegistry >> initialize [
 
 { #category : #all }
 SubscriptionRegistry >> reset [
+	"Use an OrderedCollection since the order in which elements are added IS important
+	when using it to register DOM events".
 	subscriptions := OrderedCollection new
 ]
 
