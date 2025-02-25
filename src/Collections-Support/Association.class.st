@@ -56,13 +56,11 @@ Association >> key: aKey value: anObject [
 
 { #category : #all }
 Association >> printOn: aStream [
-	"Print in the format (key->value)."
+	"Print in the format: key->value."
 
-	aStream nextPut: $(.
 	key printOn: aStream.
 	aStream nextPutAll: '->'.
-	value printOn: aStream.
-	aStream nextPut: $)
+	value printOn: aStream
 ]
 
 { #category : #all }
