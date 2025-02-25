@@ -373,6 +373,11 @@ Object >> isClass [
 ]
 
 { #category : #all }
+Object >> isCollection [
+	^ false
+]
+
+{ #category : #all }
 Object >> isMethodProperties [
 	^ false
 ]

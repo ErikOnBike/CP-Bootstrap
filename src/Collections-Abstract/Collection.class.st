@@ -194,6 +194,11 @@ Collection >> includes: anObject [
 ]
 
 { #category : #all }
+Collection >> isCollection [
+	^ true
+]
+
+{ #category : #all }
 Collection >> isEmpty [
 	"Answer whether the receiver contains any elements."
 
