@@ -175,8 +175,15 @@ CpObjectDecoder >> decodeClass [
 			classVarNames do: [ :each | newClass addClassVarNamed: each ].
 			classInstVarNames
 				ifNotEmpty: [
-					newClass class instVarNames: classInstVarNames.
-					newClass class withAllSubclassesDo: [ :each | each setFormat: each format + classInstVarNames size ] ] ]
+					self error: 'Currently there is no support for installing a superclass (out of order) which has class instance variables'.
+
+					"Add the class instance variables"
+					"newClass class instVarNames: classInstVarNames.
+					newClass class setFormat: newClass class format + classInstVarNames size."
+
+					"Recreate the metaclass instance(s), i.e. the class, since they have changed size"
+					"newClass withAllSubclassesDo: [ :each |
+						... ]" ] ]
 		ifNil: [
 
 			"Create new subclass"

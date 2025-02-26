@@ -2,8 +2,9 @@ Class {
 	#name : #Metaclass,
 	#superclass : #Behavior,
 	#instVars : [
+		'instanceVariableNames',
 		'thisClass',
-		'instanceVariableNames'
+		'filler1'
 	],
 	#category : #'Kernel-Classes'
 }

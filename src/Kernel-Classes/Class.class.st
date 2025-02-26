@@ -9,7 +9,8 @@ Class {
 		'filler1',
 		'filler2',
 		'filler3',
-		'filler4'
+		'filler4',
+		'filler5'
 	],
 	#category : #'Kernel-Classes'
 }
