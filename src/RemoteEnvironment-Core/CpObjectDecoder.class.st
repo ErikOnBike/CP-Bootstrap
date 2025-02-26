@@ -172,7 +172,11 @@ CpObjectDecoder >> decodeClass [
 				ifNotEmpty: [
 					newClass instVarNames: instVarNames.
 					newClass withAllSubclassesDo: [ :each | each setFormat: each format + instVarNames size ] ].
-			classVarNames do: [ :each | newClass addClassVarNamed: each ] ]
+			classVarNames do: [ :each | newClass addClassVarNamed: each ].
+			classInstVarNames
+				ifNotEmpty: [
+					newClass class instVarNames: classInstVarNames.
+					newClass class withAllSubclassesDo: [ :each | each setFormat: each format + classInstVarNames size ] ] ]
 		ifNil: [
 
 			"Create new subclass"
