@@ -122,9 +122,11 @@ OrderedDictionary >> at: key put: anObject [
 
 { #category : #all }
 OrderedDictionary >> collect: aBlock [
+	"Evaluate aBlock with each of my values as the argument. Collect the resulting values into a collection that is like me. Answer with the new collection."
+
 	| newCollection |
 	newCollection := self species new.
-	self associationsDo: [ :each | newCollection add: each ].
+	self associationsDo: [ :each | newCollection add: each key -> (aBlock value: each value) ].
 	^ newCollection
 ]
 
@@ -274,9 +276,14 @@ OrderedDictionary >> size [
 
 { #category : #all }
 OrderedDictionary >> select: aBlock [
+	"Evaluate aBlock with each of my values as the argument. Collect into a
+	new dictionary, only those associations for which aBlock evaluates to true."
+
 	| newCollection |
 	newCollection := self species new.
-	self associationsDo: [ :each | (aBlock value: each) ifTrue: [ newCollection add: each ] ].
+	self associationsDo: [ :each |
+		(aBlock value: each value)
+			ifTrue: [ newCollection add: each ] ].
 	^ newCollection
 ]
 
