@@ -55,6 +55,38 @@ Symbol >> = anObject [
 ]
 
 { #category : #all }
+Symbol >> doesNotUnderstand: aMessage [
+
+	"Special case when a class reference Symbol is receiver it means the actual Class
+	did not get properly installed"
+
+	self == #__ClassReference
+		ifTrue: [
+			| missingClasses |
+
+			"Collect which Classes are missing (we don't know which is referenced without doing too much foo)"
+			missingClasses := IdentitySet new.
+			thisContext sender method withAllNestedLiteralsDo: [ :each |
+				(each class = Association and: [ each value = #__ClassReference ])
+					ifTrue: [ missingClasses add: each key ] ].
+
+			"Show error message describing missing class(es) and which message was sent"
+			self error: (String streamContents: [ :stream |
+				stream
+					nextPutAll: (missingClasses
+						ifNotEmpty: [
+							missingClasses size = 1
+								ifTrue: [ 'Class' ]
+								ifFalse: [ 'Classes' ] ]
+						ifEmpty: [ 'Some Class' ]) ;
+					space ;
+					nextPutAll: (',' join: missingClasses) ;
+					nextPutAll: ' not installed when sending: ' ;
+					print: aMessage ]) ]
+		ifFalse: [ super doesNotUnderstand: aMessage ]
+]
+
+{ #category : #all }
 Symbol >> isSymbol [
 	^ true
 ]

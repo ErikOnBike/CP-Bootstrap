@@ -3,7 +3,8 @@ Class {
 	#superclass : #CpEnvironment,
 	#instVars : [
 		'objectRegistry',
-		'installedClasses'
+		'installedClasses',
+		'unresolvedClassReferences'
 	],
 	#classVars : [
 		'Current',
@@ -27,19 +28,44 @@ CpClientEnvironment class >> current [
 ]
 
 { #category : #all }
-CpClientEnvironment class >> isRunning [
-
-	"Answer whether the ClientEnvironment is running/active"
-
-	^ Current notNil
-]
-
-{ #category : #all }
 CpClientEnvironment class >> hasPreInstalledClass: aClass [
 
 	"Answer whether the specified Class is pre-installed in the receiver"
 
 	^ self preInstalledClasses includes: aClass
+]
+
+{ #category : #all }
+CpClientEnvironment class >> installReconnectStrategy: aReconnectStrategy [
+
+	self current communicator
+		reconnectStrategy: aReconnectStrategy
+]
+
+{ #category : #all }
+CpClientEnvironment class >> isPlatformLinux [
+
+	^ self current platform == #linux
+]
+
+{ #category : #all }
+CpClientEnvironment class >> isPlatformMacOS [
+
+	^ self current platform == #macos
+]
+
+{ #category : #all }
+CpClientEnvironment class >> isPlatformWindows [
+
+	^ self current platform == #windows
+]
+
+{ #category : #all }
+CpClientEnvironment class >> isRunning [
+
+	"Answer whether the ClientEnvironment is running/active"
+
+	^ Current notNil
 ]
 
 { #category : #all }
@@ -71,40 +97,19 @@ CpClientEnvironment class >> release [
 ]
 
 { #category : #all }
-CpClientEnvironment class >> installReconnectStrategy: aReconnectStrategy [
-
-	self current communicator
-		reconnectStrategy: aReconnectStrategy
-]
-
-{ #category : #all }
 CpClientEnvironment class >> variableNameApp [
 
 	^ #APP
 ]
 
 { #category : #all }
-CpClientEnvironment class >> isPlatformLinux [
-
-	^ self current platform == #linux
-]
-
-{ #category : #all }
-CpClientEnvironment class >> isPlatformMacOS [
-
-	^ self current platform == #macos
-]
-
-{ #category : #all }
-CpClientEnvironment class >> isPlatformWindows [
-
-	^ self current platform == #windows
-]
-
-{ #category : #all }
 CpClientEnvironment >> alert: aString [
 
-	"Alert user with specified message (please use sparsely)"
+	"Alert user with specified message (please use sparsely).
+
+	Implementation:
+	In a web browser this will show an alert dialog.
+	In NodeJS this will show a warning message on the console (even if used from #fatal:)."
 
 	<primitive: 'primitiveEnvironmentAlert:' module: 'CpSystemPlugin'>
 	^ self
@@ -112,9 +117,25 @@ CpClientEnvironment >> alert: aString [
 ]
 
 { #category : #all }
+CpClientEnvironment >> app [
+
+	"Answer a Symbol identifying the application that is running.
+	The app environment variable should provide this information."
+
+	^ (self variableAt: self class variableNameApp)
+		ifNotNil: [ :appString | appString asSymbol ]
+		ifNil: [ self fatal: 'The environment variable ' , self class variableNameApp printString , ' is not properly set' ]
+]
+
+{ #category : #all }
 CpClientEnvironment >> confirm: aString [
 
-	"Confirm specified message with user (please use sparsely)"
+	"Confirm specified message with user (please use sparsely).
+
+	Implementation:
+	In a web browser this will show a confirmation dialog.
+	In NodeJS the primitive will fail and therefor false is always answered."
+
 
 	<primitive: 'primitiveEnvironmentConfirm:' module: 'CpSystemPlugin'>
 	^ false
@@ -146,54 +167,11 @@ CpClientEnvironment >> createInstanceOf: className withId: identifier [
 	| class instance |
 
 	class := (Smalltalk classNamed: className) ifNil: [ self error: 'Unknown class ', className printString ].
-	instance :=  class basicNew.
+	instance := class basicNew.
 	self objectRegistry registerObject: instance withId: identifier.
 	instance initialize.
 
 	^ instance
-]
-
-{ #category : #all }
-CpClientEnvironment >> globalApply: aSymbol withArguments: anArray [
-
-	"Perform the specified symbol on the global scope (ie 'window' in the browser
-	environment) with the specified arguments"
-
-	<primitive: 'primitiveEnvironmentGlobalApply:withArguments:' module: 'CpSystemPlugin'>
-	self primitiveFailed
-]
-
-{ #category : #all }
-CpClientEnvironment >> removeSession [
-
-	self removeVariableAt: #CLIENT_ID.
-	id := nil
-]
-
-{ #category : #all }
-CpClientEnvironment >> invalidSession [
-
-	"An invalid session is encountered, ask user whether to start new session"
-
-	(self confirm: 'The session is invalid. Start new session?')
-		ifFalse: [ ^ self ].
-
-	"Stop communicator to prevent trying to reconnect"
-	super stopCommunication.
-
-	"Reset client identifier and (fully) reload"
-	self
-		removeSession ;
-		reload
-]
-
-{ #category : #all }
-CpClientEnvironment >> reload [
-
-	"Reload the receiver (changes might get lost, use sparsely)"
-
-	<primitive: 'primitiveEnvironmentReload' module: 'CpSystemPlugin'>
-	^ self
 ]
 
 { #category : #all }
@@ -218,6 +196,20 @@ CpClientEnvironment >> fatal: aString [
 ]
 
 { #category : #all }
+CpClientEnvironment >> globalApply: aSymbol withArguments: anArray [
+
+	"Perform the specified symbol on the global scope (ie 'window' in the browser
+	environment, 'global' in NodeJS) with the specified arguments (nil means no arguments).
+
+	This method allows access to JavaScript objects which are reachable through the
+	global object (scope). To allow more thorough access to these objects, make sure to
+	install the CpJavaScriptProxy support and CpCallbackEvaluator in the client environment."
+
+	<primitive: 'primitiveEnvironmentGlobalApply:withArguments:' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
 CpClientEnvironment >> handleMessageReceived: aByteArray [
 
 	"Handle (encoded) message received through the receiver's communicator.
@@ -236,7 +228,10 @@ CpClientEnvironment >> handleMessageReceived: aByteArray [
 			"Announce the error (for debugger or otherwise)"
 			CpExceptionAnnouncer announceException: error.
 
-			"Finish class installation"
+			"Since no Exception handler might be installed, log the error too" 
+			self errorCr: error printString.
+
+			"Finish class installation (as far as we got)"
 			self postInstallClasses.
 
 			"Announce error and stop handling the message"
@@ -305,7 +300,8 @@ CpClientEnvironment >> initialize [
 	id := self variableAt: #CLIENT_ID.
 
 	objectRegistry := CpObjectRegistry new.
-	installedClasses := OrderedCollection new
+	installedClasses := OrderedCollection new.
+	unresolvedClassReferences := Dictionary new
 ]
 
 { #category : #all }
@@ -325,16 +321,66 @@ CpClientEnvironment >> installClass: aClass [
 CpClientEnvironment >> installMethod: aCompiledMethod [
 
 	"Install (decoded) CompiledMethod"
-	aCompiledMethod install
 
+	aCompiledMethod install
 ]
 
 { #category : #all }
-CpClientEnvironment >> removeMethod: aCompiledMethod [
+CpClientEnvironment >> invalidSession [
 
-	"Remove (decoded) CompiledMethod"
-	aCompiledMethod remove
+	"An invalid session is encountered, ask user whether to start new session"
 
+	(self confirm: 'The session is invalid. Start new session?')
+		ifFalse: [ ^ self ].
+
+	"Stop communicator to prevent trying to reconnect"
+	super stopCommunication.
+
+	"End current session and (fully) reload"
+	self
+		removeSession ;
+		reload
+]
+
+{ #category : #all }
+CpClientEnvironment >> objectRegistry [
+
+	"Answer the receiver's object registry. The registry is needed for the server
+	to be able to address individual objects in the receiver."
+
+	^ objectRegistry
+]
+
+{ #category : #all }
+CpClientEnvironment >> persistentVariableAt: nameString [
+
+	"Answer the value (a String) of the persisted environment variable with the specified name
+	or nil if a variable with the specified name does not exist.
+	Persisted variables will, in contrast with regular variables, survive beyond the session lifetime.
+	Case sensitivity is not defined, for compatibilty best use all uppercase names."
+
+
+	<primitive: 'primitiveEnvironmentPersistentVariableAt:' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
+CpClientEnvironment >> persistentVariableAt: nameString put: valueString [
+
+	"Set the persisted environment variable with the specified name to the specified value.
+	Persisted variables will, in contrast with regular variables, survive beyond the session lifetime.
+	Case sensitivity is not defined, for compatibilty best use all uppercase names."
+
+
+	<primitive: 'primitiveEnvironmentPersistentVariableAt:put:' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
+CpClientEnvironment >> platform [
+
+	^ (self variableAt: #OS)
+		ifNotNil: [ :platform | platform asSymbol ]
 ]
 
 { #category : #all }
@@ -351,6 +397,9 @@ CpClientEnvironment >> postInstallClasses [
 			"Announce the error (for debugger or otherwise)"
 			CpExceptionAnnouncer announceException: error.
 
+			"Since no Exception handler might be installed, log the error too" 
+			self errorCr: error printString.
+
 			"Announce error but continu post installation process"
 			self serverAnnounce: (CpClientDecodeFailed description: error description) ] ].
 
@@ -358,12 +407,20 @@ CpClientEnvironment >> postInstallClasses [
 ]
 
 { #category : #all }
-CpClientEnvironment >> objectRegistry [
+CpClientEnvironment >> registerUnresolvedClassReference: anAssociation [
 
-	"Answer the receiver's object registry. The registry is needed for the server
-	to be able to address individual objects in the receiver."
+	"Keep track of class references for which no Class exists yet.
+	These Classes will be resolved later.
 
-	^ objectRegistry
+	Implementation:
+	The class references are kept in a Dictionary with the class name
+	as key. This way resolving the actual class can be done fast for
+	all kept instances.
+	An OrderedCollection is used for storing the class reference
+	instances (Associations), because it allows quick addition."
+
+	(unresolvedClassReferences at: anAssociation key ifAbsentPut: [ OrderedCollection new ])
+		add: anAssociation
 ]
 
 { #category : #all }
@@ -374,6 +431,78 @@ CpClientEnvironment >> release [
 	objectRegistry := nil.
 
 	super release
+]
+
+{ #category : #all }
+CpClientEnvironment >> reload [
+
+	"Reload the receiver (changes might get lost, use sparsely)"
+
+	<primitive: 'primitiveEnvironmentReload' module: 'CpSystemPlugin'>
+	^ self
+]
+
+{ #category : #all }
+CpClientEnvironment >> removeMethod: aCompiledMethod [
+
+	"Remove (decoded) CompiledMethod"
+
+	aCompiledMethod remove
+]
+
+{ #category : #all }
+CpClientEnvironment >> removePersistentVariableAt: nameString [
+
+	"Remove the persisted environment variable with the specified name.
+	Persisted variables will, in contrast with regular variables, survive beyond the session lifetime.
+	Case sensitivity is not defined, for compatibilty best use all uppercase names."
+
+	<primitive: 'primitiveEnvironmentRemovePersistentVariableAt:' module: 'CpSystemPlugin'>
+	^ self
+]
+
+{ #category : #all }
+CpClientEnvironment >> removeSession [
+
+	self removeVariableAt: #CLIENT_ID.
+	id := nil
+]
+
+{ #category : #all }
+CpClientEnvironment >> removeVariableAt: nameString [
+
+	"Remove the environment variable with the specified name.
+	Case sensitivity is not defined, for compatibilty best use all uppercase names."
+
+	<primitive: 'primitiveEnvironmentRemoveVariableAt:' module: 'CpSystemPlugin'>
+	^ self
+]
+
+{ #category : #all }
+CpClientEnvironment >> restartCommunication [
+
+	"Restart communication (after connection has been restored).
+
+	Implementation:
+	Send reconnected announcement only if we have an actual session to reconnect to."
+
+	id ifNil: [ ^ self ].
+
+	self serverAnnounce: CpClientReconnected
+]
+
+{ #category : #all }
+CpClientEnvironment >> resolveClassReferences: aClass [
+
+	"Resolve the class references for the specified Class"
+
+	unresolvedClassReferences at: aClass name ifPresent: [ :classReferences |
+
+		"Resolve the class references"
+		classReferences do: [ :each | each value: aClass ].
+
+		"Remove the whole entry, since from now on it is no longer unknown"
+		unresolvedClassReferences removeKey: aClass name ]
 ]
 
 { #category : #all }
@@ -398,17 +527,6 @@ CpClientEnvironment >> serverUrl [
 ]
 
 { #category : #all }
-CpClientEnvironment >> app [
-
-	"Answer a Symbol identifying the application that is running.
-	The app environment variable should provide this information."
-
-	^ (self variableAt: self class variableNameApp)
-		ifNotNil: [ :appString | appString asSymbol ]
-		ifNil: [ self fatal: 'The environment variable ' , self class variableNameApp printString , ' is not properly set' ]
-]
-
-{ #category : #all }
 CpClientEnvironment >> startCommunication [
 
 	"Start communication with server"
@@ -420,19 +538,6 @@ CpClientEnvironment >> startCommunication [
 ]
 
 { #category : #all }
-CpClientEnvironment >> restartCommunication [
-
-	"Restart communication (after connection has been restored).
-
-	Implementation:
-	Send reconnected announcement only if we have an actual session to reconnect to."
-
-	id ifNil: [ ^ self ].
-
-	self serverAnnounce: CpClientReconnected
-]
-
-{ #category : #all }
 CpClientEnvironment >> stopCommunication [
 
 	"Stop communication with server"
@@ -440,30 +545,6 @@ CpClientEnvironment >> stopCommunication [
 	self serverAnnounce: CpClientStopped.
 
 	super stopCommunication
-]
-
-{ #category : #all }
-CpClientEnvironment >> variableNames [
-
-	"Answer an array with the names of available environment variables."
-
-	<primitive: 'primitiveEnvironmentVariableNames' module: 'CpSystemPlugin'>
-	self primitiveFailed
-]
-
-{ #category : #all }
-CpClientEnvironment >> variables [
-
-	"Answer a dictionary with the names and values of available environment variables."
-
-	| variables |
-
-	variables := Dictionary new.
-
-	self variableNames do: [ :each | 
-		variables at: each put: (self variableAt: each) ].
-
-	^ variables
 ]
 
 { #category : #all }
@@ -489,51 +570,25 @@ CpClientEnvironment >> variableAt: nameString put: valueString [
 ]
 
 { #category : #all }
-CpClientEnvironment >> removeVariableAt: nameString [
+CpClientEnvironment >> variableNames [
 
-	"Remove the environment variable with the specified name.
-	Case sensitivity is not defined, for compatibilty best use all uppercase names."
+	"Answer an array with the names of available environment variables."
 
-	<primitive: 'primitiveEnvironmentRemoveVariableAt:' module: 'CpSystemPlugin'>
-	^ self
-]
-
-{ #category : #all }
-CpClientEnvironment >> persistentVariableAt: nameString [
-
-	"Answer the value (a String) of the persisted environment variable with the specified name
-	or nil if a variable with the specified name does not exist.
-	Persisted variables will, in contrast with regular variables, survive beyond the session lifetime."
-
-	<primitive: 'primitiveEnvironmentPersistentVariableAt:' module: 'CpSystemPlugin'>
+	<primitive: 'primitiveEnvironmentVariableNames' module: 'CpSystemPlugin'>
 	self primitiveFailed
 ]
 
 { #category : #all }
-CpClientEnvironment >> persistentVariableAt: nameString put: valueString [
+CpClientEnvironment >> variables [
 
-	"Set the persisted environment variable with the specified name to the specified value.
-	Persisted variables will, in contrast with regular variables, survive beyond the session lifetime.
-	Case sensitivity is not defined, for compatibilty best use all uppercase names."
+	"Answer a dictionary with the names and values of available environment variables."
 
-	<primitive: 'primitiveEnvironmentPersistentVariableAt:put:' module: 'CpSystemPlugin'>
-	self primitiveFailed
-]
+	| variables |
 
-{ #category : #all }
-CpClientEnvironment >> removePersistentVariableAt: nameString [
+	variables := Dictionary new.
 
-	"Remove the persisted environment variable with the specified name.
-	Persisted variables will, in contrast with regular variables, survive beyond the session lifetime.
-	Case sensitivity is not defined, for compatibilty best use all uppercase names."
+	self variableNames do: [ :each | 
+		variables at: each put: (self variableAt: each) ].
 
-	<primitive: 'primitiveEnvironmentRemovePersistentVariableAt:' module: 'CpSystemPlugin'>
-	^ self
-]
-
-{ #category : #all }
-CpClientEnvironment >> platform [
-
-	^ (self variableAt: #OS)
-		ifNotNil: [ :platform | platform asSymbol ]
+	^ variables
 ]
