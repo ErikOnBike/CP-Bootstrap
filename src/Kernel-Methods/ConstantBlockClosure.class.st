@@ -73,3 +73,15 @@ ConstantBlockClosure >> valueWithArguments: anArray [
 
 	^ literal
 ]
+
+{ #category : #all }
+ConstantBlockClosure >> bindClassVariablesTo: aClass [
+	(literal class == (Smalltalk at: #ClassVariable) and: [ literal value == #__ClassVariable ])
+		ifTrue: [ literal := aClass classVariableNamed: literal key ]
+]
+
+{ #category : #all }
+ConstantBlockClosure >> withAllBlocksDo: aBlock [
+	(literal isKindOf: BlockClosure)
+		ifTrue: [ aBlock value: literal ]
+]

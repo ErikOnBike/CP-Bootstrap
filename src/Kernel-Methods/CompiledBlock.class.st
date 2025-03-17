@@ -44,6 +44,11 @@ CompiledBlock >> isCompiledBlock [
 ]
 
 { #category : #all }
+CompiledBlock >> literalsToSkip [
+	^ 1
+]
+
+{ #category : #all }
 CompiledBlock >> printOn: aStream [
 	aStream nextPutAll: 'CompiledBlock in '.
 	self outerCode printOn: aStream

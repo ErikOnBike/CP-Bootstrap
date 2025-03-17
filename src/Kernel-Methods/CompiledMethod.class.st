@@ -116,6 +116,11 @@ CompiledMethod >> isCompiledMethod [
 ]
 
 { #category : #all }
+CompiledMethod >> literalsToSkip [
+	^ 2
+]
+
+{ #category : #all }
 CompiledMethod >> printOn: aStream [
 	aStream
 		nextPutAll: self methodClass name ;

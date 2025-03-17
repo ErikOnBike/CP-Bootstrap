@@ -4,7 +4,7 @@ Class {
 	#type : #variable,
 	#instVars : [
 		'outerContext',
-		'startpc',
+		'compiledBlock',
 		'numArgs'
 	],
 	#category : #'Kernel-Methods'
@@ -116,8 +116,7 @@ BlockClosure >> numCopiedValues [
 
 { #category : #all }
 BlockClosure >> numTemps [
-	"In newer images startpc contains the CompiledBlock"
-	^ startpc numTemps
+	^ compiledBlock numTemps
 ]
 
 { #category : #all }
@@ -139,14 +138,17 @@ BlockClosure >> receiver [
 
 { #category : #all }
 BlockClosure >> startpc [
-	"In newer images startpc contains the CompiledBlock"
-	^ startpc initialPC
+	^ compiledBlock initialPC
 ]
 
 { #category : #all }
 BlockClosure >> compiledBlock [
-	"In newer images startpc contains the CompiledBlock"
-	^ startpc
+	^ compiledBlock
+]
+
+{ #category : #all }
+BlockClosure >> compiledBlock: aCompiledMethod [
+	compiledBlock := aCompiledMethod
 ]
 
 { #category : #all }
@@ -281,4 +283,14 @@ BlockClosure >> valueNoContextSwitch [
 { #category : #all }
 BlockClosure >> isBlock [
 	^ true
+]
+
+{ #category : #all }
+BlockClosure >> bindClassVariablesTo: aClass [
+	self compiledBlock bindClassVariablesTo: aClass
+]
+
+{ #category : #all }
+BlockClosure >> withAllBlocksDo: aBlock [
+	self compiledBlock withAllBlocksDo: aBlock
 ]

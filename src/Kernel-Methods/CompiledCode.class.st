@@ -97,6 +97,12 @@ CompiledCode >> objectAt: index put: value [
 ]
 
 { #category : #all }
+CompiledCode >> literalsDo: aBlock [
+	1 to: self numLiterals - self literalsToSkip do: [ :index |
+		aBlock value: (self literalAt: index) ]
+]
+
+{ #category : #all }
 CompiledCode >> bindClassVariablesTo: aClass [
 
 	"Bind class variables to the receiver (replace literal association with class variable association)"
@@ -104,13 +110,38 @@ CompiledCode >> bindClassVariablesTo: aClass [
 	| classVariableClass |
 
 	classVariableClass := Smalltalk at: #ClassVariable.
-	1 to: self numLiterals do: [ :index |
+	1 to: self numLiterals - self literalsToSkip do: [ :index |
 		| literal |
 		literal := self literalAt: index.
-		(literal class == classVariableClass and: [ literal value isNil ])
+		(literal class == classVariableClass and: [ literal value == #__ClassVariable ])
 			ifTrue: [ self literalAt: index put: (aClass classVariableNamed: literal key) ]
 			ifFalse: [
 				"Iterate into CompiledBlocks to set bindings"
-				literal class == CompiledBlock
+				(literal class == CompiledBlock or: [ literal isKindOf: CleanBlockClosure ])
 					ifTrue: [ literal bindClassVariablesTo: aClass ] ] ]
+]
+
+{ #category : #all }
+CompiledCode >> allBlocksDo: aBlock [
+
+	self literalsDo: [ :each |
+		(each class == CompiledBlock or: [ each isKindOf: CleanBlockClosure ])
+			ifTrue: [ each withAllBlocksDo: aBlock ] ]
+]
+
+{ #category : #all }
+CompiledCode >> withAllBlocksDo: aBlock [
+
+	aBlock value: self.
+	self allBlocksDo: aBlock
+]
+
+{ #category : #all }
+CompiledCode >> withAllNestedLiteralsDo: aBlockClosure [
+	"This method traverses all the nested literals.
+	As a Block or Method can have literals in the nested blocks.
+	This is used to query all the selectors used in a method for example"
+
+	self withAllBlocksDo: [ :aCompiledCode |
+		aCompiledCode literalsDo: aBlockClosure ]
 ]
