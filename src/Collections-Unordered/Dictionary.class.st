@@ -22,6 +22,11 @@ Dictionary >> addAll: anAssociationCollection [
 ]
 
 { #category : #all }
+Dictionary >> asDictionary [
+	^ self
+]
+
+{ #category : #all }
 Dictionary >> associationAt: key [
 	^ self associationAt: key ifAbsent: [ self errorKeyNotFound ]
 ]

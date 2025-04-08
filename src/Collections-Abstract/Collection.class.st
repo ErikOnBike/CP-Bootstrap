@@ -90,6 +90,22 @@ Collection >> asByteArray [
 ]
 
 { #category : #all }
+Collection >> asDictionary [
+	^ self asDictionary: Dictionary
+]
+
+{ #category : #all }
+Collection >> asDictionary: dictionaryClass [
+	"Answer a Dictionary of the specified type (either Dictionary or OrderedDictionary)
+	with the receiver's elements (assumed Associations) as content"
+	| dictionary |
+
+	dictionary := dictionaryClass new.
+	self do: [ :each | dictionary add: each ].
+	^ dictionary
+]
+
+{ #category : #all }
 Collection >> asSet [
 	"Answer a Set whose elements are the unique elements of the receiver."
 

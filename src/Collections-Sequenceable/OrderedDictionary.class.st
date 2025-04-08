@@ -47,6 +47,13 @@ OrderedDictionary >> addAll: anAssociationCollection [
 ]
 
 { #category : #all }
+OrderedDictionary >> asDictionary [
+	"In contrast with Pharo's implementation: I consider myself a Dictionary
+	and therefore answer myself instead of a new (unordered) Dictionary."
+	^ self
+]
+
+{ #category : #all }
 OrderedDictionary >> associationAt: key [
 	^ dictionary associationAt: key
 ]
@@ -262,6 +269,12 @@ OrderedDictionary >> removeKey: key ifAbsent: aBlock [
 	dictionary size < oldSize
 		ifTrue: [ self orderedKeysRemove: key ].
 	^ value
+]
+
+{ #category : #all }
+OrderedDictionary >> removeAll [
+	1 to: self size do: [ :i | orderedKeys at: i put: nil ].
+	dictionary removeAll
 ]
 
 { #category : #all }

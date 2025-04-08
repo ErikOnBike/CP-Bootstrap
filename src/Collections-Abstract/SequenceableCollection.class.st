@@ -63,6 +63,11 @@ SequenceableCollection >> asArray [
 ]
 
 { #category : #all }
+SequenceableCollection >> asOrderedDictionary [
+	^ self asDictionary: OrderedDictionary
+]
+
+{ #category : #all }
 SequenceableCollection >> at: index ifAbsent: absentBlock [
 	"Answer the element at the given index. If I do not contain an element at that index, answer the result of evaluating the argument, absentBlock."
 

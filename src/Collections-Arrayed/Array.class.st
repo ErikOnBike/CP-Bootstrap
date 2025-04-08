@@ -13,25 +13,6 @@ Array >> asArray [
 ]
 
 { #category : #all }
-Array >> asDictionary [
-	^ self asDictionary: Dictionary
-]
-
-{ #category : #all }
-Array >> asOrderedDictionary [
-	^ self asDictionary: OrderedDictionary
-]
-
-{ #category : #all }
-Array >> asDictionary: dictionaryClass [
-	| dictionary |
-
-	dictionary := dictionaryClass new.
-	self do: [ :each | dictionary add: each ].
-	^ dictionary
-]
-
-{ #category : #all }
 Array >> elementsExchangeIdentityWith: otherArray [
 	"This primitive performs a bulk mutation, causing all pointers to the elements of this array to be replaced by pointers to the corresponding elements of otherArray.  At the same time, all pointers to the elements of otherArray are replaced by pointers to the corresponding elements of this array."
 
