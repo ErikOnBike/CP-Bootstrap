@@ -124,10 +124,14 @@ SequenceableCollection >> allButLast: n [
 	^ self copyFrom: 1 to: self size - n
 ]
 
-
 { #category : #all }
 SequenceableCollection >> allButFirstDo: aBlock [
 	2 to: self size do: [ :index | aBlock value: (self at: index) ]
+]
+
+{ #category : #all }
+SequenceableCollection >> allButLastDo: aBlock [
+	1 to: self size - 1 do: [ :index | aBlock value: (self at: index) ]
 ]
 
 { #category : #all }
