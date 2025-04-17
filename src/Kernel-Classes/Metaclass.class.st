@@ -3,8 +3,8 @@ Class {
 	#superclass : #Behavior,
 	#instVars : [
 		'instanceVariableNames',
-		'thisClass',
-		'filler1'
+		'filler1',
+		'thisClass'
 	],
 	#category : #'Kernel-Classes'
 }
