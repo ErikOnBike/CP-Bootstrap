@@ -230,6 +230,7 @@ CpClientEnvironment >> handleMessageReceived: aByteArray [
 
 			"Since no Exception handler might be installed, log the error too" 
 			self errorCr: error printString.
+			self errorCr: error signalerContext printString.
 
 			"Finish class installation (as far as we got)"
 			self postInstallClasses.
@@ -399,6 +400,7 @@ CpClientEnvironment >> postInstallClasses [
 
 			"Since no Exception handler might be installed, log the error too" 
 			self errorCr: error printString.
+			self errorCr: error signalerContext printString.
 
 			"Announce error but continu post installation process"
 			self serverAnnounce: (CpClientDecodeFailed description: error description) ] ].
