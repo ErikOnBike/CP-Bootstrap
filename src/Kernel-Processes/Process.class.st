@@ -157,6 +157,7 @@ Process >> isSyncProcess [
 { #category : #all }
 Process >> handleError: anError [
 	self errorCr: 'Unhandled Error: ', anError printString.
+	self errorCr: anError signalerContext printString.
 	self allowAwaitPromise
 		ifTrue: [
 			self traceCr: 'Terminating Process'.
