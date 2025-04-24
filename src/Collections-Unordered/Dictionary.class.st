@@ -5,6 +5,20 @@ Class {
 }
 
 { #category : #all }
+Dictionary >> = anObject [
+	self == anObject
+		ifTrue: [ ^ true ].
+	(anObject isCollection and: [ anObject isDictionary ])
+		ifFalse: [ ^ false ].
+	self size = anObject size
+		ifFalse: [ ^ false ].
+	anObject associationsDo: [ :each |
+		(self at: each key ifAbsent: [ ^ false ]) = each value
+			ifFalse: [ ^ false ] ].
+	^ true
+]
+
+{ #category : #all }
 Dictionary >> add: anAssociation [
 	| index element |
 	index := self findElementOrNil: anAssociation key.
@@ -130,6 +144,14 @@ Dictionary >> collect: aBlock [
 ]
 
 { #category : #all }
+Dictionary >> hash [
+	| hash |
+	hash := self species hash.
+	self associationsDo: [ :each | hash := hash bitXor: each hash ].
+	^ hash bitXor: self size hash
+]
+
+{ #category : #all }
 Dictionary >> postCopy [
 	"Must copy all my associations or later stores into either dictionary will effect both the original and the copy."
 
@@ -174,6 +196,11 @@ Dictionary >> includesKey: key [
 	(array at: index) == nil
 		ifTrue: [ ^ false ]
 		ifFalse: [ ^ true ]
+]
+
+{ #category : #all }
+Dictionary >> isDictionary [
+	^ true
 ]
 
 { #category : #all }

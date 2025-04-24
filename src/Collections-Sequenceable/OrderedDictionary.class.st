@@ -21,6 +21,11 @@ OrderedDictionary class >> new: anInteger [
 ]
 
 { #category : #all }
+OrderedDictionary >> = anObject [
+	^ dictionary = anObject
+]
+
+{ #category : #all }
 OrderedDictionary >> initialize: anInteger [
 	dictionary := Dictionary new: anInteger.
 	orderedKeys := Array new: anInteger
@@ -138,6 +143,11 @@ OrderedDictionary >> collect: aBlock [
 ]
 
 { #category : #all }
+OrderedDictionary >> hash [
+	^ dictionary hash
+]
+
+{ #category : #all }
 OrderedDictionary >> postCopy [
 	orderedKeys := orderedKeys copy.
 	dictionary := dictionary copy
@@ -171,6 +181,12 @@ OrderedDictionary >> includes: anObject [
 { #category : #all }
 OrderedDictionary >> includesKey: key [
 	^ dictionary includesKey: key
+]
+
+{ #category : #all }
+OrderedDictionary >> isDictionary [
+	"In contrast with Pharo, answer true (since I am a Dictionary)"
+	^ true
 ]
 
 { #category : #all }

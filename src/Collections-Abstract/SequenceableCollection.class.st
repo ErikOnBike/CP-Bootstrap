@@ -98,6 +98,14 @@ SequenceableCollection >> first: n [
 ]
 
 { #category : #all }
+SequenceableCollection >> hash [
+	| hash |
+	hash := self species hash.
+	self do: [ :each | hash := hash bitXor: each hash ].
+	^ hash bitXor: self size hash
+]
+
+{ #category : #all }
 SequenceableCollection >> last: n [
 	| size |
 	size := self size.
