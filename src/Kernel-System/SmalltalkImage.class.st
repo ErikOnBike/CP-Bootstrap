@@ -34,10 +34,10 @@ SmalltalkImage >> globalAssociationAt: aSymbol ifAbsentPut: absentBlock [
 ]
 
 { #category : #all }
-SmalltalkImage >> classNamed: aSymbol [
+SmalltalkImage >> classNamed: aString [
 	| global |
 
-	global := self at: aSymbol.
+	global := self at: aString asSymbol.
 	^ global ifNotNil: [
 		global isBehavior
 			ifTrue: [ global ]
