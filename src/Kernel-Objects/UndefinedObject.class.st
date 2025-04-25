@@ -19,6 +19,11 @@ UndefinedObject >> basicCopy [
 ]
 
 { #category : #all }
+UndefinedObject >> ifEmptyOrNil: aBlock [
+	^ aBlock value
+]
+
+{ #category : #all }
 UndefinedObject >> ifNil: aBlock [
 	"A convenient test, in conjunction with Object ifNil:"
 

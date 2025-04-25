@@ -274,6 +274,13 @@ Collection >> ifNotEmpty: notEmptyBlock ifEmpty: emptyBlock [
 ]
 
 { #category : #all }
+Collection >> ifEmptyOrNil: aBlock [
+	^ self isEmpty
+		ifTrue: [ aBlock value ]
+		ifFalse: [ self ]
+]
+
+{ #category : #all }
 Collection >> printOn: aStream [
 	"Refer to the comment in Object|printOn:."
 
