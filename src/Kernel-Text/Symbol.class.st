@@ -55,6 +55,11 @@ Symbol >> = anObject [
 ]
 
 { #category : #all }
+Symbol >> cull: anObject [
+	^ anObject perform: self
+]
+
+{ #category : #all }
 Symbol >> doesNotUnderstand: aMessage [
 
 	"Special case when a class reference Symbol is receiver it means the actual Class
@@ -184,6 +189,11 @@ Symbol >> replaceFrom: start to: stop with: replacement startingAt: repStart [
 { #category : #all }
 Symbol >> species [
 	^ ByteString
+]
+
+{ #category : #all }
+Symbol >> value: anObject [
+	^ anObject perform: self
 ]
 
 { #category : #all }
