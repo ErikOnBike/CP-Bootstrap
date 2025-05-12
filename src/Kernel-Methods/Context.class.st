@@ -186,7 +186,7 @@ Context >> handleSignal: exception [
 { #category : #all }
 Context >> nextHandlerContext [
 
-	^ self sender findNextHandlerContext
+	^ sender findNextHandlerContext
 ]
 
 { #category : #all }
@@ -462,13 +462,13 @@ Context >> printOn: aStream [
 					method methodClass printOn: aStream.
 					aStream nextPut: $) ].
 			aStream nextPutAll: ' >> '.
-			self method selector printOn: aStream.
+			method selector printOn: aStream.
 
 			"Print arguments (if no closure)"
 			closureOrNil ifNil: [
-				self method numArgs > 0
+				method numArgs > 0
 					ifTrue: [ aStream nextPutAll: ' arguments:' ].
-				1 to: self method numArgs do: [ :i |
+				1 to: method numArgs do: [ :i |
 					aStream nextPutAll: (i > 1 ifTrue: [ ', ' ] ifFalse: [ ' ' ]).
 					(self argAt: i) printOn: aStream ] ] ]
 		ifNil: [ aStream nextPutAll: ' >> <unknown method>' ].
