@@ -119,7 +119,7 @@ Process >> idle [
 
 { #category : #all }
 Process >> beIdleProcess [
-	"Mark the receiver as THE idle Process (internal for CodeParadise VM).
+	"Mark the receiver as THE idle Process (internal for CodeParadise).
 	If another Process was already marked, it will no longer be recognized as the idle Process.
 	A single (lowest priority) idle Process is required to recognize that no other Process
 	is able to execute. In contrast with default behavior, the CodeParadise VM will then
@@ -132,9 +132,7 @@ Process >> beIdleProcess [
 { #category : #all }
 Process >> allowAwaitPromise [
 
-	"Answer whether the receiver allows awaiting"
-
-	<applicationExtension>
+	"Answer whether the receiver allows awaiting (internal for CodeParadise)"
 
 	<primitive: 'primitiveProcessAllowAwaitPromise' module: 'CpSystemPlugin'>
 	self primitiveFailed
