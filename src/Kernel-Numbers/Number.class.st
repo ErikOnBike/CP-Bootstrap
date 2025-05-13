@@ -417,6 +417,11 @@ Number >> sin [
 ]
 
 { #category : #all }
+Number >> squared [
+	^ self * self
+]
+
+{ #category : #all }
 Number >> sqrt [
 	"Answer the square root of the receiver."
 
