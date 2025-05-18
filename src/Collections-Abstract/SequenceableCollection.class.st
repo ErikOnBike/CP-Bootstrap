@@ -63,6 +63,14 @@ SequenceableCollection >> asArray [
 ]
 
 { #category : #all }
+SequenceableCollection >> asOrderedCollection [
+
+	^ (OrderedCollection new: self size)
+		addAll: self ;
+		yourself
+]
+
+{ #category : #all }
 SequenceableCollection >> asOrderedDictionary [
 	^ self asDictionary: OrderedDictionary
 ]

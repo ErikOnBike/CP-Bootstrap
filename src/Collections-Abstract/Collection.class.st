@@ -215,11 +215,6 @@ Collection >> isCollection [
 ]
 
 { #category : #all }
-Collection >> isDictionary [
-	^ false
-]
-
-{ #category : #all }
 Collection >> isEmpty [
 	"Answer whether the receiver contains any elements."
 

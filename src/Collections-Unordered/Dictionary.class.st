@@ -8,7 +8,7 @@ Class {
 Dictionary >> = anObject [
 	self == anObject
 		ifTrue: [ ^ true ].
-	(anObject isCollection and: [ anObject isDictionary ])
+	anObject isDictionary
 		ifFalse: [ ^ false ].
 	self size = anObject size
 		ifFalse: [ ^ false ].

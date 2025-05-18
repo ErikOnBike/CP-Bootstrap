@@ -378,6 +378,11 @@ Object >> isCollection [
 ]
 
 { #category : #all }
+Object >> isDictionary [
+	^ false
+]
+
+{ #category : #all }
 Object >> isMethodProperties [
 	^ false
 ]
