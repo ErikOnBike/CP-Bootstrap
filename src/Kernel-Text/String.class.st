@@ -155,7 +155,7 @@ String >> asNumberOrNil [
 	"Answer the Number created by interpreting the receiver as the string 
 	representation of a number"
 
-	<primitive: 'primitiveStringAsNumber' module: 'CpSystemPlugin'>
+	<primitive: 'primitiveStringAsNumberOrNil' module: 'CpSystemPlugin'>
 	^ nil
 ]
 
