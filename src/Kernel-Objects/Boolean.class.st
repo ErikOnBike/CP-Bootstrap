@@ -12,7 +12,7 @@ Boolean class >> new [
 ]
 
 { #category : #all }
-Boolean >> basicCopy [
+Boolean >> shallowCopy [
 	"There is the only one instance of me, so answer myself."
 
 	^ self

@@ -12,7 +12,7 @@ UndefinedObject class >> new [
 ]
 
 { #category : #all }
-UndefinedObject >> basicCopy [
+UndefinedObject >> shallowCopy [
 	"There is the only one instance of me, so answer myself."
 
 	^ self

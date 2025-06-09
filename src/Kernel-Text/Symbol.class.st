@@ -136,7 +136,7 @@ Symbol >> at: anInteger put: anObject [
 ]
 
 { #category : #all }
-Symbol >> basicCopy [
+Symbol >> shallowCopy [
 	"Answer myself because Symbols are unique."
 
 	

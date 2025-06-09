@@ -131,7 +131,7 @@ Character >> asciiValue [
 ]
 
 { #category : #all }
-Character >> basicCopy [
+Character >> shallowCopy [
 	"Answer myself because Characters are unique."
 
 	^ self

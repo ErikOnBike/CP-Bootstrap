@@ -162,7 +162,7 @@ SmallInteger >> asFloat [
 ]
 
 { #category : #all }
-SmallInteger >> basicCopy [
+SmallInteger >> shallowCopy [
 	"I am immutable (and not really an object), so answer myself."
 
 	
