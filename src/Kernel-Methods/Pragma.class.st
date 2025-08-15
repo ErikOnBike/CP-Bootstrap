@@ -10,14 +10,6 @@ Class {
 }
 
 { #category : #all }
-Pragma class >> selector: aSymbol arguments: anArray [ 
-	^ self new
-		selector: aSymbol;
-		arguments: anArray;
-		yourself
-]
-
-{ #category : #all }
 Pragma class >> withPragmasIn: aClass do: aBlock [
 	aClass selectorsAndMethodsDo: [ :selector :method | method pragmas do: aBlock ]
 ]
