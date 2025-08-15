@@ -11,14 +11,14 @@ Class {
 }
 
 { #category : #all }
-CpCommunicator class >> newFor: ownerObject [
+CpCommunicator class >> newForOwner: ownerObject [
 
 	"Answer a new instance of the receiver for the specified owner.
 	The owner is responsible for handling the message received and should therefore
 	accept the message: #handleMessageReceived:"
 
-	^ self new
-		owner: ownerObject ;
+	^ self basicNew
+		initializeWithOwner: ownerObject ;
 		yourself
 ]
 
@@ -75,6 +75,12 @@ CpCommunicator >> hasOpenMessageChannel [
 ]
 
 { #category : #all }
+CpCommunicator >> hasUnsentMessages [
+
+	^ self unsentMessagesCount > 0
+]
+
+{ #category : #all }
 CpCommunicator >> initialize [
 
 	"Initialze the receiver"
@@ -83,6 +89,18 @@ CpCommunicator >> initialize [
 
 	unsentMessages := OrderedCollection new.
 	unsentMessagesMutex := Mutex new
+]
+
+{ #category : #all }
+CpCommunicator >> initializeWithOwner: ownerObject [
+
+	"Initialize the receiver with the specified owner.
+	The owner is responsible to handle the messages received by the receiver.
+	Therefore ownerObject should accept the message: #handleMessageReceived:"
+
+	self initialize.
+
+	owner := ownerObject
 ]
 
 { #category : #all }
@@ -116,16 +134,6 @@ CpCommunicator >> owner [
 	"Answer the owner of the receiver"
 
 	^ owner
-]
-
-{ #category : #all }
-CpCommunicator >> owner: ownerObject [
-
-	"Set the owner of the receiver.
-	The owner is responsible to handle the messages received by the receiver.
-	Therefore ownerObject should accept the message: #handleMessageReceived:"
-
-	owner := ownerObject
 ]
 
 { #category : #all }
@@ -214,10 +222,4 @@ CpCommunicator >> unsentMessagesCount [
 	"Answer the number of unsent messages in the receiver"
 
 	unsentMessagesMutex critical: [ ^ unsentMessages size ]
-]
-
-{ #category : #all }
-CpCommunicator >> hasUnsentMessages [
-
-	^ self unsentMessagesCount > 0
 ]

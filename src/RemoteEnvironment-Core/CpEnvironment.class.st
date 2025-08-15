@@ -37,7 +37,7 @@ CpEnvironment >> createCommunicator [
 
 	"Create a new communicator for the receiver and answer it"
 
-	^ self class communicatorClass newFor: self
+	^ self class communicatorClass newForOwner: self
 ]
 
 { #category : #all }
