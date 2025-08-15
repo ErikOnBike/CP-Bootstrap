@@ -5,7 +5,6 @@ Class {
 		'readStream',
 		'stringTable',
 		'symbolTable',
-		'readStream',
 		'currentMethod'
 	],
 	#category : #'RemoteEnvironment-Core'
@@ -25,16 +24,80 @@ CpObjectDecoder class >> putInstVars: instVars in: anObject [
 ]
 
 { #category : #all }
-CpObjectDecoder >> denormalizeHeader: header [
+CpObjectDecoder >> basicReadStringUsingTable: aCollection [
 
-	"De-normalize the header value of CompiledCode. (See comment of CpObjectEncoder >> #normalizeHeader:)
+	"Read a String (can be a Symbol) using the specified table space (cache)"
 
-	Implementation:
-	Reset the position of the sign flag, which is used to indicate secondary bytecode set being used."
+	| characterCount |
 
-	^ (header bitAnd: 16r40000000) ~~ 0
-		ifTrue: [ (header bitAnd: 16r3fffffff) + SmallInteger minVal ]
-		ifFalse: [ header ]
+	characterCount := self readLength.
+	(characterCount = 2 and: [ self peekHasStringIndex ])
+		ifTrue: [ ^ self basicReadStringWithIndexUsingTable: aCollection ].
+
+	^ self basicReadStringWithLength: characterCount usingTable: aCollection
+]
+
+{ #category : #all }
+CpObjectDecoder >> basicReadStringWithIndexUsingTable: aCollection [
+
+	"Read an index (into either the String or Symbol table) from the read stream.
+	Assume the index is max 11 bits big.
+
+	See CpObjectEncoder >> #basicWriteStringIndex: for an explanation."
+
+	| index string |
+
+	"Read index which is 0-based"
+	index := ((readStream next bitAnd: 16r07) bitShift: 8) bitOr: readStream next.
+	index := index + 1.
+
+	string := aCollection
+		at: index
+		ifAbsent: [
+			self errorCr: 'Error during String decoding: Accessing indexed String from invalid location ', index printString.
+
+			"Answer an appropriate empty String"
+			^ aCollection == stringTable
+				ifTrue: [ '' ]
+				ifFalse: [ #'' ] ].
+
+	"For Strings (not Symbols) make a copy since these are unique instances"
+	^ aCollection == stringTable
+		ifTrue: [ string copy ]
+		ifFalse: [ string ]
+]
+
+{ #category : #all }
+CpObjectDecoder >> basicReadStringWithLength: anInteger usingTable: aCollection [
+
+	"Read a String consisting of UTF-8 characters and store it in the specified table space (cache)"
+
+	| wordArray isWideString string |
+
+	"Create and fill the string"
+	wordArray := WordArray new: anInteger.
+	isWideString := false.
+	1 to: anInteger do: [  :index |
+		(wordArray at: index put: self readUTF8CodePoint) >= 256
+			ifTrue: [ isWideString := true ] ].
+
+	string := isWideString
+		ifTrue: [ WideString fromWordArray: wordArray ]
+		ifFalse: [ ByteString fromWordArray: wordArray ].
+
+	aCollection == symbolTable
+		ifTrue: [ string := string asSymbol ].
+
+	^ aCollection add: string
+]
+
+{ #category : #all }
+CpObjectDecoder >> cacheString: aString [
+
+	"Add the specified String to the receiver's cache (String table)"
+
+	(stringTable ifNil: [ stringTable := OrderedCollection new ])
+		addIfNotPresent: aString
 ]
 
 { #category : #all }
@@ -47,6 +110,7 @@ CpObjectDecoder >> decodeAdditionalMethodState [
 
 	selector := self readSymbol.
 	pragmas := self readArray.
+
 	additionalMethodState := AdditionalMethodState new: pragmas size.
 	pragmas withIndexDo: [ :eachPragma :index | additionalMethodState basicAt: index put: eachPragma ].
 
@@ -74,7 +138,7 @@ CpObjectDecoder >> decodeAnnouncement [
 	instVars := self readArray.
 
 	"Instanciate new announcement"
-	announcement := (Smalltalk classNamed: className) new.
+	announcement := (Smalltalk classNamed: className) basicNew.
 	self class putInstVars: instVars in: announcement.
 
 	^ announcement
@@ -238,6 +302,40 @@ CpObjectDecoder >> decodeClassVariable [
 ]
 
 { #category : #all }
+CpObjectDecoder >> decodeCompiledBlock [
+
+	"Decode a CompiledBlock. It will have its outerCode set,
+	based on the current method being decoded (a CompiledBlock
+	should only be present in context of a CompiledMethod)."
+
+	| block header bytecodeSize initialPC endPC |
+
+	"Raise error if the receiver is not running in the ClientEnvironment"
+	CpClientEnvironment isRunning
+		ifFalse: [ ^ self error: 'ClientEnvironment sent CompiledBlock to ServerEnvironment' ].
+
+	"Read header and bytecode size"
+	header := self denormalizeHeader: self readUInt32.
+	bytecodeSize := self readLength.
+
+	"Create empty block instance"
+	block := CompiledBlock basicNew: bytecodeSize header: header.
+
+	"Add bytecode to the block"
+	initialPC := block initialPC.
+	endPC := block endPC.
+	initialPC to: endPC do: [ :byteIndex | block byteAt: byteIndex put: readStream next ].
+
+	"Add literals (excl. outerCode which is positioned at index 'numLiterals')"
+	1 to: block numLiterals - 1 do: [ :index | block literalAt: index put: self decodeNext ].
+
+	"Add outerCode (which resides at index 'numLiterals')"
+	block outerCode: currentMethod.
+
+	^ block
+]
+
+{ #category : #all }
 CpObjectDecoder >> decodeCompiledMethod [
 
 	"Decode a CompiledMethod. Although it is not installed here, it will have its bound Class set
@@ -271,40 +369,6 @@ CpObjectDecoder >> decodeCompiledMethod [
 	currentMethod := nil.
 
 	^ method
-]
-
-{ #category : #all }
-CpObjectDecoder >> decodeCompiledBlock [
-
-	"Decode a CompiledBlock. It will have its outerCode set,
-	based on the current method being decoded (a CompiledBlock
-	should only be present in context of a CompiledMethod)."
-
-	| block header bytecodeSize initialPC endPC |
-
-	"Raise error if the receiver is not running in the ClientEnvironment"
-	CpClientEnvironment isRunning
-		ifFalse: [ ^ self error: 'ClientEnvironment sent CompiledBlock to ServerEnvironment' ].
-
-	"Read header and bytecode size"
-	header := self denormalizeHeader: self readUInt32.
-	bytecodeSize := self readLength.
-
-	"Create empty block instance"
-	block := CompiledBlock basicNew: bytecodeSize header: header.
-
-	"Add bytecode to the block"
-	initialPC := block initialPC.
-	endPC := block endPC.
-	initialPC to: endPC do: [ :byteIndex | block byteAt: byteIndex put: readStream next ].
-
-	"Add literals (excl. outerCode which is positioned at index 'numLiterals')"
-	1 to: block numLiterals - 1 do: [ :index | block literalAt: index put: self decodeNext ].
-
-	"Add outerCode (which resides at index 'numLiterals')"
-	block outerCode: currentMethod.
-
-	^ block
 ]
 
 { #category : #all }
@@ -407,17 +471,6 @@ CpObjectDecoder >> decodeLargePositiveInteger [
 ]
 
 { #category : #all }
-CpObjectDecoder >> decodeMessageSend [
-
-	"Decode a MessageSend"
-
-	^ MessageSend
-		receiver: self decodeNext
-		selector: self readSymbol
-		arguments: self decodeNext
-]
-
-{ #category : #all }
 CpObjectDecoder >> decodeMessage [
 
 	"Decode a Message (lookupClass is ignored"
@@ -428,11 +481,14 @@ CpObjectDecoder >> decodeMessage [
 ]
 
 { #category : #all }
-CpObjectDecoder >> decodePoint [
+CpObjectDecoder >> decodeMessageSend [
 
-	"Decode a Point"
+	"Decode a MessageSend"
 
-	^ Point x: self decodeNext y: self decodeNext
+	^ MessageSend
+		receiver: self decodeNext
+		selector: self readSymbol
+		arguments: self decodeNext
 ]
 
 { #category : #all }
@@ -499,6 +555,14 @@ CpObjectDecoder >> decodeNil [
 ]
 
 { #category : #all }
+CpObjectDecoder >> decodePoint [
+
+	"Decode a Point"
+
+	^ Point x: self decodeNext y: self decodeNext
+]
+
+{ #category : #all }
 CpObjectDecoder >> decodePragma [
 
 	"Decode Pragma using its selector and arguments.
@@ -510,7 +574,10 @@ CpObjectDecoder >> decodePragma [
 	selector := self readSymbol.
 	arguments := self readArray.
 
-	^ Pragma selector: selector arguments: arguments
+	^ Pragma new
+		selector: selector ;
+		arguments: arguments ;
+		yourself
 ]
 
 { #category : #all }
@@ -546,6 +613,19 @@ CpObjectDecoder >> decodeWordArray [
 ]
 
 { #category : #all }
+CpObjectDecoder >> denormalizeHeader: header [
+
+	"De-normalize the header value of CompiledCode. (See comment of CpObjectEncoder >> #normalizeHeader:)
+
+	Implementation:
+	Reset the position of the sign flag, which is used to indicate secondary bytecode set being used."
+
+	^ (header bitAnd: 16r40000000) ~~ 0
+		ifTrue: [ (header bitAnd: 16r3fffffff) + SmallInteger minVal ]
+		ifFalse: [ header ]
+]
+
+{ #category : #all }
 CpObjectDecoder >> doPeek: aBlock [
 
 	"Evaluate aBlock while preserving the current read stream position"
@@ -575,6 +655,16 @@ CpObjectDecoder >> on: aByteArray [
 
 	"Implementation: The stringTable is lazy initialized"
 	symbolTable := OrderedCollection new
+]
+
+{ #category : #all }
+CpObjectDecoder >> peekHasStringIndex [
+
+	"Answer whether a String index is on the read stream.
+
+	See CpObjectEncoder >> #basicWriteStringIndex: for an explanation."
+
+	^ (readStream peek bitAnd: 16rf8) = 16rf8
 ]
 
 { #category : #all }
@@ -692,93 +782,6 @@ CpObjectDecoder >> readSymbol [
 	"Read a Symbol (should not be a String)"
 
 	^ self basicReadStringUsingTable: symbolTable
-]
-
-{ #category : #all }
-CpObjectDecoder >> basicReadStringUsingTable: aCollection [
-
-	"Read a String (can be a Symbol) using the specified table space (cache)"
-
-	| characterCount |
-
-	characterCount := self readLength.
-	(characterCount = 2 and: [ self peekHasStringIndex ])
-		ifTrue: [ ^ self basicReadStringWithIndexUsingTable: aCollection ].
-
-	^ self basicReadStringWithLength: characterCount usingTable: aCollection
-]
-
-{ #category : #all }
-CpObjectDecoder >> basicReadStringWithIndexUsingTable: aCollection [
-
-	"Read an index (into either the String or Symbol table) from the read stream.
-	Assume the index is max 11 bits big.
-
-	See CpObjectEncoder >> #basicWriteStringIndex: for an explanation."
-
-	| index string |
-
-	"Read index which is 0-based"
-	index := ((readStream next bitAnd: 16r07) bitShift: 8) bitOr: readStream next.
-	index := index + 1.
-
-	string := aCollection
-		at: index
-		ifAbsent: [
-			self errorCr: 'Error during String decoding: Accessing indexed String from invalid location ', index printString.
-
-			"Answer an appropriate empty String"
-			^ aCollection == stringTable
-				ifTrue: [ '' ]
-				ifFalse: [ #'' ] ].
-
-	"For Strings (not Symbols) make a copy since these are unique instances"
-	^ aCollection == stringTable
-		ifTrue: [ string copy ]
-		ifFalse: [ string ]
-]
-
-{ #category : #all }
-CpObjectDecoder >> basicReadStringWithLength: anInteger usingTable: aCollection [
-
-	"Read a String consisting of UTF-8 characters and store it in the specified table space (cache)"
-
-	| wordArray isWideString string |
-
-	"Create and fill the string"
-	wordArray := WordArray new: anInteger.
-	isWideString := false.
-	1 to: anInteger do: [ :index |
-		(wordArray at: index put: self readUTF8CodePoint) >= 256
-			ifTrue: [ isWideString := true ] ].
-
-	string := isWideString
-		ifTrue: [ WideString fromWordArray: wordArray ]
-		ifFalse: [ ByteString fromWordArray: wordArray ].
-
-	aCollection == symbolTable
-		ifTrue: [ string := string asSymbol ].
-
-	^ aCollection add: string
-]
-
-{ #category : #all }
-CpObjectDecoder >> peekHasStringIndex [
-
-	"Answer whether a String index is on the read stream.
-
-	See CpObjectEncoder >> #basicWriteStringIndex: for an explanation."
-
-	^ (readStream peek bitAnd: 16rf8) = 16rf8
-]
-
-{ #category : #all }
-CpObjectDecoder >> cacheString: aString [
-
-	"Add the specified String to the receiver's cache (String table)"
-
-	(stringTable ifNil: [ stringTable := OrderedCollection new ])
-		addIfNotPresent: aString
 ]
 
 { #category : #all }
