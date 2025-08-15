@@ -16,15 +16,15 @@ CpExceptionAnnouncement class >> exception: anException [
 ]
 
 { #category : #all }
+CpExceptionAnnouncement >> exception [
+
+	^ exception
+]
+
+{ #category : #all }
 CpExceptionAnnouncement >> initializeWithException: anException [
 
 	self initialize.
 
 	exception := anException
-]
-
-{ #category : #all }
-CpExceptionAnnouncement >> exception [
-
-	^ exception
 ]
