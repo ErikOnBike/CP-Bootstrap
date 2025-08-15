@@ -8,22 +8,6 @@ Class {
 }
 
 { #category : #all }
-CpExceptionAnnouncer class >> current [
-
-	"Answer the current instance of the receiver"
-
-	^ Current ifNil: [ Current := self basicNew initialize ; yourself ]
-]
-
-{ #category : #all }
-CpExceptionAnnouncer class >> new [
-
-	"Use self >> #current instead to get the singleton instance"
-
-	self shouldNotImplement
-]
-
-{ #category : #all }
 CpExceptionAnnouncer class >> announce: anAnnouncement [
 
 	"In case no one is listening, simply answer nil and do not create my current instance"
@@ -45,20 +29,48 @@ CpExceptionAnnouncer class >> announceException: anException [
 ]
 
 { #category : #all }
-CpExceptionAnnouncer class >> when: anAnnouncement send: aSymbol to: anObject [
+CpExceptionAnnouncer class >> current [
 
-	^ self current
-		when: anAnnouncement send: aSymbol to: anObject
-]
+	"Answer the current instance of the receiver"
 
-{ #category : #all }
-CpExceptionAnnouncer class >> when: anAnnouncement do: aBlock [
-
-	^ self current
-		when: anAnnouncement do: aBlock
+	^ Current ifNil: [ Current := self basicNew initialize ; yourself ]
 ]
 
 { #category : #all }
 CpExceptionAnnouncer class >> hasCurrent [
 	^ Current isNotNil
+]
+
+{ #category : #all }
+CpExceptionAnnouncer class >> new [
+
+	"Use self >> #current instead to get the singleton instance"
+
+	self shouldNotImplement
+]
+
+{ #category : #all }
+CpExceptionAnnouncer class >> when: anAnnouncementClass do: aBlock [
+
+	self flag: #deprecatedMethod.
+	self warnCr: 'Use of any Announcer''s #when:do: is deprecated, please use #when:do:for:'.
+
+	^ self when: anAnnouncementClass do: aBlock for: aBlock receiver
+]
+
+{ #category : #all }
+CpExceptionAnnouncer class >> when: anAnnouncement do: aBlock for: anObject [
+
+	"Subscribe anObject to announcements of anAnnouncementClass class. 
+	 When announced, aBlock is evaluated."
+
+	^ self current
+		when: anAnnouncement do: aBlock for: anObject
+]
+
+{ #category : #all }
+CpExceptionAnnouncer class >> when: anAnnouncement send: aSymbol to: anObject [
+
+	^ self current
+		when: anAnnouncement send: aSymbol to: anObject
 ]
