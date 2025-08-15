@@ -10,7 +10,7 @@ Class {
 }
 
 { #category : #all }
-CpJavaScriptWebSocketChannel class >> for: ownerObject connectedToUrl: urlString [
+CpJavaScriptWebSocketChannel class >> forOwner: ownerObject connectedToUrl: urlString [
 
 	"Create for the specified owner, a new instance of the receiver which is connected
 	to the specified URL.
@@ -20,7 +20,7 @@ CpJavaScriptWebSocketChannel class >> for: ownerObject connectedToUrl: urlString
 
 	| instance |
 
-	instance := self newFor: ownerObject.
+	instance := self newForOwner: ownerObject.
 	(instance connectToUrl: urlString)
 		ifFalse: [
 			instance release.
@@ -33,17 +33,17 @@ CpJavaScriptWebSocketChannel class >> for: ownerObject connectedToUrl: urlString
 ]
 
 { #category : #all }
-CpJavaScriptWebSocketChannel class >> newFor: ownerObject [
+CpJavaScriptWebSocketChannel class >> newForOwner: ownerObject [
 
 	"Answer a new instance of the receiver with the specified owner"
 
-	^ self new
-		owner: ownerObject ;
+	^ self basicNew
+		initializeWithOwner: ownerObject ;
 		yourself
 ]
 
 { #category : #all }
-CpJavaScriptWebSocketChannel class >> startServerOnPort: anInteger path: aString do: aValuable [
+CpJavaScriptWebSocketChannel class >> startServerForOwner: ownerObject onPort: anInteger path: aString [
 
 	"Create a server listening on the specified port and path.
 	When a new connection is made a new instance of the receiver is created for the
@@ -82,6 +82,23 @@ CpJavaScriptWebSocketChannel >> connectToUrl: urlString [
 	^ self isOpen
 ]
 
+CpJavaScriptWebSocketChannel >> connectToUrl: urlString withEventSemaphore: semaIndex [
+
+	"Connect the primitive WebSocket to the specified URL and use the specified Semaphore for signaling events"
+
+	<primitive: 'primitiveWebSocketConnectToUrl:withEventSemaphore:' module: 'CpSystemPlugin'>
+	self primitiveFailed
+]
+
+{ #category : #all }
+CpJavaScriptWebSocketChannel >> handleMessageHandlerError: anError [
+
+	"Announce the error (for debugger or otherwise)"
+	CpExceptionAnnouncer announceException: anError.
+
+	super handleMessageHandlerError: anError
+]
+
 { #category : #all }
 CpJavaScriptWebSocketChannel >> initialize [
 
@@ -107,14 +124,6 @@ CpJavaScriptWebSocketChannel >> isOpen [
 	^ state = 1
 ]
 
-CpJavaScriptWebSocketChannel >> connectToUrl: urlString withEventSemaphore: semaIndex [
-
-	"Connect the primitive WebSocket to the specified URL and use the specified Semaphore for signaling events"
-
-	<primitive: 'primitiveWebSocketConnectToUrl:withEventSemaphore:' module: 'CpSystemPlugin'>
-	self primitiveFailed
-]
-
 { #category : #all }
 CpJavaScriptWebSocketChannel >> readyState [
 
@@ -137,17 +146,6 @@ CpJavaScriptWebSocketChannel >> receivedMessage [
 ]
 
 { #category : #all }
-CpJavaScriptWebSocketChannel >> send: aByteArray [
-
-	"Send the message through the primitive WebSocket (asynchronous).
-	Answer a Boolean indicating whether send was successful."
-
-	<primitive: 'primitiveWebSocketSend:' module: 'CpSystemPlugin'>
-	self primitiveFailed
-
-]
-
-{ #category : #all }
 CpJavaScriptWebSocketChannel >> release [
 
 	"Release instance variables of the receiver.
@@ -162,6 +160,17 @@ CpJavaScriptWebSocketChannel >> release [
 	state := -1.
 
 	super release
+]
+
+{ #category : #all }
+CpJavaScriptWebSocketChannel >> send: aByteArray [
+
+	"Send the message through the primitive WebSocket (asynchronous).
+	Answer a Boolean indicating whether send was successful."
+
+	<primitive: 'primitiveWebSocketSend:' module: 'CpSystemPlugin'>
+	self primitiveFailed
+
 ]
 
 { #category : #all }
@@ -195,13 +204,4 @@ CpJavaScriptWebSocketChannel >> updateState [
 	eventSemaphore ifNil: [ ^ self ].
 	eventSemaphore wait.
 	state := self readyState
-]
-
-{ #category : #all }
-CpJavaScriptWebSocketChannel >> handleMessageHandlerError: anError [
-
-	"Announce the error (for debugger or otherwise)"
-	CpExceptionAnnouncer announceException: anError.
-
-	super handleMessageHandlerError: anError
 ]

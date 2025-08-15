@@ -39,7 +39,7 @@ CpMessageChannel class >> environmentImplementation: aClass [
 ]
 
 { #category : #all }
-CpMessageChannel class >> for: ownerObject connectedToUrl: urlString [
+CpMessageChannel class >> forOwner: ownerObject connectedToUrl: urlString [
 
 	"Create for the specified owner, a new instance of the receiver which is connected
 	to the specified URL.
@@ -48,12 +48,12 @@ CpMessageChannel class >> for: ownerObject connectedToUrl: urlString [
 
 	"Use the environment's specific implementation or raise an error"
 	self environmentImplementation
-		ifNotNil: [ :implementationClass | ^ implementationClass for: ownerObject connectedToUrl: urlString ]
+		ifNotNil: [ :implementationClass | ^ implementationClass forOwner: ownerObject connectedToUrl: urlString ]
 		ifNil: [ Error signal: 'No implementation class set for MessageChannel' ]
 ]
 
 { #category : #all }
-CpMessageChannel class >> startServerFor: ownerObject onPort: anInteger path: aString [
+CpMessageChannel class >> startServerForOwner: ownerObject onPort: anInteger path: aString [
 
 	"Create a server listening on the specified port and path for the specified owner.
 	The owner Object will need to handle the relevant events. See #owner:."
@@ -61,7 +61,7 @@ CpMessageChannel class >> startServerFor: ownerObject onPort: anInteger path: aS
 	"Use the environment's specific implementation or raise an error"
 	self environmentImplementation
 		ifNotNil: [ :implementationClass |
-			^ implementationClass startServerFor: ownerObject onPort: anInteger path: aString ]
+			^ implementationClass startServerForOwner: ownerObject onPort: anInteger path: aString ]
 		ifNil: [ Error signal: 'No implementation class set for MessageChannel' ]
 ]
 
@@ -78,6 +78,14 @@ CpMessageChannel >> createMessageHandler [
 
 	"Create a forked process which will run the receiver's message handler for messages received"
 	[ self runMessageHandler ] forkAt: Processor highIOPriority named: 'MessageHandler'
+]
+
+{ #category : #all }
+CpMessageChannel >> handleMessageHandlerError: anError [ 
+
+	"Placeholder method to allow specific error handling by subclass or extension method."
+
+	self errorCr: 'Failed to handle messages: ' , anError printString
 ]
 
 { #category : #all }
@@ -118,6 +126,20 @@ CpMessageChannel >> handleNextMessage [
 ]
 
 { #category : #all }
+CpMessageChannel >> initializeWithOwner: ownerObject [
+
+	"Initialize the receiver with the specified owner.
+	The owner should accept the message #handleMessageReceived:on: which receives a
+	message as the first argument and the receiver as the second argument.
+	When the receiver is closed, the above message is sent to the owner with nil as
+	argument for both message and message channel to indicate the connection has closed."
+
+	self initialize.
+
+	owner := ownerObject
+]
+
+{ #category : #all }
 CpMessageChannel >> isOpen [
 
 	"Answer whether the receiver is open (ie can send and receive messages)"
@@ -131,18 +153,6 @@ CpMessageChannel >> owner [
 	"Answer the receiver's owner"
 
 	^ owner
-]
-
-{ #category : #all }
-CpMessageChannel >> owner: anObject [
-
-	"Set the receiver's owner to the specified Object.
-	The owner should accept the message #handleMessageReceived:on: which receives a
-	message as the first argument and the receiver as the second argument.
-	When the receiver is closed, the above message is sent to the owner with nil as
-	argument for both message and message channel to indicate the connection has closed."
-
-	owner := anObject
 ]
 
 { #category : #all }
@@ -169,10 +179,13 @@ CpMessageChannel >> runMessageHandler [
 	"Run the receiver's message handling process for handling received messages.
 	Implementation: After the connection has closed, clean up."
 	[ self isOpen ] whileTrue: [
-		"Handle available messages and update internal state"
-		self
-			handleMessages ;
-			updateState ].
+		[ 
+			"Handle available messages and update internal state"
+			self
+				handleMessages ;
+				updateState
+		 ] on: Error do: [ :error | 
+			self handleMessageHandlerError: error ] ].
 
 	"Signal connection is closed by sending a nil message"
 	self handleMessageReceived: nil.
