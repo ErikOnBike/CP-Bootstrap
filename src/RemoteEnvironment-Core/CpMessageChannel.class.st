@@ -27,7 +27,7 @@ CpMessageChannel class >> environmentImplementation [
 						ifTrue: [ implementationClasses first ]
 						ifFalse: [
 							"If Zinc message channel exists, use that one, otherwise answer nil to denote 'undecided'"
-							implementationClasses detect: [ :each | each name beginsWith: #Zinc ] ifNone: [ nil ] ] ]
+							implementationClasses detect: [ :each | each name beginsWith: #CpZinc ] ifNone: [ nil ] ] ]
 				ifFalse: [ self ] ]
 ]
 
