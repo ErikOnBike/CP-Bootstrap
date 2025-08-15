@@ -25,19 +25,11 @@ CpEnvironment >> communicator [
 ]
 
 { #category : #all }
-CpEnvironment >> communicator: aCommunicator [
-
-	"Set the receiver's Communicator"
-
-	communicator := aCommunicator
-]
-
-{ #category : #all }
 CpEnvironment >> createCommunicator [
 
 	"Create a new communicator for the receiver and answer it"
 
-	^ self class communicatorClass newForOwner: self
+	^ communicator := self class communicatorClass newForOwner: self
 ]
 
 { #category : #all }
@@ -109,7 +101,7 @@ CpEnvironment >> startCommunication [
 
 	"Start communication with the other party"
 
-	self communicator: self createCommunicator
+	self createCommunicator
 ]
 
 { #category : #all }
