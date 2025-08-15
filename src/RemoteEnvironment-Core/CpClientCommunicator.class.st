@@ -31,7 +31,7 @@ CpClientCommunicator >> connectToUrl: urlString [
 	self close.
 
 	url := urlString.
-	self messageChannel: (CpMessageChannel for: self connectedToUrl: url)
+	self messageChannel: (CpMessageChannel forOwner: self connectedToUrl: url)
 ]
 
 { #category : #all }

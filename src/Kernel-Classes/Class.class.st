@@ -137,7 +137,7 @@ Class >> allSubclasses [
 		whileFalse: [
 			scan addAll: (scan at: scanTop) subclasses.
 			scanTop := scanTop + 1 ].
-	^ scan asSet
+	^ scan
 ]
 
 { #category : #all }
