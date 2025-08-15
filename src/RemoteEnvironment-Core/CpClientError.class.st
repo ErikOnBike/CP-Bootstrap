@@ -26,3 +26,12 @@ CpClientError >> description: aString [
 
 	description := aString
 ]
+
+{ #category : #all }
+CpClientError >> printOn: aStream [
+
+	aStream
+		nextPutAll: self class name ;
+		nextPutAll: ': ' ;
+		print: self description
+]
