@@ -51,24 +51,59 @@ CpObjectEncoder class >> minimalByteSizeFor: anInteger [
 ]
 
 { #category : #all }
-CpObjectEncoder >> bytes [
+CpObjectEncoder >> basicWriteString: aString [
 
-	^ writeStream contents
+	"Write aString (can be Symbol) using UTF-8"
+
+	self writeLength: aString size.
+	aString do: [ :char | self writeUTF8CodePoint: char asUnicode ]
 ]
 
 { #category : #all }
-CpObjectEncoder >> normalizeHeader: header [
+CpObjectEncoder >> basicWriteString: aString usingTable: aCollection [
 
-	"Normalize the header value of CompiledCode. (See class comment of CompiledCode)
+	"Write aString (can be a Symbol) using the specified table (cache)"
 
-	Implementation:
-	Reposition the sign flag used to indicate secondary bytecode set being used.
-	The sign position is moved to an unused 31st bit in the header (allowing the
-	integer to remain unsigned."
+	| index |
 
-	^ header < 0
-		ifTrue: [ (header - SmallInteger minVal) bitOr: 16r40000000 ]
-		ifFalse: [ header ]
+	index := aCollection
+		indexOf: aString
+		ifAbsent: [
+			"We have max 11 bits of table space (2 raisedTo: 11), see #basicWriteStringIndex: for an explanation"
+			aCollection size < 2048
+				ifTrue: [ aCollection add: aString ].
+			^ self basicWriteString: aString ].
+
+	"Since Smalltalk indices always start at 1 subtract 1 to use 0 value as well"
+	self basicWriteStringIndex: index - 1
+]
+
+{ #category : #all }
+CpObjectEncoder >> basicWriteStringIndex: anInteger [
+
+	"Write the specified index (into either the String or Symbol table).
+	Assume anInteger is max 11 bits big.
+
+	Use a 3 byte encoding which is similar to regular Strings, but has an
+	invalid UTF-8 encoding to trigger this special behavior. This prevents
+	additional typing information to be needed in the different locations
+	where Strings and Symbols are used.
+
+	First byte contains the length 2 (for 2 additional bytes).
+	Second byte contains invalid UTF-8 marker and 3 index bits: 11111xxx
+	Third byte contains remaining index bits: yyyyyyyy
+	Index = 02r<xxxyyyyyyyy>"
+
+	self writeLength: 2.
+	writeStream
+		nextPut: 16rf8 + (anInteger bitShift: -8) ;
+		nextPut: (anInteger bitAnd: 16rff)
+]
+
+{ #category : #all }
+CpObjectEncoder >> bytes [
+
+	^ writeStream contents
 ]
 
 { #category : #all }
@@ -204,30 +239,6 @@ CpObjectEncoder >> encodeClassVariable: aClassVariable [
 ]
 
 { #category : #all }
-CpObjectEncoder >> encodeCompiledMethod: aCompiledMethod [
-
-	"Encode aCompiledMethod based on the method's header, bytecode and literals.
-	This will include the Class the method is installed in."
-
-	| initialPC endPC |
-
-	writeStream nextPut: 18.
-
-	"Write header"
-	self writeUInt32: (self normalizeHeader: aCompiledMethod header).
-
-	"Write bytecode (without creating intermediate collection)"
-	initialPC := aCompiledMethod initialPC.
-	endPC := aCompiledMethod endPC.
-	self writeLength: endPC - initialPC + 1.
-	initialPC to: endPC do: [ :byteIndex | writeStream nextPut: (aCompiledMethod byteAt: byteIndex) ].
-
-	"Write literals"
-	1 to: aCompiledMethod numLiterals do: [ :literalIndex |
-		(aCompiledMethod literalAt: literalIndex) cpEncodeWith: self ]
-]
-
-{ #category : #all }
 CpObjectEncoder >> encodeCompiledBlock: aCompiledBlock [
 
 	"Encode aCompiledBlock based on the block's header, bytecode and literals.
@@ -250,6 +261,30 @@ CpObjectEncoder >> encodeCompiledBlock: aCompiledBlock [
 	"Write literals (excl. outerCode which is positioned at index 'numLiterals', otherwise we get into infinite loop)"
 	1 to: aCompiledBlock numLiterals - 1 do: [ :literalIndex |
 		(aCompiledBlock literalAt: literalIndex) cpEncodeWith: self ]
+]
+
+{ #category : #all }
+CpObjectEncoder >> encodeCompiledMethod: aCompiledMethod [
+
+	"Encode aCompiledMethod based on the method's header, bytecode and literals.
+	This will include the Class the method is installed in."
+
+	| initialPC endPC |
+
+	writeStream nextPut: 18.
+
+	"Write header"
+	self writeUInt32: (self normalizeHeader: aCompiledMethod header).
+
+	"Write bytecode (without creating intermediate collection)"
+	initialPC := aCompiledMethod initialPC.
+	endPC := aCompiledMethod endPC.
+	self writeLength: endPC - initialPC + 1.
+	initialPC to: endPC do: [ :byteIndex | writeStream nextPut: (aCompiledMethod byteAt: byteIndex) ].
+
+	"Write literals"
+	1 to: aCompiledMethod numLiterals do: [ :literalIndex |
+		(aCompiledMethod literalAt: literalIndex) cpEncodeWith: self ]
 ]
 
 { #category : #all }
@@ -333,6 +368,21 @@ CpObjectEncoder >> encodeLargePositiveInteger: anInteger [
 ]
 
 { #category : #all }
+CpObjectEncoder >> encodeMessage: aMessage [
+
+	"Encode aMessage using its selector and arguments (lookupClass is ignored).
+	The selector and all arguments should be encodable themselves."
+
+	writeStream nextPut: 28.
+
+	"Write selector (a Symbol)"
+	self writeSymbol: aMessage selector.
+
+	"Encode arguments (either nil or Array)"
+	aMessage arguments cpEncodeWith: self
+]
+
+{ #category : #all }
 CpObjectEncoder >> encodeMessageSend: aMessageSend [
 
 	"Encode aMessageSend using its receiver, selector and arguments.
@@ -353,32 +403,6 @@ CpObjectEncoder >> encodeMessageSend: aMessageSend [
 ]
 
 { #category : #all }
-CpObjectEncoder >> encodePoint: aPoint [
-
-	"Encode aPoint using its x and y value (allowing non integers as well)"
-
-	writeStream nextPut: 29.
-
-	aPoint x cpEncodeWith: self.
-	aPoint y cpEncodeWith: self
-]
-
-{ #category : #all }
-CpObjectEncoder >> encodeMessage: aMessage [
-
-	"Encode aMessage using its selector and arguments (lookupClass is ignored).
-	The selector and all arguments should be encodable themselves."
-
-	writeStream nextPut: 28.
-
-	"Write selector (a Symbol)"
-	self writeSymbol: aMessage selector.
-
-	"Encode arguments (either nil or Array)"
-	aMessage arguments cpEncodeWith: self
-]
-
-{ #category : #all }
 CpObjectEncoder >> encodeMetaclassReference: aClass [
 
 	writeStream nextPut: 22.
@@ -389,6 +413,17 @@ CpObjectEncoder >> encodeMetaclassReference: aClass [
 CpObjectEncoder >> encodeNil [
 
 	writeStream nextPut: 1
+]
+
+{ #category : #all }
+CpObjectEncoder >> encodePoint: aPoint [
+
+	"Encode aPoint using its x and y value (allowing non integers as well)"
+
+	writeStream nextPut: 29.
+
+	aPoint x cpEncodeWith: self.
+	aPoint y cpEncodeWith: self
 ]
 
 { #category : #all }
@@ -439,6 +474,21 @@ CpObjectEncoder >> initialize [
 
 	"Implementation: The stringTable is lazy initialized"
 	symbolTable := OrderedCollection new
+]
+
+{ #category : #all }
+CpObjectEncoder >> normalizeHeader: header [
+
+	"Normalize the header value of CompiledCode. (See class comment of CompiledCode)
+
+	Implementation:
+	Reposition the sign flag used to indicate secondary bytecode set being used.
+	The sign position is moved to an unused 31st bit in the header (allowing the
+	integer to remain unsigned."
+
+	^ header < 0
+		ifTrue: [ (header - SmallInteger minVal) bitOr: 16r40000000 ]
+		ifFalse: [ header ]
 ]
 
 { #category : #all }
@@ -543,56 +593,6 @@ CpObjectEncoder >> writeSymbol: aSymbol [
 	"Write aSymbol (should not be a String)"
 
 	self basicWriteString: aSymbol usingTable: symbolTable
-]
-
-{ #category : #all }
-CpObjectEncoder >> basicWriteString: aString [
-
-	"Write aString (can be Symbol) using UTF-8"
-
-	self writeLength: aString size.
-	aString do: [ :char | self writeUTF8CodePoint: char asUnicode ]
-]
-
-{ #category : #all }
-CpObjectEncoder >> basicWriteString: aString usingTable: aCollection [
-
-	"Write aString (can be a Symbol) using the specified table (cache)"
-
-	| index |
-
-	index := aCollection
-		indexOf: aString
-		ifAbsent: [
-			"We have max 11 bits of table space (2 raisedTo: 11), see #basicWriteStringIndex: for an explanation"
-			aCollection size < 2048
-				ifTrue: [ aCollection add: aString ].
-			^ self basicWriteString: aString ].
-
-	"Since Smalltalk indices always start at 1 subtract 1 to use 0 value as well"
-	self basicWriteStringIndex: index - 1
-]
-
-{ #category : #all }
-CpObjectEncoder >> basicWriteStringIndex: anInteger [
-
-	"Write the specified index (into either the String or Symbol table).
-	Assume anInteger is max 11 bits big.
-
-	Use a 3 byte encoding which is similar to regular Strings, but has an
-	invalid UTF-8 encoding to trigger this special behavior. This prevents
-	additional typing information to be needed in the different locations
-	where Strings and Symbols are used.
-
-	First byte contains the length 2 (for 2 additional bytes).
-	Second byte contains invalid UTF-8 marker and 3 index bits: 11111xxx
-	Third byte contains remaining index bits: yyyyyyyy
-	Index = 02r<xxxyyyyyyyy>"
-
-	self writeLength: 2.
-	writeStream
-		nextPut: 16rf8 + (anInteger bitShift: -8) ;
-		nextPut: (anInteger bitAnd: 16rff)
 ]
 
 { #category : #all }
