@@ -481,19 +481,6 @@ CpClientEnvironment >> removeVariableAt: nameString [
 ]
 
 { #category : #all }
-CpClientEnvironment >> restartCommunication [
-
-	"Restart communication (after connection has been restored).
-
-	Implementation:
-	Send reconnected announcement only if we have an actual session to reconnect to."
-
-	id ifNil: [ ^ self ].
-
-	self serverAnnounce: CpClientReconnected
-]
-
-{ #category : #all }
 CpClientEnvironment >> resolveClassReferences: aClass [
 
 	"Resolve the class references for the specified Class"
@@ -505,6 +492,19 @@ CpClientEnvironment >> resolveClassReferences: aClass [
 
 		"Remove the whole entry, since from now on it is no longer unknown"
 		unresolvedClassReferences removeKey: aClass name ]
+]
+
+{ #category : #all }
+CpClientEnvironment >> restartCommunication [
+
+	"Restart communication (after connection has been restored).
+
+	Implementation:
+	Send reconnected announcement only if we have an actual session to reconnect to."
+
+	id ifNil: [ ^ self ].
+
+	self serverAnnounce: CpClientReconnected
 ]
 
 { #category : #all }
