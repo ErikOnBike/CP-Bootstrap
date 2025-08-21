@@ -2,7 +2,8 @@ Class {
 	#name : #CpExceptionAnnouncement,
 	#superclass : #Announcement,
 	#instVars : [
-		'exception'
+		'exception',
+		'announcerContext'
 	],
 	#category : #'RemoteEnvironment-Core'
 }
@@ -10,9 +11,21 @@ Class {
 { #category : #all }
 CpExceptionAnnouncement class >> exception: anException [
 
+	^ self exception: anException announcerContext: nil
+]
+
+{ #category : #all }
+CpExceptionAnnouncement class >> exception: anException announcerContext: aContext [
+
 	^ self basicNew
-		initializeWithException: anException ;
+		initializeWithException: anException announcerContext: aContext ;
 		yourself
+]
+
+{ #category : #all }
+CpExceptionAnnouncement >> announcerContext [
+
+	^ announcerContext
 ]
 
 { #category : #all }
@@ -22,9 +35,10 @@ CpExceptionAnnouncement >> exception [
 ]
 
 { #category : #all }
-CpExceptionAnnouncement >> initializeWithException: anException [
+CpExceptionAnnouncement >> initializeWithException: anException announcerContext: aContext [
 
 	self initialize.
 
-	exception := anException
+	exception := anException.
+	announcerContext := aContext
 ]
