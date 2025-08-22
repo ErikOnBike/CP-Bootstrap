@@ -33,6 +33,20 @@ OrderedCollection >> add: newObject [
 ]
 
 { #category : #all }
+OrderedCollection >> add: newObject afterIndex: index [
+	"Add the argument, newObject, as an element of the receiver. Put it in
+	the sequence just after index. Answer newObject."
+	^ self insert: newObject before: firstIndex + index
+]
+
+{ #category : #all }
+OrderedCollection >> add: newObject beforeIndex: index [
+	"Add the argument, newObject, as an element of the receiver. Put it in
+	the sequence just before index. Answer newObject."
+	^ self insert: newObject before: firstIndex + index - 1
+]
+
+{ #category : #all }
 OrderedCollection >> addLast: newObject [
 	"Add newObject to the end of the receiver. Answer newObject."
 
