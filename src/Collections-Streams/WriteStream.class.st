@@ -109,6 +109,20 @@ WriteStream >> space [
 ]
 
 { #category : #all }
+WriteStream >> cr [
+	"Append a CR character to me."
+
+	self nextPut: Character cr
+]
+
+{ #category : #all }
+WriteStream >> lf [
+	"Append a LF character to me."
+
+	self nextPut: Character lf
+]
+
+{ #category : #all }
 WriteStream >> ifPastPrintOnCutOff: aBlock [
 	"Evaluate the specified Block if the size of the receiver's contents is too big for #printOn:"
 
