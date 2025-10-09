@@ -65,6 +65,24 @@ CpEnvironment >> id: identifier [
 ]
 
 { #category : #all }
+CpEnvironment >> ifDevelopment: aBlock [
+
+	"Evaluate the specified Block if running in a development environment (i.e. non-production environment)"
+
+	self ifProduction: [ "intentionally empty" ] ifDevelopment: aBlock
+]
+
+{ #category : #all }
+CpEnvironment >> ifProduction: prodBlock ifDevelopment: devBlock [
+
+	"Evaluate the appropriate Block depending on the environment status"
+
+	(self variableAt: #'CODE_PARADISE_ENV') = 'production'
+		ifTrue: [ prodBlock value ]
+		ifFalse: [ devBlock value ]
+]
+
+{ #category : #all }
 CpEnvironment >> release [
 
 	"Release the receiver's instance variables"
