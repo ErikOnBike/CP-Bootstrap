@@ -154,8 +154,14 @@ Process >> isSyncProcess [
 
 { #category : #all }
 Process >> handleError: anError [
+	"Log the unhandled error"
 	self errorCr: 'Unhandled Error: ', anError printString.
 	self errorCr: anError signalerContext printString.
+
+	"Announce the exception"
+	CpExceptionAnnouncer announceException: anError.
+
+	"Terminate Process if part of await"
 	self allowAwaitPromise
 		ifTrue: [
 			self traceCr: 'Terminating Process'.
