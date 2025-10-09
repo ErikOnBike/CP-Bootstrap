@@ -10,8 +10,7 @@ Class {
 
 { #category : #all }
 ConstantBlockClosure class >> numArgs: anInteger literal: anObject [
-	^ self new
-		numArgs: anInteger ;
+	^ (self numArgs: anInteger)
 		literal: anObject ;
 		yourself
 ]

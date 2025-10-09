@@ -117,7 +117,7 @@ CompiledCode >> bindClassVariablesTo: aClass [
 			ifTrue: [ self literalAt: index put: (aClass classVariableNamed: literal key) ]
 			ifFalse: [
 				"Iterate into CompiledBlocks to set bindings"
-				(literal class == CompiledBlock or: [ literal isKindOf: CleanBlockClosure ])
+				(literal class == CompiledBlock or: [ literal isKindOf: ConstantBlockClosure ])
 					ifTrue: [ literal bindClassVariablesTo: aClass ] ] ]
 ]
 
@@ -125,7 +125,7 @@ CompiledCode >> bindClassVariablesTo: aClass [
 CompiledCode >> allBlocksDo: aBlock [
 
 	self literalsDo: [ :each |
-		(each class == CompiledBlock or: [ each isKindOf: CleanBlockClosure ])
+		(each class == CompiledBlock or: [ each isKindOf: ConstantBlockClosure ])
 			ifTrue: [ each withAllBlocksDo: aBlock ] ]
 ]
 

@@ -6,6 +6,13 @@ Class {
 }
 
 { #category : #all }
+CleanBlockClosure class >> numArgs: anInteger [
+	^ self new
+		numArgs: anInteger ;
+		yourself
+]
+
+{ #category : #all }
 CleanBlockClosure >> receiver [
 	^ nil
 ]
