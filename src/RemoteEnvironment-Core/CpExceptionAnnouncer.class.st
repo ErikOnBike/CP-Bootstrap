@@ -50,6 +50,17 @@ CpExceptionAnnouncer class >> new [
 ]
 
 { #category : #all }
+CpExceptionAnnouncer class >> unsubscribe: anObject [
+
+	"In case no one is listening, stop"
+	self hasCurrent
+		ifFalse: [ ^ self ].
+
+	^ self current
+		unsubscribe: anObject
+]
+
+{ #category : #all }
 CpExceptionAnnouncer class >> when: anAnnouncementClass do: aBlock [
 
 	self flag: #deprecatedMethod.
