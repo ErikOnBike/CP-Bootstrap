@@ -178,7 +178,7 @@ Class >> removeSubclass: aSubclass [
 			to: newSubclasses size
 			with: subclasses
 			startingAt: index + 1.
-		subclasses = newSubclasses.
+		subclasses := newSubclasses.
 		^ self ] ]
 ]
 
