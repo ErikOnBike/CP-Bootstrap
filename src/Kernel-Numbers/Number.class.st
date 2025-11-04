@@ -193,11 +193,14 @@ Number >> asInteger [
 
 { #category : #all }
 Number >> ceiling [
-	"Answer the integer nearest the receiver toward positive infinity."
+       "Answer the integer nearest the receiver toward  infinity."
 
-	self <= 0
-		ifTrue: [ ^ self truncated ]
-		ifFalse: [ ^ self negated floor negated ]
+       | truncation |
+       truncation := self truncated.
+       self <= 0 ifTrue: [ ^ truncation ].
+       ^ self = truncation
+               ifTrue: [ truncation ]
+               ifFalse: [ truncation + 1 ]
 ]
 
 { #category : #all }
@@ -230,9 +233,9 @@ Number >> floor [
 	truncation := self truncated.
 	self >= 0
 		ifTrue: [ ^ truncation ].
-	self = truncation
-		ifTrue: [ ^ truncation ]
-		ifFalse: [ ^ truncation - 1 ]
+	^ self = truncation
+		ifTrue: [ truncation ]
+		ifFalse: [ truncation - 1 ]
 ]
 
 { #category : #all }
