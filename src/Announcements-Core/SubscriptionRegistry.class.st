@@ -18,6 +18,19 @@ SubscriptionRegistry >> initialize [
 ]
 
 { #category : #all }
+SubscriptionRegistry >> release [
+
+	subscriptions ifNotNil: [
+		subscriptions removeAll.
+		subscriptions := nil ].
+	subscriptionsMutex ifNotNil: [
+		subscriptionsMutex release.
+		subscriptionsMutex := nil ].
+
+	super release
+]
+
+{ #category : #all }
 SubscriptionRegistry >> reset [
 	"Use an OrderedCollection since the order in which elements are added IS important
 	when using it to register DOM events".

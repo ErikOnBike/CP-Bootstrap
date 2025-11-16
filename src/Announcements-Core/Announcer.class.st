@@ -15,6 +15,15 @@ Announcer >> initialize [
 ]
 
 { #category : #all }
+Announcer >> release [
+	registry ifNotNil: [
+		registry release.
+		registry := nil ].
+
+	super release
+]
+
+{ #category : #all }
 Announcer >> subscriptions [
 
 	^ registry
