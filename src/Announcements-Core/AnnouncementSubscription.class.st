@@ -55,6 +55,9 @@ AnnouncementSubscription >> subscriber: anObject [
 
 { #category : #all }
 AnnouncementSubscription >> unsubscribe [
+	"Sanity check"
+	announcer ifNil: [ ^ self ].
+
 	announcer removeSubscription: self
 ]
 
@@ -75,12 +78,17 @@ AnnouncementSubscription >> announcementClass: anAnnouncementClass [
 
 { #category : #all }
 AnnouncementSubscription >> deliver: anAnnouncement [
+	"Sanity check"
+	action ifNil: [ ^ self ].
+
 	(self handlesAnnouncement: anAnnouncement)
 		ifTrue: [ self action cull: anAnnouncement ]
 ]
 
 { #category : #all }
 AnnouncementSubscription >> handlesAnnouncement: anAnnouncement [
+	"Sanity check"
+	announcementClass ifNil: [ ^ false ].
 
-	^ self announcementClass handlesAnnouncement: anAnnouncement
+	^ announcementClass handlesAnnouncement: anAnnouncement
 ]

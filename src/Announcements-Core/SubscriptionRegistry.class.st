@@ -53,7 +53,9 @@ SubscriptionRegistry >> deliver: anAnnouncement [
 	|  interestedSubscriptions |
 	"using a copy, so subscribers can unsubscribe from announcer "
 
-	subscriptions isEmpty ifTrue: [ ^ self ].
+	"Sanity check"
+	subscriptions isEmptyOrNil ifTrue: [ ^ self ].
+
 	subscriptionsMutex critical: [
 		interestedSubscriptions := subscriptions copy ].
 	interestedSubscriptions isEmpty ifTrue: [ ^ self ].
@@ -83,24 +85,36 @@ SubscriptionRegistry >> deliver: anAnnouncement to: subs startingAt: startIndex 
 
 { #category : #all }
 SubscriptionRegistry >> remove: subscription [
+	"Sanity check"
+	subscriptions isEmptyOrNil ifTrue: [ ^ nil ].
+
 	^ subscriptionsMutex critical: [
 		subscriptions remove: subscription ifAbsent: nil ]
 ]
 
 { #category : #all }
 SubscriptionRegistry >> removeSubscriber: subscriber [
-	^ subscriptionsMutex critical: [
+	"Sanity check"
+	subscriptions isEmptyOrNil ifTrue: [ ^ self ].
+
+	subscriptionsMutex critical: [
 		subscriptions removeAllSuchThat: [ :subscription | subscription subscriber == subscriber ] ]
 ]
 
 { #category : #all }
 SubscriptionRegistry >> subscriptionsHandling: anAnnouncement [
+	"Sanity check"
+	subscriptions isEmptyOrNil ifTrue: [ ^ #() ].
+
 	^ subscriptions select: [ :each | each handlesAnnouncement: anAnnouncement ]
 ]
 
 { #category : #all }
 SubscriptionRegistry >> subscriptionsOf: aSubscriber do: aBlock [
 	| copy |
+
+	"Sanity check"
+	subscriptions isEmptyOrNil ifTrue: [ ^ self ].
 
 	subscriptionsMutex critical: [ copy := subscriptions copy ].
 
