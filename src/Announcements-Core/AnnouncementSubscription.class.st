@@ -36,6 +36,19 @@ AnnouncementSubscription >> action: anObject [
 ]
 
 { #category : #all }
+AnnouncementSubscription >> release [
+
+	"No instance variable's content is created by the receiver, only nil them out.
+	Do NOT release the instance variables, it is not our responsibility."
+	announcer := nil.
+	announcementClass := nil.
+	action := nil.
+	subscriber := nil.
+
+	super release
+]
+
+{ #category : #all }
 AnnouncementSubscription >> subscriber: anObject [
 	subscriber := anObject
 ]

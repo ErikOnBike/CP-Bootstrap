@@ -21,6 +21,7 @@ SubscriptionRegistry >> initialize [
 SubscriptionRegistry >> release [
 
 	subscriptions ifNotNil: [
+		subscriptions do: [ :each | each release ].
 		subscriptions removeAll.
 		subscriptions := nil ].
 	subscriptionsMutex ifNotNil: [

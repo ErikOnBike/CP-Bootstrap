@@ -33,7 +33,12 @@ Announcer >> subscriptions [
 Announcer >> announce: anAnnouncement [
 
 	| announcement |
+
 	announcement := anAnnouncement asAnnouncement.	
+
+	"Sanity check"
+	registry ifNil: [ ^ announcement ].
+
 	registry deliver: announcement.
 	^ announcement
 ]
@@ -75,12 +80,19 @@ Announcer >> when: anAnnouncementClass send: aSelector to: anObject [
 
 { #category : #all }
 Announcer >> removeSubscription: anAnnouncementSubscription [
+
+	"Sanity check"
+	registry ifNil: [ ^ nil ].
+
 	^ registry remove: anAnnouncementSubscription
 ]
 
 { #category : #all }
 Announcer >> unsubscribe: anObject [
 	"Unsubscribe all subscriptions of anObject from the receiver"
+
+	"Sanity check"
+	registry ifNil: [ ^ self ].
 
 	registry removeSubscriber: anObject
 ]
