@@ -31,6 +31,13 @@ ReadStream >> contents [
 ]
 
 { #category : #all }
+ReadStream >> isEmpty [
+	"Answer whether the receiver's contents has no elements"
+
+	^ self atEnd and: [ position = 0 ]
+]
+
+{ #category : #all }
 ReadStream >> next [
 	"Answer the next object in the Stream represented by the receiver."
 
