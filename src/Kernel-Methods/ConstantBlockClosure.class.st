@@ -2,22 +2,27 @@ Class {
 	#name : #ConstantBlockClosure,
 	#superclass : #CleanBlockClosure,
 	#type : #variable,
-	#instVars : [
-		'literal'
-	],
 	#category : #'Kernel-Methods'
 }
 
 { #category : #all }
 ConstantBlockClosure class >> numArgs: anInteger literal: anObject [
-	^ (self numArgs: anInteger)
+	^ self new
+		numArgs: anInteger ;
 		literal: anObject ;
 		yourself
 ]
 
 { #category : #all }
-ConstantBlockClosure >> literal [
-	^ literal
+ConstantBlockClosure >> bindClassVariablesTo: aClass [
+	(literal class == (Smalltalk at: #ClassVariable) and: [ literal value == #__ClassVariable ])
+		ifTrue: [ literal := aClass classVariableNamed: literal key ]
+]
+
+{ #category : #all }
+ConstantBlockClosure >> errorArgCount: anInteger [
+
+	self error: 'ConstantBlockClosure evaluated with ', anInteger printString, ' arguments, but ', numArgs printString, ' expected.'
 ]
 
 { #category : #all }
@@ -28,7 +33,7 @@ ConstantBlockClosure >> literal: anObject [
 { #category : #all }
 ConstantBlockClosure >> value [
 
-	numArgs = 0 ifFalse: [ self error: 'ConstantBlockClosure evaluated without arguments, but ', numArgs printString, ' expected.' ].
+	numArgs = 0 ifFalse: [ self errorArgCount: 0 ].
 
 	^ literal
 ]
@@ -36,7 +41,7 @@ ConstantBlockClosure >> value [
 { #category : #all }
 ConstantBlockClosure >> value: anObject [
 
-	numArgs = 1 ifFalse: [ self error: 'ConstantBlockClosure evaluated with 1 argument, but ', numArgs printString, ' expected.' ].
+	numArgs = 1 ifFalse: [ self errorArgCount: 1 ].
 
 	^ literal
 ]
@@ -44,7 +49,7 @@ ConstantBlockClosure >> value: anObject [
 { #category : #all }
 ConstantBlockClosure >> value: firstObject value: secondObject [
 
-	numArgs = 2 ifFalse: [ self error: 'ConstantBlockClosure evaluated with 2 arguments, but ', numArgs printString, ' expected.' ].
+	numArgs = 2 ifFalse: [ self errorArgCount: 2 ].
 
 	^ literal
 ]
@@ -52,7 +57,7 @@ ConstantBlockClosure >> value: firstObject value: secondObject [
 { #category : #all }
 ConstantBlockClosure >> value: firstObject value: secondObject value: thirdObject [
 
-	numArgs = 3 ifFalse: [ self error: 'ConstantBlockClosure evaluated with 3 arguments, but ', numArgs printString, ' expected.' ].
+	numArgs = 3 ifFalse: [ self errorArgCount: 3 ].
 
 	^ literal
 ]
@@ -60,7 +65,7 @@ ConstantBlockClosure >> value: firstObject value: secondObject value: thirdObjec
 { #category : #all }
 ConstantBlockClosure >> value: firstObject value: secondObject value: thirdObject value: fourthObject [
 
-	numArgs = 4 ifFalse: [ self error: 'ConstantBlockClosure evaluated with 4 arguments, but ', numArgs printString, ' expected.' ].
+	numArgs = 4 ifFalse: [ self errorArgCount: 4 ].
 
 	^ literal
 ]
@@ -68,15 +73,9 @@ ConstantBlockClosure >> value: firstObject value: secondObject value: thirdObjec
 { #category : #all }
 ConstantBlockClosure >> valueWithArguments: anArray [
 
-	numArgs = anArray size ifFalse: [ self error: 'ConstantBlockClosure evaluated with ', anArray size printString, ' arguments, but ', numArgs printString, ' expected.' ].
+	numArgs = anArray size ifFalse: [ self errorArgCount: anArray size ].
 
 	^ literal
-]
-
-{ #category : #all }
-ConstantBlockClosure >> bindClassVariablesTo: aClass [
-	(literal class == (Smalltalk at: #ClassVariable) and: [ literal value == #__ClassVariable ])
-		ifTrue: [ literal := aClass classVariableNamed: literal key ]
 ]
 
 { #category : #all }

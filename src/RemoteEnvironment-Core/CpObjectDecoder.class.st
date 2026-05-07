@@ -374,16 +374,16 @@ CpObjectDecoder >> decodeCompiledMethod [
 { #category : #all }
 CpObjectDecoder >> decodeCleanBlockClosure [
 
-	| numArgs |
+	| compiledBlock |
 
 	"Raise error if the receiver is not running in the ClientEnvironment"
 	CpClientEnvironment isRunning
 		ifFalse: [ ^ self error: 'ClientEnvironment sent CompiledBlock to ServerEnvironment' ].
 
-	"Read number of arguments"
-	numArgs := self readLength.
+	"Read compiledBlock"
+	compiledBlock := self decodeNext.
 
-	^ CleanBlockClosure numArgs: numArgs
+	^ CleanBlockClosure compiledBlock: compiledBlock
 ]
 
 { #category : #all }
