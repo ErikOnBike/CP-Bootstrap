@@ -161,3 +161,13 @@ Interval >> size [
 Interval >> species [
 	^ Array
 ]
+
+{ #category : #all }
+Interval >> stop [
+	^ stop
+]
+
+{ #category : #all }
+Interval >> cpEncodeWith: anEncoder [
+	anEncoder encodeInterval: self
+]

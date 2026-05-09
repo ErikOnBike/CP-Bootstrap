@@ -90,6 +90,12 @@ Collection >> asByteArray [
 ]
 
 { #category : #all }
+Collection >> asCpEncodedArray [
+
+	^ self asArray
+]
+
+{ #category : #all }
 Collection >> asDictionary [
 	^ self asDictionary: Dictionary
 ]
@@ -416,4 +422,9 @@ Collection >> sum [
 	total := seed := self detect: [ :x | true ] ifNone: [ ^ 0 ].
 	self do: [ :el | total := total + el ].
 	^ total - seed	"subtract the seed value from the total"
+]
+
+{ #category : #all }
+Collection >> cpEncodeWith: anEncoder [
+	anEncoder encodeCollection: self
 ]

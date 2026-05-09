@@ -52,6 +52,12 @@ OrderedDictionary >> addAll: anAssociationCollection [
 ]
 
 { #category : #all }
+OrderedDictionary >> asCpEncodedArray [
+
+	^ self associations
+]
+
+{ #category : #all }
 OrderedDictionary >> asDictionary [
 	"In contrast with Pharo's implementation: I consider myself a Dictionary
 	and therefore answer myself instead of a new (unordered) Dictionary."

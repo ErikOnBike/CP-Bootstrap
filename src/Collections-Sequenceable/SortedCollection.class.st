@@ -221,3 +221,8 @@ SortedCollection >> at: anInteger put: anObject [
 SortedCollection >> insert: anObject before: spot [
 	self shouldNotImplement
 ]
+
+{ #category : #all }
+SortedCollection >> cpEncodeWith: anEncoder [
+	anEncoder encodeSortedCollection: self
+]
