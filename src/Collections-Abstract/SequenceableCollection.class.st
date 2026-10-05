@@ -42,9 +42,9 @@ SequenceableCollection >> = otherCollection [
 	corresponding element of otherCollection."
 
 	| size |
-	(size := self size) = otherCollection size
-		ifFalse: [ ^ false ].
 	self species == otherCollection species
+		ifFalse: [ ^ false ].
+	(size := self size) = otherCollection size
 		ifFalse: [ ^ false ].
 	1 to: size do: [ :index | 
 		(self at: index) = (otherCollection at: index)
